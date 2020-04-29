@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SwitchPreferenceCompat
+        app:key="key_view_mode"
+        app:summary="You can turn Vertical/Horizontal mode as on/off."
+        app:title="Viewer Mode" />
+
+</PreferenceScreen>

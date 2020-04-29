@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="bookshelf_padding_top">60dp</dimen>
+    <dimen name="common_padding">60dp</dimen>
+    <dimen name="bookshelf_padding">60dp</dimen>
+    <dimen name="book_item_width">96dp</dimen>
+    <dimen name="book_item_height">96dp</dimen>
+    <dimen name="contents_item_padding">30dp</dimen>
+
 </resources>

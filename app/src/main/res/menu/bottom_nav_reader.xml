@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/nav_contents"
+        android:enabled="true"
+        android:icon="@drawable/ic_format_list_bulleted_black"
+        android:title="@string/er_bottom_nv_contents"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/nav_settings"
+        android:enabled="true"
+        android:icon="@drawable/ic_settings_black"
+        android:title="@string/er_bottom_nv_settings"
+        app:showAsAction="always" />
+</menu>

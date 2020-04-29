@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="@dimen/bookshelf_padding"
-    tools:context=".SplashActivity">
+    tools:context=".main.activity.ContentsActivity">
 
     <FrameLayout
         android:id="@+id/frame_layout_fragment"

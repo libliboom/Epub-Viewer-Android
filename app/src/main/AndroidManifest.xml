@@ -17,6 +17,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".main.activity.BookshelfActivity" />
+        <activity android:name=".main.activity.EpubReaderActivity" />
+        <activity android:name=".main.activity.ContentsActivity" />
+        <activity android:name=".main.activity.SettingsActivity" />
     </application>
 
 </manifest>
