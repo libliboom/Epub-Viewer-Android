@@ -4,23 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".main.activity.EpubReaderActivity">
+    tools:context=".reader.activity.EPubReaderActivity">
 
-    <androidx.appcompat.widget.AppCompatSeekBar
-        android:id="@+id/bottom_nv_seek_bar"
+    <FrameLayout
+        android:id="@+id/frame_layout_fragment"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:background="@color/colorSecondaryDark"
-        app:layout_constraintBottom_toTopOf="@id/bottom_nv_reader" />
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_nv_reader"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/color_0057e7"
-        app:itemIconTint="@drawable/select_bottom_nv_item"
-        app:itemTextColor="@drawable/select_bottom_nv_item"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/bottom_nav_reader" />
+        android:layout_height="match_parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,4 +3,6 @@
     <string name="er_splash_welcome">Epub Viewer\nMini</string>
     <string name="er_bottom_nv_contents">Contents</string>
     <string name="er_bottom_nv_settings">Settings</string>
+    <string name="er_toolbar_title_contents">Contents</string>
+    <string name="er_toolbar_title_settings">Setting</string>
 </resources>

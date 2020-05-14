@@ -7,8 +7,8 @@
 
     <ImageView
         android:id="@+id/image_view_book"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
+        android:layout_width="@dimen/book_item_width"
+        android:layout_height="@dimen/book_item_height"
         android:src="@drawable/ic_book_black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"

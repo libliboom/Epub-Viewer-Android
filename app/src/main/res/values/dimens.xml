@@ -2,8 +2,8 @@
 <resources>
     <dimen name="common_padding">60dp</dimen>
     <dimen name="bookshelf_padding">60dp</dimen>
-    <dimen name="book_item_width">96dp</dimen>
-    <dimen name="book_item_height">96dp</dimen>
+    <dimen name="book_item_width">128dp</dimen>
+    <dimen name="book_item_height">128dp</dimen>
     <dimen name="contents_item_padding">30dp</dimen>
-
+    <dimen name="reader_view_margin">15dp</dimen>
 </resources>

@@ -27,3 +27,13 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+ext {
+    lifecycle_version = "2.2.0"
+    rxjava_version = '2.2.19'
+    rxandroid_version = '2.1.1'
+    rxbinding_version = '2.2.0'
+    rxlifecycle_version = '2.2.2'
+    dagger_version = "2.22"
+    glide_version = "4.11.0"
+}
