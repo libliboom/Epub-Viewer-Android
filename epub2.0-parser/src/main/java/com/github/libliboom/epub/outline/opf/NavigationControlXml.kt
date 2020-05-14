@@ -10,7 +10,7 @@ import com.google.gson.Gson
  */
 class NavigationControlXml(ncxPath: String) {
 
-    private var navMap = mutableMapOf<String, NavPoint>()
+    var navMap = mutableMapOf<String, NavPoint>()
 
     init {
         registerNavigationMap(ncxPath)

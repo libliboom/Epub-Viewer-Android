@@ -1,9 +1,10 @@
 package com.github.libliboom.epub
 
+import com.github.libliboom.epub.io.robinary.MetaRoBinary
 import com.github.libliboom.epub.outline.ocf.OpenContainerFormat
 import com.github.libliboom.epub.outline.opf.OpenPackageFormat
-import com.github.libliboom.epub.io.robinary.MetaRoBinary
 import com.github.libliboom.utils.io.ZipFileUtils
+import java.io.File
 
 /**
  * EPUB stands for Electronic publication
@@ -16,13 +17,13 @@ import com.github.libliboom.utils.io.ZipFileUtils
  * ...
  */
 class EPub(filePath: String, decompressedPath: String) {
-
+    // TODO: 2020/05/14 check all path if the last char is file separator or not
     private val filePath = filePath
-    private val decompressedPath = decompressedPath
+    private val decompressedPath = decompressedPath + File.separator
 
-    private lateinit var meta: MetaRoBinary
-    private lateinit var ocf: OpenContainerFormat
-    private lateinit var opf: OpenPackageFormat
+    lateinit var meta: MetaRoBinary
+    lateinit var ocf: OpenContainerFormat
+    lateinit var opf: OpenPackageFormat
 
     init {
         try {

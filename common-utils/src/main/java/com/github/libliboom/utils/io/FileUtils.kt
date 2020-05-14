@@ -5,6 +5,9 @@ import com.github.libliboom.utils.const.Resource.Companion.OEBPS_FOLDER_NAME
 import com.github.libliboom.utils.const.Resource.Companion.OUTPUT_FOLDER_NAME
 import com.github.libliboom.utils.const.Resource.Companion.RES_FOLDER_NAME
 import java.io.File
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 
 /**
  * It's sort of snippet for debug.
@@ -26,6 +29,30 @@ object FileUtils {
 
     fun getOEBPSDir(): String {
         return getOutputDir() + OEBPS_FOLDER_NAME + File.separator
+    }
+
+    fun getFileUri(path: String): String {
+        return "file://$path"
+    }
+
+    fun getFileName(file: String): String {
+        return file.split(".")[0]
+    }
+
+    fun convertToPath(file: String): String {
+        return if (file.last() == '/') file else "$file/"
+    }
+
+    fun copy(istream: InputStream, ostream: OutputStream) {
+        try {
+            val buffer = ByteArray(8192)
+            var length: Int
+            while (istream.read(buffer).also { length = it } > 0) {
+                ostream.write(buffer, 0, length)
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
     }
 
     private fun getCommonUtilsDir(): String {

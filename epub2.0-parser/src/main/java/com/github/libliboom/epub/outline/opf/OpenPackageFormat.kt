@@ -19,8 +19,9 @@ class OpenPackageFormat(meta: MetaRoBinary, decompressedPath: String) {
     private var metadata = listOf<String>()
     private var items = mutableListOf<Item>()
     private var itemRefs = mutableListOf<ItemRef>()
-    private lateinit var ncx: NavigationControlXml
-    private lateinit var guide: Guide
+
+    lateinit var ncx: NavigationControlXml
+    lateinit var guide: Guide
 
     init {
         initOpf()
