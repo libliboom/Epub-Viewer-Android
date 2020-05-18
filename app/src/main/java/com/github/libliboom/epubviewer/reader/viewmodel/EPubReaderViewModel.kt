@@ -40,10 +40,10 @@ class EPubReaderViewModel : ViewModel {
     }
 
     fun getPath(context: Context, next: Int): String {
-        val idx = adjustmentChapter(next)
+        currentChapter = adjustmentChapter(next)
         val root = StorageManager.getDir(context)
         val fileName = FileUtils.getFileName(ePubFile)
-        return root + EXTRACTED_EPUB_FILE_PATH + FileUtils.convertToPath(fileName) + OEBPS_PATH + chapters[idx].split("#")[0]
+        return root + EXTRACTED_EPUB_FILE_PATH + FileUtils.convertToPath(fileName) + OEBPS_PATH + chapters[currentChapter].split("#")[0]
     }
 
     fun initEpub(context: Context) {
