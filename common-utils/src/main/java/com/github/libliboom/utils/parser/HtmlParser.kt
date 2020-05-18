@@ -119,6 +119,19 @@ class HtmlParser {
 
     }
 
+    fun parseCover(filename: String, tag: String = "img"): String {
+        var source = createSource(filename)
+        val img = source.getAllStartTags(tag)
+
+        val sb = StringBuilder()
+        for (attr in img[0].attributes) {
+            sb.append("\"").append(attr.name)
+                .append("\":\"").append(attr.value).append("\"").append(",")
+        }
+
+        return "{" + sb.substring(0, sb.length - 1) + "}"
+    }
+
     // @TODO: analyze about this configuration
     private fun createSource(filename: String): Source {
         var sourceUrlString = filename

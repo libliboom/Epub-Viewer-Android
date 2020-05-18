@@ -65,11 +65,22 @@ internal class HtmlParserTest {
 
     @Test
     fun parseGuide() {
-        val jsonString = instance.parseGuide(filename)
+        val jsonString = instance.parseGuide(opffile)
         val gson = Gson()
         val guide = gson.fromJson(jsonString, Guide::class.java)
 
         println(guide.toString())
+    }
+
+    @Test
+    fun parseCover() {
+        val jsonString = instance.parseGuide(opffile)
+        val gson = Gson()
+        val guide = gson.fromJson(jsonString, Guide::class.java)
+        val hrefPath = FileUtils.getOEBPSDir() + guide.href
+        val resultString = instance.parseCover(hrefPath)
+        val cover = gson.fromJson(resultString, Cover::class.java)
+        println(cover.toString())
     }
 
     @Test
@@ -100,5 +111,6 @@ internal class HtmlParserTest {
     data class Item(val href: String, val id: String, val `media-type`: String)
     data class ItemRef(val idref: String, val linear: String)
     data class Guide(val type: String, val title: String, val href: String)
+    data class Cover(val src: String, val alt: String)
     data class NavPoint(val id: String, val playOrder: String, val navlabelText: String, val contentSrc: String)
 }

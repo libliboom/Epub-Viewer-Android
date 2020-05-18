@@ -3,6 +3,8 @@ package com.github.libliboom.utils.io
 import com.github.libliboom.utils.const.Resource.Companion.COMMON_UTILS_FOLDER_NAME
 import com.github.libliboom.utils.const.Resource.Companion.OEBPS_FOLDER_NAME
 import com.github.libliboom.utils.const.Resource.Companion.OUTPUT_FOLDER_NAME
+import com.github.libliboom.utils.const.Resource.Companion.OUTPUT_SOURCE_FOLDER_NAME
+import com.github.libliboom.utils.const.Resource.Companion.OUTPUT_TEST_FOLDER_NAME
 import com.github.libliboom.utils.const.Resource.Companion.RES_FOLDER_NAME
 import java.io.File
 import java.io.IOException
@@ -24,7 +26,10 @@ object FileUtils {
     }
 
     fun getOutputDir(): String {
-        return getCommonUtilsDir() + OUTPUT_FOLDER_NAME + File.separator
+        return getCommonUtilsDir() +
+            OUTPUT_SOURCE_FOLDER_NAME + File.separator +
+            OUTPUT_TEST_FOLDER_NAME + File.separator +
+            OUTPUT_FOLDER_NAME + File.separator
     }
 
     fun getOEBPSDir(): String {

@@ -10,6 +10,7 @@ import java.io.File
 
 class OpenPackageFormat(meta: MetaRoBinary, decompressedPath: String) {
 
+    private val oebpsPath = decompressedPath + Resource.OEBPS_FOLDER_NAME + File.separator
     private val opfPath = decompressedPath + meta.getBytes(OPF).toString(Charsets.UTF_8)
     private val tocNcxPath = decompressedPath + Resource.OEBPS_FOLDER_NAME + File.separator + TOC_NCX_FILE_NAME
 
@@ -22,6 +23,7 @@ class OpenPackageFormat(meta: MetaRoBinary, decompressedPath: String) {
 
     lateinit var ncx: NavigationControlXml
     lateinit var guide: Guide
+    lateinit var cover: Cover
 
     init {
         initOpf()
@@ -32,6 +34,7 @@ class OpenPackageFormat(meta: MetaRoBinary, decompressedPath: String) {
         initManifest()
         initSpine()
         initGuide()
+        initCover()
         initNcx()
     }
 
@@ -55,6 +58,11 @@ class OpenPackageFormat(meta: MetaRoBinary, decompressedPath: String) {
         guide = gson.fromJson(htmlParser.parseGuide(opfPath), Guide::class.java)
     }
 
+    private fun initCover() {
+        cover = gson.fromJson(htmlParser.parseCover(oebpsPath + guide.href), Cover::class.java)
+        cover.src = oebpsPath + cover.src
+    }
+
     private fun initNcx() {
         ncx = NavigationControlXml(tocNcxPath)
     }
@@ -62,4 +70,5 @@ class OpenPackageFormat(meta: MetaRoBinary, decompressedPath: String) {
     data class Item(val href: String, val id: String, val `media-type`: String)
     data class ItemRef(val idref: String, val linear: String)
     data class Guide(val type: String, val title: String, val href: String)
+    data class Cover(var src: String, val alt: String)
 }
