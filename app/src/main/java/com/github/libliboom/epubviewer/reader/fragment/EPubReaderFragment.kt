@@ -34,6 +34,7 @@ class EPubReaderFragment : BaseFragment(), ReaderWebView.OnScrollChangedCallback
 
         web_view.setOnScrollChangedCallback(this)
         web_view.settings.javaScriptEnabled = true // for external link
+        web_view.webViewClient = ReaderWebViewClient(mViewModel)
     }
 
     private fun setupBottomNavigation() {
@@ -48,13 +49,13 @@ class EPubReaderFragment : BaseFragment(), ReaderWebView.OnScrollChangedCallback
         }
     }
 
+    fun loadSpecificChapter(chapter: Int) {
+        loadChapter(chapter)
+    }
+
     private fun loadChapter(next: Int) {
         val page = mViewModel.getPath(requireContext(), next)
-
-        web_view.run {
-            webViewClient = ReaderWebViewClient()
-            loadUrl(FileUtils.getFileUri(page))
-        }
+        web_view.loadUrl(FileUtils.getFileUri(page))
     }
 
     override fun onScrolledToTop() {

@@ -14,22 +14,22 @@ class ContentsActivity : ReaderActivity() {
         setContentView(R.layout.activity_contents)
         updateTitle(getString(R.string.er_toolbar_title_contents))
 
-        val href = intent.getStringExtra(EXTRA_TITLE) ?: EXTRA_TITLE_DEFAULT
+        val cover = intent.getStringExtra(EXTRA_COVER) ?: EXTRA_TITLE_DEFAULT
         val chapters = intent.getStringArrayListExtra(EXTRA_CHAPTERS)
 
         supportFragmentManager.beginTransaction()
-            .add(R.id.frame_layout_fragment, ContentsFragment.newInstance(href, chapters))
+            .add(R.id.frame_layout_fragment, ContentsFragment.newInstance(cover, chapters))
             .commit()
     }
 
     companion object {
-        private const val EXTRA_TITLE = "extra_title"
+        private const val EXTRA_COVER = "extra_cover"
         private const val EXTRA_CHAPTERS = "extra_chapters"
         private const val EXTRA_TITLE_DEFAULT = "No title"
 
-        fun newIntent(context: Context, title: String, list: ArrayList<String>): Intent {
+        fun newIntent(context: Context, cover: String, list: ArrayList<String>): Intent {
             val intent = Intent(context, ContentsActivity::class.java)
-            intent.putExtra(EXTRA_TITLE, title)
+            intent.putExtra(EXTRA_COVER, cover)
             intent.putStringArrayListExtra(EXTRA_CHAPTERS, list)
             return intent
         }

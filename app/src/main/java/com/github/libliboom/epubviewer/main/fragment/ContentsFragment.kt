@@ -1,5 +1,7 @@
 package com.github.libliboom.epubviewer.main.fragment
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,6 +23,8 @@ class ContentsFragment : BaseFragment() {
     @Inject
     lateinit var mRequestManager: RequestManager
 
+    private lateinit var contents: ArrayList<String>
+
     override fun getLayoutId() = R.layout.fragment_contents
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -32,10 +36,9 @@ class ContentsFragment : BaseFragment() {
     }
 
     private fun initCover() {
-        arguments?.getString(ARGS_HREF)?.let {
-            val absPath = getAbsolutePath(it)
+        arguments?.getString(ARGS_COVER)?.let {
             mRequestManager
-                .load(absPath)
+                .load(it)
                 .into(iv_contents)
         }
     }
@@ -45,11 +48,16 @@ class ContentsFragment : BaseFragment() {
         StorageManager.getDir(requireContext()) + EXTRACTED_COVER_FILE_PATH_01
 
     private fun initAdapter() {
-        arguments?.getString(ARGS_HREF)?.let {
-            mAdapter.update(it)
+        arguments?.run {
+            val cover = getString(ARGS_COVER) ?: ""
+            contents = getStringArrayList(ARGS_CHAPTERS_LIST) ?: ArrayList<String>()
+            mAdapter.init(cover, contents)
         }
-        arguments?.getStringArrayList(ARGS_CONTENTS_LIST)?.let {
-            mAdapter.update(it)
+
+        mAdapter.getPublishSubject().subscribe {
+            val intent = Intent()
+            intent.putExtra(EXTRA_INDEX_OF_CHAPTER, it)
+            sendResult(intent)
         }
     }
 
@@ -60,14 +68,22 @@ class ContentsFragment : BaseFragment() {
         }
     }
 
-    companion object {
-        const val ARGS_HREF = "href"
-        const val ARGS_CONTENTS_LIST = "contents_list"
+    private fun sendResult(intent: Intent) {
+        requireActivity().run {
+            setResult(Activity.RESULT_OK, intent)
+            finish()
+        }
+    }
 
-        fun newInstance(href: String, list: ArrayList<String>): ContentsFragment {
+    companion object {
+        const val ARGS_COVER = "cover"
+        const val ARGS_CHAPTERS_LIST = "contents_chapters_list"
+        const val EXTRA_INDEX_OF_CHAPTER = "com.github.libliboom.epubviewer.main.fragment.index_of_chapter"
+
+        fun newInstance(cover: String, chapters: ArrayList<String>): ContentsFragment {
             val args = Bundle()
-            args.putString(ARGS_HREF, href)
-            args.putStringArrayList(ARGS_CONTENTS_LIST, list)
+            args.putString(ARGS_COVER, cover)
+            args.putStringArrayList(ARGS_CHAPTERS_LIST, chapters)
 
             val fragment = ContentsFragment()
             fragment.arguments = args

@@ -1,12 +1,16 @@
 package com.github.libliboom.epubviewer.reader.activity
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.github.libliboom.epubviewer.R
+import com.github.libliboom.epubviewer.main.fragment.ContentsFragment.Companion.EXTRA_INDEX_OF_CHAPTER
 import com.github.libliboom.epubviewer.reader.fragment.EPubReaderFragment
 import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel
+import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel.Companion.REQUEST_CODE_CHAPTER
+import javax.inject.Inject
 
 /**
  * Option for reading book vertically
@@ -16,11 +20,14 @@ import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel
  *      [ ] progress bar
  *      [ ] cache
  *      [ ] effect
- *      [ ] how to handle javascript event
- *      [ ] page movement
+ *      [x] how to handle javascript event
+ *      [x] page movement
  *      [ ] find way for internal link
  */
 class EPubReaderActivity : ReaderActivity() {
+
+    @Inject
+    lateinit var mEPubReaderFragment: EPubReaderFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,8 +36,17 @@ class EPubReaderActivity : ReaderActivity() {
         updateViewModel()
 
         supportFragmentManager.beginTransaction()
-            .add(R.id.frame_layout_fragment, EPubReaderFragment.newInstance())
+            .add(R.id.frame_layout_fragment, mEPubReaderFragment)
             .commit()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == REQUEST_CODE_CHAPTER && resultCode == Activity.RESULT_OK) {
+            val index = data?.getIntExtra(EXTRA_INDEX_OF_CHAPTER, 0) ?: 0
+            mEPubReaderFragment.loadSpecificChapter(index)
+        }
     }
 
     private fun updateViewModel() {
