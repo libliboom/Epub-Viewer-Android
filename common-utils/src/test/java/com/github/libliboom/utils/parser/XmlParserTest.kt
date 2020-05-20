@@ -2,26 +2,12 @@ package com.github.libliboom.utils.parser
 
 import com.github.libliboom.utils.const.Resource.Companion.CONTAINER_FILE_PATH
 import com.github.libliboom.utils.io.FileUtils
-import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.xml.sax.Attributes
 import org.xml.sax.helpers.DefaultHandler
 
 internal class XmlParserTest {
-
-    private lateinit var instance: XmlParser
-    private lateinit var filename: String
-
-    @BeforeEach
-    fun init() {
-        instance = XmlParser()
-        filename = FileUtils.getOutputDir() + CONTAINER_FILE_PATH
-    }
-
-    @Test
-    fun convert2Document() {
-        //instance.parse(filename)
-    }
 
     @Test
     fun parse() {
@@ -47,5 +33,18 @@ internal class XmlParserTest {
                 mediaType = attributes?.getValue("full-path")
             }
         }
+    }
+
+    companion object {
+        private lateinit var instance: XmlParser
+        private lateinit var filename: String
+
+        @JvmStatic
+        @BeforeAll
+        fun setup() {
+            instance = XmlParser()
+            filename = FileUtils.getOutputDir() + CONTAINER_FILE_PATH
+        }
+
     }
 }

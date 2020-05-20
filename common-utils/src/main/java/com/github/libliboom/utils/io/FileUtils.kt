@@ -2,6 +2,7 @@ package com.github.libliboom.utils.io
 
 import com.github.libliboom.utils.const.Resource.Companion.COMMON_UTILS_FOLDER_NAME
 import com.github.libliboom.utils.const.Resource.Companion.OEBPS_FOLDER_NAME
+import com.github.libliboom.utils.const.Resource.Companion.OEBPS_PATH
 import com.github.libliboom.utils.const.Resource.Companion.OUTPUT_FOLDER_NAME
 import com.github.libliboom.utils.const.Resource.Companion.OUTPUT_SOURCE_FOLDER_NAME
 import com.github.libliboom.utils.const.Resource.Companion.OUTPUT_TEST_FOLDER_NAME
@@ -40,8 +41,12 @@ object FileUtils {
         return "file://$path"
     }
 
+    fun removeFileUri(uri: String): String {
+        return uri.split("file://")[1]
+    }
+
     fun getFileName(file: String): String {
-        return file.split(".")[0]
+        return file.split("#")[0]
     }
 
     fun convertToPath(file: String): String {
@@ -63,5 +68,10 @@ object FileUtils {
     private fun getCommonUtilsDir(): String {
         val dir = File(System.getProperty("user.dir")) // like root directory
         return dir.parent + File.separator + COMMON_UTILS_FOLDER_NAME + File.separator
+    }
+
+    fun getExtractedOebpsPath(extractedPath: String, ePubFilePath: String): String {
+        val filename = getFileName(ePubFilePath)
+        return extractedPath + convertToPath(filename) + OEBPS_PATH
     }
 }

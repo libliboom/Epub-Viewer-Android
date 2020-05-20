@@ -132,6 +132,33 @@ class HtmlParser {
         return "{" + sb.substring(0, sb.length - 1) + "}"
     }
 
+    fun parseHead(filename: String): String {
+        return parseElementOrEmpty(filename, "<head>")
+    }
+
+    fun parseBody(filename: String): String {
+        return parseElementOrEmpty(filename, "<body>")
+    }
+
+    private fun parseElementOrEmpty(filename: String, startTag: String): String {
+        var sourceUrlString = filename
+        if (sourceUrlString.indexOf(':') == -1) sourceUrlString = "file:$sourceUrlString"
+        MicrosoftConditionalCommentTagTypes.register()
+        PHPTagTypes.register()
+        PHPTagTypes.PHP_SHORT.deregister()
+
+        MasonTagTypes.register()
+        val source = Source(URL(sourceUrlString))
+        val elementList: List<Element> = source.getAllElements()
+        for (element in elementList) {
+            if (element.startTag.tidy(true) == startTag) {
+                return element.toString()
+            }
+        }
+
+        return "" // default value
+    }
+
     // @TODO: analyze about this configuration
     private fun createSource(filename: String): Source {
         var sourceUrlString = filename

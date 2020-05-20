@@ -1,9 +1,9 @@
-package com.github.libliboom.utils.io
+package com.github.libliboom.utils.io.robinary
 
 import com.github.libliboom.utils.Constant
 import com.github.libliboom.utils.const.Resource
-import com.github.libliboom.utils.const.Resource.Companion.CONTENT_OPF_FILE_PATH
-import com.github.libliboom.utils.io.FileUtils.getOutputDir
+import com.github.libliboom.utils.io.FileUtils
+import com.github.libliboom.utils.io.ZipFileUtils
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
@@ -11,53 +11,60 @@ import org.junit.jupiter.api.Test
 import java.io.File
 import java.nio.file.Files
 
-internal class ZipFileUtilsTest {
+internal class PageRoBinaryTest {
 
     @Test
-    fun extract() {
-        ZipFileUtils.extract(ePubFile, destFilePath)
+    fun getAllPage() {
+        val expect = 770 // based on size 1000
+        val actual = pagination.pageCount
+
+        assertEquals(expect, actual)
     }
 
     @Test
-    fun givenName_whenExtractFile_thenSpecificFile() {
-        // Arrange
-
-        // Action
-        ZipFileUtils.extract(ePubFile, destFilePath, filename)
-        val actual = FileUtils.exist(getOutputDir() + filename)
-
-        // Assertion
-        assertEquals(true, actual)
+    fun getPageOfChapter() {
+        contentsPaths.stream()
+            .map { s -> pagination.getPageOfChapter(s) }
+            .forEach { p -> println(p) }
     }
 
     @Test
-    fun givenCondition_whenSearchFile_thenFilteredFilelist() {
-        // Arrange
-
-        // Action
-        val actual = ZipFileUtils.findFiles(ePubFile) { it.contains(".opf") }[0]
-
-        // Assertion
-        assertEquals(filename, actual)
+    fun getChapterWithNth() {
+        val p = pagination.getChapterWithNth(573)
+        println(p)
     }
 
     companion object {
-        private val filename = CONTENT_OPF_FILE_PATH
+        lateinit var filelist: MutableList<String>
+
         private lateinit var ePubFile: String
         private lateinit var destFilePath: String
+        private lateinit var contentsPaths: List<String>
+        private lateinit var pagination: PageRoBinary
 
         @JvmStatic
         @BeforeAll
         fun setup() {
             ePubFile = FileUtils.getResourceDir() + Resource.EPUB_FILE_NAME_01
-            destFilePath = getOutputDir()
+            destFilePath = FileUtils.getOutputDir()
+            ZipFileUtils.extract(ePubFile, destFilePath)
+
+            val oepbsPath = FileUtils.getOEBPSDir()
+            val contentsPaths = mutableListOf<String>()
+            File(oepbsPath).walk().forEach {
+                if (it.path.contains(".htm.html")) {
+                    contentsPaths.add(it.path)
+                }
+            }
+            this.contentsPaths = contentsPaths
+            pagination = PageRoBinary(contentsPaths)
         }
 
         @JvmStatic
         @AfterAll
         fun cleanup() {
             val keepFileList = Constant.getKeepFilelist()
-            val outputPath = getOutputDir()
+            val outputPath = FileUtils.getOutputDir()
             val filePaths = mutableListOf<String>()
             File(outputPath).walk().forEach {
                 filePaths.add(it.path)

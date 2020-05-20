@@ -3,26 +3,14 @@ package com.github.libliboom.utils.parser
 import com.github.libliboom.utils.const.Resource
 import com.github.libliboom.utils.io.FileUtils
 import com.google.gson.Gson
-import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 
 internal class HtmlParserTest {
 
-    val opffile = FileUtils.getOEBPSDir() + Resource.CONTENT_OPF_FILE_NAME
-    val ncxfile = FileUtils.getOEBPSDir() + Resource.TOC_NCX_FILE_NAME
-
-    private lateinit var instance: HtmlParser
-    private lateinit var filename: String
-
-    @BeforeEach
-    fun init() {
-        instance = HtmlParser()
-        filename = ncxfile
-    }
-
     @Test
     fun parseMetadata() {
-        val contents = instance.parseMetadata(filename)
+        val contents = instance.parseMetadata(opffile)
         for (s in contents) {
             println(s)
         }
@@ -30,7 +18,7 @@ internal class HtmlParserTest {
 
     @Test
     fun parseManifest() {
-        val parsedMap = instance.parseManifest(filename)
+        val parsedMap = instance.parseManifest(opffile)
         val gson = Gson()
         for (s in parsedMap) {
             val jsonString = s.value
@@ -41,7 +29,7 @@ internal class HtmlParserTest {
 
     @Test
     fun parseSpine() {
-        val parsedMap = instance.parseSpine(filename)
+        val parsedMap = instance.parseSpine(opffile)
         val gson = Gson()
         for (s in parsedMap) {
             val jsonString = s.value
@@ -52,7 +40,7 @@ internal class HtmlParserTest {
 
     @Test
     fun parseNavMap() {
-        val parsedMap = instance.parseNavMap(filename)
+        val parsedMap = instance.parseNavMap(ncxfile)
 
         val gson = Gson()
         for (s in parsedMap) {
@@ -84,28 +72,36 @@ internal class HtmlParserTest {
     }
 
     @Test
+    fun parseElement() {
+        val header = instance.parseHead(contentsfile)
+        println(header)
+        val body = instance.parseBody(contentsfile)
+        println("$body(${body.length})")
+    }
+
+    @Test
     fun displayAllElements() {
-        instance.displayAllElements(filename)
+        instance.displayAllElements(contentsfile)
     }
 
     @Test
     fun findSpecificTags() {
-        instance.findSpecificTags(filename)
+        instance.findSpecificTags(contentsfile)
     }
 
     @Test
     fun extractText() {
-        instance.extractText(filename)
+        instance.extractText(ncxfile)
     }
 
     @Test
     fun renderToText() {
-        instance.renderToText(filename)
+        instance.renderToText(ncxfile)
     }
 
     @Test
     fun encoding() {
-        instance.encoding(filename)
+        instance.encoding(ncxfile)
     }
 
     data class Item(val href: String, val id: String, val `media-type`: String)
@@ -113,4 +109,18 @@ internal class HtmlParserTest {
     data class Guide(val type: String, val title: String, val href: String)
     data class Cover(val src: String, val alt: String)
     data class NavPoint(val id: String, val playOrder: String, val navlabelText: String, val contentSrc: String)
+
+    companion object {
+        private val opffile = FileUtils.getOEBPSDir() + Resource.CONTENT_OPF_FILE_NAME
+        private val ncxfile = FileUtils.getOEBPSDir() + Resource.TOC_NCX_FILE_NAME
+        private val contentsfile = FileUtils.getOEBPSDir() + Resource.CONTENTS_SAMPLE_FILE_NAME_45
+
+        private lateinit var instance: HtmlParser
+
+        @JvmStatic
+        @BeforeAll
+        fun setup() {
+            instance = HtmlParser()
+        }
+    }
 }

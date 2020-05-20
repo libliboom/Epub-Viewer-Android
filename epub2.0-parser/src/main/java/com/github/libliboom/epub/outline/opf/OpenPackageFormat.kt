@@ -10,7 +10,8 @@ import java.io.File
 
 class OpenPackageFormat(meta: MetaRoBinary, decompressedPath: String) {
 
-    private val oebpsPath = decompressedPath + Resource.OEBPS_FOLDER_NAME + File.separator
+    val oebpsPath = decompressedPath + Resource.OEBPS_FOLDER_NAME + File.separator
+
     private val opfPath = decompressedPath + meta.getBytes(OPF).toString(Charsets.UTF_8)
     private val tocNcxPath = decompressedPath + Resource.OEBPS_FOLDER_NAME + File.separator + TOC_NCX_FILE_NAME
 

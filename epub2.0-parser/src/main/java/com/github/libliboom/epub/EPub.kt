@@ -4,6 +4,7 @@ import com.github.libliboom.epub.io.robinary.MetaRoBinary
 import com.github.libliboom.epub.outline.ocf.OpenContainerFormat
 import com.github.libliboom.epub.outline.opf.OpenPackageFormat
 import com.github.libliboom.utils.io.ZipFileUtils
+import com.github.libliboom.utils.io.robinary.PageRoBinary
 import java.io.File
 
 /**
@@ -22,6 +23,7 @@ class EPub(filePath: String, decompressedPath: String) {
     private val decompressedPath = decompressedPath + File.separator
 
     lateinit var meta: MetaRoBinary
+    lateinit var pagination: PageRoBinary
     lateinit var ocf: OpenContainerFormat
     lateinit var opf: OpenPackageFormat
 
@@ -35,6 +37,7 @@ class EPub(filePath: String, decompressedPath: String) {
         initOpenContainerFormat()
         decompress()
         initOpenPackageFormat()
+        initPagination()
     }
 
     private fun initOpenContainerFormat() {
@@ -50,5 +53,13 @@ class EPub(filePath: String, decompressedPath: String) {
 
     private fun initOpenPackageFormat() {
         opf = OpenPackageFormat(meta, decompressedPath)
+    }
+
+    private fun initPagination() {
+        val filelist = ArrayList<String>()
+        for (src in opf.ncx.navMap.values) {
+            filelist += (opf.oebpsPath + src.contentSrc)
+        }
+        pagination = PageRoBinary(filelist)
     }
 }
