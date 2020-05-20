@@ -6,6 +6,7 @@ import android.webkit.WebView
 import androidx.lifecycle.ViewModel
 import com.github.libliboom.epub.EPub
 import com.github.libliboom.epub.outline.opf.NavigationControlXml
+import com.github.libliboom.epubviewer.db.preference.SettingsPreference
 import com.github.libliboom.epubviewer.dev.EPubFileStub.EXTRACTED_EPUB_FILE_PATH
 import com.github.libliboom.epubviewer.main.activity.ContentsActivity
 import com.github.libliboom.epubviewer.main.activity.SettingsActivity
@@ -80,8 +81,7 @@ class EPubReaderViewModel : ViewModel {
         val p = ePub.pagination.getChapterWithNth(page)
         val chapter = getPath(context, p.first)
 
-        // TODO: 2020/05/20 get saved mode from settings
-        val pageMode = true
+        val pageMode = SettingsPreference.getViewMode(context)
         if (pageMode) {
             cacheHead(p, chapter)
             loadPage(webView, chapter, p.second)

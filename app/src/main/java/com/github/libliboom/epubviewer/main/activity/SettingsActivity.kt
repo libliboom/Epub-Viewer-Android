@@ -6,8 +6,12 @@ import android.os.Bundle
 import com.github.libliboom.epubviewer.R
 import com.github.libliboom.epubviewer.main.fragment.SettingsFragment
 import com.github.libliboom.epubviewer.reader.activity.ReaderActivity
+import javax.inject.Inject
 
 class SettingsActivity : ReaderActivity() {
+
+    @Inject
+    lateinit var fragment: SettingsFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -15,7 +19,7 @@ class SettingsActivity : ReaderActivity() {
         updateTitle(getString(R.string.er_toolbar_title_settings))
 
         supportFragmentManager.beginTransaction()
-            .add(R.id.frame_layout_fragment, SettingsFragment.newInstance())
+            .add(R.id.frame_layout_fragment, fragment)
             .commit()
     }
 

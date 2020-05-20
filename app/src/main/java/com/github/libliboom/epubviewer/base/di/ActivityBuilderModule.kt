@@ -39,6 +39,7 @@ abstract class ActivityBuilderModule {
     abstract fun contributeContentsActivity(): ContentsActivity
 
     @ReaderScope
-    @ContributesAndroidInjector(modules = [ReaderViewModelModule::class])
+    @ContributesAndroidInjector(modules = [
+        ReaderModule::class, ReaderViewModelModule::class, ReaderFragmentBuilderModule::class])
     abstract fun contributeSettingsActivity(): SettingsActivity
 }
