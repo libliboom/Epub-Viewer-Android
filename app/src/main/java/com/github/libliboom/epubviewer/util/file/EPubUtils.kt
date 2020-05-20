@@ -24,4 +24,8 @@ object EPubUtils {
     fun getCover(ePub: EPub): String {
         return ePub.opf.cover.src
     }
+
+    fun getOepbsPath(ePub: EPub): String {
+        return ePub.opf.oebpsPath
+    }
 }

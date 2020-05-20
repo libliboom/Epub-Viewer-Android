@@ -5,7 +5,6 @@ import android.net.Uri
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel
-import com.github.libliboom.epubviewer.util.file.EPubUtils
 import java8.util.stream.StreamSupport
 
 // REFACTORING: 2020/05/18 init with dagger
@@ -33,18 +32,9 @@ class ReaderWebViewClient(private val viewModel: EPubReaderViewModel) : WebViewC
     }
 
     private fun loadChapter(view: WebView, url: String) {
-        updateChapter(url)
-        view.loadUrl(url)
-    }
-
-    private fun updateChapter(url: String) {
-        val navMap = EPubUtils.getNavMap(viewModel.ePub)
-        for ((idx, p) in navMap.values.withIndex()) {
-            val srcFileName = EPubUtils.getContentsSrcFileName(p.contentSrc)
-            if (url.contains(srcFileName)) {
-                viewModel.currentChapter = idx
-                break
-            }
+        viewModel.run{
+            updateChapterIndex(url)
+            loadChapterByUrl(view.context, view, url)
         }
     }
 

@@ -51,7 +51,7 @@ class EPubReaderActivity : ReaderActivity() {
 
     private fun updateViewModel() {
         val viewModel = ViewModelProvider(this, factory).get(EPubReaderViewModel::class.java)
-        viewModel.ePubFile = intent.getStringExtra(EXTRA_EPUB_FILE)
+        viewModel.ePubFilePath = intent.getStringExtra(EXTRA_EPUB_FILE)
     }
 
     companion object {
