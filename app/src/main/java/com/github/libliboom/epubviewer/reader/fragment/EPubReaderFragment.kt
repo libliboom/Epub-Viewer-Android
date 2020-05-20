@@ -1,8 +1,8 @@
 package com.github.libliboom.epubviewer.reader.fragment
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
-import android.widget.SeekBar
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.github.libliboom.epubviewer.R
@@ -11,8 +11,12 @@ import com.github.libliboom.epubviewer.reader.view.ReaderWebView
 import com.github.libliboom.epubviewer.reader.view.ReaderWebViewClient
 import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel
 import com.github.libliboom.epubviewer.util.event.ClickUtils
+import com.jakewharton.rxbinding2.widget.RxSeekBar
+import com.jakewharton.rxbinding2.widget.SeekBarStopChangeEvent
+import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_epub_reader.bottom_nv_reader
 import kotlinx.android.synthetic.main.fragment_epub_reader.bottom_nv_seek_bar
+import kotlinx.android.synthetic.main.fragment_epub_reader.tv_page_info
 import kotlinx.android.synthetic.main.fragment_epub_reader.web_view
 
 class EPubReaderFragment : BaseFragment(), ReaderWebView.OnScrollChangedCallback {
@@ -26,6 +30,7 @@ class EPubReaderFragment : BaseFragment(), ReaderWebView.OnScrollChangedCallback
 
     override fun getLayoutId() = R.layout.fragment_epub_reader
 
+    @SuppressLint("CheckResult")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupBottomNavigation()
@@ -36,9 +41,8 @@ class EPubReaderFragment : BaseFragment(), ReaderWebView.OnScrollChangedCallback
         }
 
         bottom_nv_seek_bar.apply {
-            progress = 100
+            progress = 0
             max = viewModel.ePub.pagination.pageCount
-            setOnSeekBarChangeListener(mSeekBarChangeListener)
         }
 
         web_view.apply {
@@ -46,6 +50,8 @@ class EPubReaderFragment : BaseFragment(), ReaderWebView.OnScrollChangedCallback
             webViewClient = ReaderWebViewClient(viewModel)
             setOnScrollChangedCallback(this@EPubReaderFragment)
         }
+
+        setupSeekBar()
     }
 
     private fun setupBottomNavigation() {
@@ -60,6 +66,26 @@ class EPubReaderFragment : BaseFragment(), ReaderWebView.OnScrollChangedCallback
         }
     }
 
+    private fun setupSeekBar() {
+        tv_page_info.text = "${bottom_nv_seek_bar.progress}/${bottom_nv_seek_bar.max}"
+
+        RxSeekBar.changeEvents(bottom_nv_seek_bar)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { seekBarChangeEvent ->
+                when (seekBarChangeEvent) {
+                    is SeekBarStopChangeEvent -> {
+                        tv_page_info.text =
+                            "${bottom_nv_seek_bar.progress}/${bottom_nv_seek_bar.max}"
+                        viewModel.loadPageByPageIndex(
+                            requireContext(),
+                            web_view,
+                            bottom_nv_seek_bar.progress!!
+                        )
+                    }
+                }
+            }
+    }
+
     override fun onScrolledToTop() {
         if (clickUtils.isLoadedOnce()) return
         viewModel.loadChapterByPageIndex(requireContext(), web_view, viewModel.currentChapterIdx - 1)
@@ -72,22 +98,6 @@ class EPubReaderFragment : BaseFragment(), ReaderWebView.OnScrollChangedCallback
 
     fun loadSpecificChapter(chapter: Int) {
         viewModel.loadChapterByPageIndex(requireContext(), web_view, chapter)
-    }
-
-    // FIXME: 2020/05/19 prevent minus progress
-    private val mSeekBarChangeListener = object : SeekBar.OnSeekBarChangeListener {
-        override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-
-        }
-
-        override fun onStartTrackingTouch(seekBar: SeekBar?) {
-
-        }
-
-        override fun onStopTrackingTouch(seekBar: SeekBar?) {
-            Toast.makeText(context, "${seekBar?.progress}", Toast.LENGTH_SHORT).show()
-            viewModel.loadPageByPageIndex(requireContext(), web_view, seekBar?.progress!!)
-        }
     }
 
     companion object {
