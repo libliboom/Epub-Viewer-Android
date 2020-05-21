@@ -16,7 +16,8 @@ class BookshelfActivity : BaseActivity() {
         setContentView(R.layout.activity_bookshelf)
 
         val viewModel = ViewModelProvider(this, factory).get(BookshelfViewModel::class.java)
-        viewModel.forceInitialization(applicationContext)
+        viewModel.initResources(applicationContext)
+
 
         supportFragmentManager.beginTransaction()
             .add(R.id.frame_layout_fragment, BookshelfFragment.newInstance())

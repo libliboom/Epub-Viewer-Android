@@ -47,11 +47,12 @@ class EPubReaderViewModel : ViewModel {
     }
 
     fun initEpub(context: Context) {
-        val dir = StorageManager.getDir(context)
-        val eFile = dir + ePubFilePath
-        val dPath = dir + decompressedRootPath + FileUtils.getFileName(ePubFilePath)
+        val booksPath = StorageManager.getBooksPath(context)
+        val ePath = booksPath + ePubFilePath
+        val extractedPath = StorageManager.getExtractedPath(context)
+        val dPath = extractedPath + FileUtils.getFileName(ePubFilePath)
 
-        ePub = EPub(eFile, dPath)
+        ePub = EPub(ePath, dPath)
         initChapter(ePub!!)
         chapterSize = chapters.size
     }
@@ -95,8 +96,7 @@ class EPubReaderViewModel : ViewModel {
     // TODO: 2020/05/18 insert absolute path at initialization
     private fun getPath(context: Context, next: Int): String {
         currentChapterIdx = adjustmentChapter(next)
-        val root = StorageManager.getDir(context)
-        val decompressPath = root + decompressedRootPath
+        val decompressPath = StorageManager.getExtractedPath(context)
         val oebpsDir = FileUtils.getExtractedOebpsPath(decompressPath, ePubFilePath)
         val srcPath = chapters[currentChapterIdx]
         return oebpsDir + EPubUtils.getContentsSrcFileName(srcPath)

@@ -8,9 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.RequestManager
 import com.github.libliboom.epubviewer.R
 import com.github.libliboom.epubviewer.base.BaseFragment
-import com.github.libliboom.epubviewer.dev.EPubFileStub.EXTRACTED_COVER_FILE_PATH_01
 import com.github.libliboom.epubviewer.main.recycler.adapter.ContentsAdapter
-import com.github.libliboom.epubviewer.util.file.StorageManager
 import kotlinx.android.synthetic.main.fragment_contents.iv_contents
 import kotlinx.android.synthetic.main.fragment_contents.rv_contents
 import javax.inject.Inject
@@ -42,10 +40,6 @@ class ContentsFragment : BaseFragment() {
                 .into(iv_contents)
         }
     }
-
-    // TODO: 2020/05/13 fetch cover file path
-    private fun getAbsolutePath(it: String) =
-        StorageManager.getDir(requireContext()) + EXTRACTED_COVER_FILE_PATH_01
 
     private fun initAdapter() {
         arguments?.run {
