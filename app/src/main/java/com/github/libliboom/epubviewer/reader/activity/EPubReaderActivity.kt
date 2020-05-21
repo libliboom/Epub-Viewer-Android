@@ -10,6 +10,7 @@ import com.github.libliboom.epubviewer.main.fragment.ContentsFragment.Companion.
 import com.github.libliboom.epubviewer.reader.fragment.EPubReaderFragment
 import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel
 import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel.Companion.REQUEST_CODE_CHAPTER
+import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel.Companion.REQUEST_CODE_VIEW_MODE
 import javax.inject.Inject
 
 /**
@@ -42,10 +43,16 @@ class EPubReaderActivity : ReaderActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode != Activity.RESULT_OK) return
 
-        if (requestCode == REQUEST_CODE_CHAPTER && resultCode == Activity.RESULT_OK) {
-            val index = data?.getIntExtra(EXTRA_INDEX_OF_CHAPTER, 0) ?: 0
-            mEPubReaderFragment.loadSpecificChapter(index)
+        when (requestCode) {
+            REQUEST_CODE_CHAPTER -> {
+                val index = data?.getIntExtra(EXTRA_INDEX_OF_CHAPTER, 0) ?: 0
+                mEPubReaderFragment.loadSpecificChapter(index)
+            }
+            REQUEST_CODE_VIEW_MODE -> {
+                mEPubReaderFragment.reloadCurrentPage()
+            }
         }
     }
 

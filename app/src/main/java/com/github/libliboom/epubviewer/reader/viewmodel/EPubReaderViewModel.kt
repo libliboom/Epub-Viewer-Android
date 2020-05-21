@@ -40,8 +40,10 @@ class EPubReaderViewModel : ViewModel {
         )
     }
 
-    fun startSettingActivity(context: Context) {
-        context.startActivity(SettingsActivity.newIntent(context))
+    fun startSettingActivity(activity: Activity) {
+        activity.startActivityForResult(
+            SettingsActivity.newIntent(activity), REQUEST_CODE_VIEW_MODE
+        )
     }
 
     fun initEpub(context: Context) {
@@ -169,6 +171,7 @@ class EPubReaderViewModel : ViewModel {
 
     companion object {
         const val REQUEST_CODE_CHAPTER = 0x1000
+        const val REQUEST_CODE_VIEW_MODE = 0x2000
         val parser = HtmlParser()
     }
 }

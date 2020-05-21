@@ -1,5 +1,7 @@
 package com.github.libliboom.epubviewer.main.fragment
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.preference.Preference
@@ -22,12 +24,22 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
 
         preference.run {
             when (key) {
-                KEY_VIEW_MODE -> SettingsPreference.setViewMode(requireContext(), newValue as Boolean)
+                KEY_VIEW_MODE -> {
+                    SettingsPreference.setViewMode(requireContext(), newValue as Boolean)
+                    sendResult()
+                }
                 else -> Log.i(TAG, "onPreferenceChange: else")
             }
         }
 
         return true
+    }
+
+    private fun sendResult() {
+        requireActivity().run {
+            setResult(Activity.RESULT_OK, Intent())
+            finish()
+        }
     }
 
     companion object {

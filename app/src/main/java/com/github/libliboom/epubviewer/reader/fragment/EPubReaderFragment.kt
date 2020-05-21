@@ -100,6 +100,10 @@ class EPubReaderFragment : BaseFragment(), ReaderWebView.OnScrollChangedCallback
         viewModel.loadChapterByPageIndex(requireContext(), web_view, chapter)
     }
 
+    fun reloadCurrentPage() {
+        viewModel.loadPageByPageIndex(requireContext(), web_view, bottom_nv_seek_bar.progress)
+    }
+
     companion object {
         fun newInstance() = EPubReaderFragment()
     }
