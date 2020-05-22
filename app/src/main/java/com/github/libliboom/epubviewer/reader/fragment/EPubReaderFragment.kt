@@ -4,25 +4,25 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.viewpager2.widget.ViewPager2
 import com.github.libliboom.epubviewer.R
 import com.github.libliboom.epubviewer.base.BaseFragment
-import com.github.libliboom.epubviewer.reader.view.ReaderWebView
-import com.github.libliboom.epubviewer.reader.view.ReaderWebViewClient
+import com.github.libliboom.epubviewer.db.preference.SettingsPreference
+import com.github.libliboom.epubviewer.reader.viewpager.adapter.PageAdapter
 import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel
-import com.github.libliboom.epubviewer.util.event.ClickUtils
 import com.jakewharton.rxbinding2.widget.RxSeekBar
 import com.jakewharton.rxbinding2.widget.SeekBarStopChangeEvent
+import com.jakewharton.rxbinding4.viewpager2.pageSelections
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_epub_reader.bottom_nv_reader
 import kotlinx.android.synthetic.main.fragment_epub_reader.bottom_nv_seek_bar
 import kotlinx.android.synthetic.main.fragment_epub_reader.tv_page_info
-import kotlinx.android.synthetic.main.fragment_epub_reader.web_view
+import kotlinx.android.synthetic.main.fragment_epub_reader.view_pager
+import kotlinx.android.synthetic.main.item_web_view.web_view
 
-class EPubReaderFragment : BaseFragment(), ReaderWebView.OnScrollChangedCallback {
-
-    // TODO: 2020/05/14 to Rx
-    private val clickUtils = ClickUtils()
+class EPubReaderFragment : BaseFragment() {
 
     private val viewModel: EPubReaderViewModel by lazy {
         ViewModelProvider(requireActivity(), factory).get(EPubReaderViewModel::class.java)
@@ -35,23 +35,11 @@ class EPubReaderFragment : BaseFragment(), ReaderWebView.OnScrollChangedCallback
         super.onViewCreated(view, savedInstanceState)
         setupBottomNavigation()
 
-        viewModel.run {
-            initEpub(requireContext())
-            loadChapterByPageIndex(requireContext(), web_view, viewModel.currentChapterIdx)
-        }
+        viewModel.initEpub(requireContext())
 
-        bottom_nv_seek_bar.apply {
-            progress = 0
-            max = viewModel.ePub.pagination.pageCount
-        }
-
-        web_view.apply {
-            settings.javaScriptEnabled = true
-            webViewClient = ReaderWebViewClient(viewModel)
-            setOnScrollChangedCallback(this@EPubReaderFragment)
-        }
-
+        setPageMode()
         setupSeekBar()
+        setupViewPager()
     }
 
     private fun setupBottomNavigation() {
@@ -66,42 +54,64 @@ class EPubReaderFragment : BaseFragment(), ReaderWebView.OnScrollChangedCallback
         }
     }
 
+    @SuppressLint("CheckResult")
     private fun setupSeekBar() {
-        tv_page_info.text = "${bottom_nv_seek_bar.progress}/${bottom_nv_seek_bar.max}"
+        bottom_nv_seek_bar.apply {
+            progress = 0
+            max = viewModel.ePub.pagination.pageCount
+        }
+
+        updateCurrentPageInfo()
+
+        viewModel.currentPageIdx.observe(requireActivity(),
+            Observer { idx ->
+                bottom_nv_seek_bar.progress = idx
+                updateCurrentPageInfo()
+                bottom_nv_seek_bar.invalidate()
+            })
 
         RxSeekBar.changeEvents(bottom_nv_seek_bar)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { seekBarChangeEvent ->
                 when (seekBarChangeEvent) {
                     is SeekBarStopChangeEvent -> {
-                        tv_page_info.text =
-                            "${bottom_nv_seek_bar.progress}/${bottom_nv_seek_bar.max}"
-                        viewModel.loadPageByPageIndex(
-                            requireContext(),
-                            web_view,
-                            bottom_nv_seek_bar.progress!!
-                        )
+                        updateCurrentPageInfo()
                     }
                 }
             }
+
+        view_pager.pageSelections()
+            .subscribeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
+            .subscribe {e ->
+                bottom_nv_seek_bar.progress = e
+                tv_page_info.text = "${bottom_nv_seek_bar.progress}/${bottom_nv_seek_bar.max}"
+            }
     }
 
-    override fun onScrolledToTop() {
-        if (clickUtils.isLoadedOnce()) return
-        viewModel.loadChapterByPageIndex(requireContext(), web_view, viewModel.currentChapterIdx - 1)
+    private fun updateCurrentPageInfo() {
+        view_pager.setCurrentItem(bottom_nv_seek_bar.progress!!, false)
     }
 
-    override fun onScrolledToBottom() {
-        if (clickUtils.isLoadedOnce()) return
-        viewModel.loadChapterByPageIndex(requireContext(), web_view, viewModel.currentChapterIdx + 1)
+    private fun setupViewPager() {
+        view_pager.apply {
+            offscreenPageLimit = 1
+            adapter = PageAdapter(requireContext(), viewModel)
+        }
     }
 
-    fun loadSpecificChapter(chapter: Int) {
-        viewModel.loadChapterByPageIndex(requireContext(), web_view, chapter)
+    fun loadSpecificChapter(idx: Int) {
+        viewModel.loadChapterByChapterIndex(requireContext(), web_view, idx)
     }
 
     fun reloadCurrentPage() {
+        setPageMode()
         viewModel.loadPageByPageIndex(requireContext(), web_view, bottom_nv_seek_bar.progress)
+    }
+
+    private fun setPageMode() {
+        val pageMode = SettingsPreference.getViewMode(context)
+        if (pageMode) view_pager.orientation = ViewPager2.ORIENTATION_VERTICAL
+        else view_pager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
     }
 
     companion object {

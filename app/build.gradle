@@ -67,7 +67,9 @@ dependencies {
     // Rx
     implementation "io.reactivex.rxjava2:rxjava:$rxjava_version"
     implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
-    implementation "com.jakewharton.rxbinding2:rxbinding:$rxbinding_version"
+    implementation "com.jakewharton.rxbinding2:rxbinding:$rxbinding2_version"
+    implementation "com.jakewharton.rxbinding4:rxbinding:$rxbinding4_version"
+    implementation "com.jakewharton.rxbinding4:rxbinding-viewpager2:$rxbinding4_version"
     implementation "com.trello.rxlifecycle2:rxlifecycle:$rxlifecycle_version"
     implementation "com.trello.rxlifecycle2:rxlifecycle-android:$rxlifecycle_version"
     implementation "com.trello.rxlifecycle2:rxlifecycle-components:$rxlifecycle_version"

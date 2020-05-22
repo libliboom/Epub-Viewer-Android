@@ -52,17 +52,21 @@ class PageRoBinary(private val filelist: List<String>) : BlobRoBinary() {
     private fun findChapter(l: Int, r: Int, p: Int): Int {
         if (r > l) {
             val mid = (l + (r - 1)) / 2
+            val min = pages4Chapter[mid].second
+            val max = pages4Chapter[mid+1].second
 
-            if (pages4Chapter[mid].second <= p
-                && p <= pages4Chapter[mid+1].second) {
+            if (p in min..max) {
+                if (p == max) {
+                    return mid + 1
+                }
                 return mid
             }
 
-            if (p < pages4Chapter[mid].second) {
+            if (p < min) {
                 return findChapter(l, mid - 1, p)
             }
 
-            if (pages4Chapter[mid].second < p) {
+            if (min < p) {
                 return findChapter(mid + 1, r, p)
             }
         }

@@ -3,10 +3,10 @@ package com.github.libliboom.epubviewer.reader.viewmodel
 import android.app.Activity
 import android.content.Context
 import android.webkit.WebView
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.github.libliboom.epub.EPub
 import com.github.libliboom.epub.outline.opf.NavigationControlXml
-import com.github.libliboom.epubviewer.db.preference.SettingsPreference
 import com.github.libliboom.epubviewer.dev.EPubFileStub.EXTRACTED_EPUB_FILE_PATH
 import com.github.libliboom.epubviewer.main.activity.ContentsActivity
 import com.github.libliboom.epubviewer.main.activity.SettingsActivity
@@ -20,6 +20,8 @@ import javax.inject.Inject
 class EPubReaderViewModel : ViewModel {
 
     var currentChapterIdx = 0
+
+    var currentPageIdx = MutableLiveData(0)
 
     lateinit var ePub: EPub
     lateinit var ePubFilePath: String
@@ -74,27 +76,22 @@ class EPubReaderViewModel : ViewModel {
         loadPageByPageIndex(context, webView, p.second)
     }
 
-    fun loadChapterByPageIndex(context: Context, webView: WebView, next: Int) {
-        val page = getPath(context, next)
-        val p = ePub.pagination.getPageOfChapter(FileUtils.getFileName(page))
+    fun loadChapterByChapterIndex(context: Context, webView: WebView, idx: Int) {
+        val srcFile = getSrcFile(context, idx)
+        val p = ePub.pagination.getPageOfChapter(FileUtils.getFileName(srcFile))
         loadPageByPageIndex(context, webView, p.second)
     }
 
     fun loadPageByPageIndex(context: Context, webView: WebView, page: Int) {
+        currentPageIdx.value = page
         val p = ePub.pagination.getChapterWithNth(page)
-        val chapter = getPath(context, p.first)
-
-        val pageMode = SettingsPreference.getViewMode(context)
-        if (pageMode) {
-            cacheHead(p, chapter)
-            loadPage(webView, chapter, p.second)
-        } else {
-            webView.loadUrl(FileUtils.getFileUri(chapter))
-        }
+        val chapter = getSrcFile(context, p.first)
+        cacheHead(p, chapter)
+        loadPage(webView, chapter, p.second)
     }
 
     // TODO: 2020/05/18 insert absolute path at initialization
-    private fun getPath(context: Context, next: Int): String {
+    private fun getSrcFile(context: Context, next: Int): String {
         currentChapterIdx = adjustmentChapter(next)
         val decompressPath = StorageManager.getExtractedPath(context)
         val oebpsDir = FileUtils.getExtractedOebpsPath(decompressPath, ePubFilePath)
