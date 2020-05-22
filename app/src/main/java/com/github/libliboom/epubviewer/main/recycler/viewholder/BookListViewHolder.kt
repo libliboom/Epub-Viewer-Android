@@ -7,11 +7,14 @@ import com.github.libliboom.epubviewer.base.BaseViewHolder
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.item_book.view.image_view_book
+import java.util.concurrent.TimeUnit
 
 class BookListViewHolder(private val view: View) : BaseViewHolder(view) {
 
     fun onBindSubject(publishSubject: PublishSubject<Int>) {
-        getClickObservable().subscribe(publishSubject)
+        getClickObservable()
+            .throttleFirst(2000, TimeUnit.MILLISECONDS)
+            .subscribe(publishSubject)
     }
 
     override fun onBindItem(context: Context, item: BaseItem) {
