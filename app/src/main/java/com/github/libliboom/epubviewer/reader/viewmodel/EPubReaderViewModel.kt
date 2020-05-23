@@ -72,17 +72,18 @@ class EPubReaderViewModel : ViewModel {
     fun loadChapterByUrl(context: Context, webView: WebView, url: String) {
         val path = FileUtils.removeFileUri(url)
         val p = ePub.pagination.getPageOfChapter(FileUtils.getFileName(path))
+        currentPageIdx.value = p.second
         loadPageByPageIndex(context, webView, p.second)
     }
 
     fun loadChapterByChapterIndex(context: Context, webView: WebView, idx: Int) {
         val srcFile = getSrcFile(context, idx)
         val p = ePub.pagination.getPageOfChapter(FileUtils.getFileName(srcFile))
+        currentPageIdx.value = p.second
         loadPageByPageIndex(context, webView, p.second)
     }
 
     fun loadPageByPageIndex(context: Context, webView: WebView, page: Int) {
-        currentPageIdx.value = page
         val p = ePub.pagination.getChapterWithNth(page)
         val chapter = getSrcFile(context, p.first)
         cacheHead(p, chapter)
