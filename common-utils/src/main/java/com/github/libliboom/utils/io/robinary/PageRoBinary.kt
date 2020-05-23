@@ -2,7 +2,7 @@ package com.github.libliboom.utils.io.robinary
 
 import com.github.libliboom.utils.parser.HtmlParser
 
-// based on memory
+// TODO: 2020/05/23  change it to be based on memory
 // LATER: 2020/05/19 based on file or else
 class PageRoBinary(private val filelist: List<String>) : BlobRoBinary() {
 

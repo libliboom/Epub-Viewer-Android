@@ -12,11 +12,11 @@ import io.reactivex.subjects.PublishSubject
 // TODO: 2020/05/13 DI with properties
 class BookListAdapter : RecyclerView.Adapter<BookListViewHolder>() {
 
-    private var mFiles = listOf<String>()
-    private var mCovers = listOf<String>()
-    private val mPublishSubject: PublishSubject<Int> = PublishSubject.create()
+    private var files = listOf<String>()
+    private var covers = listOf<String>()
+    private val publishSubject: PublishSubject<Int> = PublishSubject.create()
 
-    private lateinit var mRequestManager: RequestManager
+    private lateinit var requestManager: RequestManager
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookListViewHolder {
         val view = LayoutInflater.from(parent.context).run {
@@ -27,21 +27,21 @@ class BookListAdapter : RecyclerView.Adapter<BookListViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: BookListViewHolder, position: Int) {
-        val book = BookListViewHolder.Book(mRequestManager, mCovers[position])
-        holder.onBindSubject(mPublishSubject)
+        val book = BookListViewHolder.Book(requestManager, covers[position])
+        holder.onBindSubject(publishSubject)
         holder.onBindItem(holder.itemView.context, book)
     }
 
-    override fun getItemCount() = mCovers.size
+    override fun getItemCount() = covers.size
 
     // REFACTORING: 2020/05/13 Not enough...
     fun updateViewModel(viewModel: BookshelfViewModel, requestManager: RequestManager) {
-        mFiles = viewModel.ePubFiles
-        mCovers = viewModel.coverPaths
-        mRequestManager = requestManager
+        files = viewModel.ePubFiles
+        covers = viewModel.coverPaths
+        this.requestManager = requestManager
     }
 
     fun getPublishSubject(): PublishSubject<Int> {
-        return mPublishSubject
+        return publishSubject
     }
 }

@@ -16,10 +16,10 @@ import javax.inject.Inject
 class ContentsFragment : BaseFragment() {
 
     @Inject
-    lateinit var mAdapter: ContentsAdapter
+    lateinit var contentsAdapter: ContentsAdapter
 
     @Inject
-    lateinit var mRequestManager: RequestManager
+    lateinit var requestManager: RequestManager
 
     private lateinit var contents: ArrayList<String>
 
@@ -35,7 +35,7 @@ class ContentsFragment : BaseFragment() {
 
     private fun initCover() {
         arguments?.getString(ARGS_COVER)?.let {
-            mRequestManager
+            requestManager
                 .load(it)
                 .into(iv_contents)
         }
@@ -45,10 +45,10 @@ class ContentsFragment : BaseFragment() {
         arguments?.run {
             val cover = getString(ARGS_COVER) ?: ""
             contents = getStringArrayList(ARGS_CHAPTERS_LIST) ?: ArrayList<String>()
-            mAdapter.init(cover, contents)
+            contentsAdapter.init(cover, contents)
         }
 
-        mAdapter.getPublishSubject().subscribe {
+        contentsAdapter.getPublishSubject().subscribe {
             val intent = Intent()
             intent.putExtra(EXTRA_INDEX_OF_CHAPTER, it)
             sendResult(intent)
@@ -58,7 +58,7 @@ class ContentsFragment : BaseFragment() {
     private fun initRecyclerView() {
         rv_contents.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter = mAdapter
+            adapter = contentsAdapter
         }
     }
 

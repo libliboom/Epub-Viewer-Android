@@ -9,16 +9,16 @@ import io.reactivex.subjects.PublishSubject
 
 class ContentsAdapter : RecyclerView.Adapter<ContentsViewHolder>() {
 
-    private lateinit var mCover: String
+    private val publishSubject: PublishSubject<Int> = PublishSubject.create()
 
-    private lateinit var mContentsList: ArrayList<String>
+    private lateinit var cover: String
 
-    private val mPublishSubject: PublishSubject<Int> = PublishSubject.create()
+    private lateinit var contentsList: ArrayList<String>
 
     // REFACTORING: 2020/05/18 with dagger
     fun init(cover: String, contentsList: ArrayList<String>) {
-        mCover = cover
-        mContentsList = contentsList
+        this.cover = cover
+        this.contentsList = contentsList
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContentsViewHolder {
@@ -30,14 +30,14 @@ class ContentsAdapter : RecyclerView.Adapter<ContentsViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ContentsViewHolder, position: Int) {
-        val contents = ContentsViewHolder.Contents(mContentsList[position])
-        holder.onBindSubject(mPublishSubject)
+        val contents = ContentsViewHolder.Contents(contentsList[position])
+        holder.onBindSubject(publishSubject)
         holder.onBindItem(holder.itemView.context, contents)
     }
 
-    override fun getItemCount() = mContentsList.size
+    override fun getItemCount() = contentsList.size
 
     fun getPublishSubject(): PublishSubject<Int> {
-        return mPublishSubject
+        return publishSubject
     }
 }

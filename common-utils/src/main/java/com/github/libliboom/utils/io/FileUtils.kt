@@ -49,10 +49,6 @@ object FileUtils {
         return file.split("#")[0]
     }
 
-    fun convertToPath(file: String): String {
-        return if (file.last() == '/') file else "$file/"
-    }
-
     fun copy(istream: InputStream, ostream: OutputStream) {
         try {
             val buffer = ByteArray(8192)
@@ -65,13 +61,17 @@ object FileUtils {
         }
     }
 
+    fun getExtractedOebpsPath(extractedPath: String, ePubFilePath: String): String {
+        val filename = getFileName(ePubFilePath)
+        return extractedPath + convertToPath(filename) + OEBPS_PATH
+    }
+
     private fun getCommonUtilsDir(): String {
         val dir = File(System.getProperty("user.dir")) // like root directory
         return dir.parent + File.separator + COMMON_UTILS_FOLDER_NAME + File.separator
     }
 
-    fun getExtractedOebpsPath(extractedPath: String, ePubFilePath: String): String {
-        val filename = getFileName(ePubFilePath)
-        return extractedPath + convertToPath(filename) + OEBPS_PATH
+    private fun convertToPath(file: String): String {
+        return if (file.last() == '/') file else "$file/"
     }
 }

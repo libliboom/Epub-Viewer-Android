@@ -18,10 +18,10 @@ import javax.inject.Inject
 class BookshelfFragment : BaseFragment() {
 
     @Inject
-    lateinit var mAdapter: BookListAdapter
+    lateinit var bookListAdapter: BookListAdapter
 
     @Inject
-    lateinit var mRequestManager: RequestManager
+    lateinit var requestManager: RequestManager
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,12 +40,18 @@ class BookshelfFragment : BaseFragment() {
     }
 
     private fun initAdapter() {
-        val viewModel = ViewModelProvider(requireActivity(), factory).get(BookshelfViewModel::class.java)
-        mAdapter.updateViewModel(viewModel, mRequestManager)
-
-        // FIXME: 2020/05/14 issue of event click that loads duplicated activity
-        mAdapter.getPublishSubject().subscribe {
-            requireContext().startActivity(EPubReaderActivity.newIntent(requireActivity(), viewModel.ePubFiles[it]))
+        bookListAdapter.run {
+            val viewModel = ViewModelProvider(requireActivity(), factory)
+                .get(BookshelfViewModel::class.java)
+            updateViewModel(viewModel, requestManager)
+            getPublishSubject().subscribe {
+                requireContext().startActivity(
+                    EPubReaderActivity.newIntent(
+                        requireActivity(),
+                        viewModel.ePubFiles[it]
+                    )
+                )
+            }
         }
     }
 
@@ -53,7 +59,7 @@ class BookshelfFragment : BaseFragment() {
         view as RecyclerView
         view.apply {
             layoutManager = GridLayoutManager(requireContext(), SPAN_COUNT)
-            this.adapter = mAdapter
+            adapter = bookListAdapter
         }
     }
 

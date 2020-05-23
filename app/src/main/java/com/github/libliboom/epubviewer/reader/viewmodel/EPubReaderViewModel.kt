@@ -20,7 +20,6 @@ import javax.inject.Inject
 class EPubReaderViewModel : ViewModel {
 
     var currentChapterIdx = 0
-
     var currentPageIdx = MutableLiveData(0)
 
     lateinit var ePub: EPub
@@ -54,8 +53,8 @@ class EPubReaderViewModel : ViewModel {
         val extractedPath = StorageManager.getExtractedPath(context)
         val dPath = extractedPath + FileUtils.getFileName(ePubFilePath)
 
-        ePub = EPub(ePath, dPath)
-        initChapter(ePub!!)
+        ePub = EPub(ePath, dPath).load()
+        initChapter(ePub)
         chapterSize = chapters.size
     }
 

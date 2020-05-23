@@ -27,17 +27,25 @@ class EPub(filePath: String, decompressedPath: String) {
     lateinit var ocf: OpenContainerFormat
     lateinit var opf: OpenPackageFormat
 
+    // TODO: 2020/05/23 find a way how to handle run time Exception
     init {
         try {
             meta = MetaRoBinary(filePath)
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
 
-        initOpenContainerFormat()
-        decompress()
-        initOpenPackageFormat()
-        initPagination()
+    fun load(): EPub {
+        try {
+            initOpenContainerFormat()
+            decompress()
+            initOpenPackageFormat()
+            initPagination()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return this
     }
 
     private fun initOpenContainerFormat() {
