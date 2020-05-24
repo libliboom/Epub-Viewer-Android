@@ -9,9 +9,9 @@ Implementation for epub2.0 viewer by kotlin on android
 - Viewer based on EPub 2.0
 - Bookshelf to manage downloaded books
 - Reader has functions like the followings:
-    + [ ] move to specific page by seekbar
-    + [ ] move to specific chapter through contents list
-    + [ ] set option for reading mode
+    + [x] move to specific page by seekbar
+    + [x] move to specific chapter through contents list
+    + [x] set option for reading mode
     + [ ] turning a page with animation effect
     + [ ] internal/external link in epub file
     + [ ] Text-to-speech mode
