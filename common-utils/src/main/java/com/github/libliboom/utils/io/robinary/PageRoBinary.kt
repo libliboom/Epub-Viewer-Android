@@ -1,5 +1,6 @@
 package com.github.libliboom.utils.io.robinary
 
+import com.github.libliboom.utils.layout.LayoutManager
 import com.github.libliboom.utils.parser.HtmlParser
 
 // TODO: 2020/05/23  change it to be based on memory
@@ -9,26 +10,35 @@ class PageRoBinary(private val filelist: List<String>) : BlobRoBinary() {
     var pageCount = 0
 
     private val pages4Chapter = mutableListOf<Pair<Int, Int>>()
+    private val pages4Contents = mutableMapOf<Int, String>()
 
     init {
-        calculatePage(PAGE_SIZE)
+        calculatePage()
     }
 
-    private fun calculatePage(size: Int) {
+    private fun calculatePage() {
         var sum = 0
 
         val parser = HtmlParser()
         for ((idx, f) in filelist.withIndex()) {
             pages4Chapter.add(Pair(idx, sum))
-            val s = parser.parseBody(f)
-            sum += if ((s.length / size == 0)) {
-                (s.length / size)
+
+            if (idx == 0) {
+                for (chunk in LayoutManager.chunked(f)) {
+                    pages4Contents[sum++] = chunk
+                }
             } else {
-                (s.length / size) + 1
+                val s = parser.parseText(f)
+                for (chunk in s.chunked(PAGE_CHAR_SIZE)) {
+                    pages4Contents[sum++] = chunk
+                }
             }
         }
-
         pageCount = sum
+    }
+
+    fun getContentsOfPage(pageNumber: Int): String {
+        return pages4Contents[pageNumber]!!
     }
 
     fun getPageOfChapter(filename: String): Pair<Int, Int> {
@@ -53,7 +63,7 @@ class PageRoBinary(private val filelist: List<String>) : BlobRoBinary() {
         if (r > l) {
             val mid = (l + (r - 1)) / 2
             val min = pages4Chapter[mid].second
-            val max = pages4Chapter[mid+1].second
+            val max = pages4Chapter[mid + 1].second
 
             if (p in min..max) {
                 if (p == max) {
@@ -75,6 +85,7 @@ class PageRoBinary(private val filelist: List<String>) : BlobRoBinary() {
     }
 
     companion object {
-        const val PAGE_SIZE = 1000
+        const val PAGE_CHAR_SIZE = 850
+        const val PAGE_LINE_SIZE = 15
     }
 }

@@ -1,6 +1,7 @@
 package com.github.libliboom.utils.parser
 
 import net.htmlparser.jericho.Element
+import net.htmlparser.jericho.HTMLElementName
 import net.htmlparser.jericho.MasonTagTypes
 import net.htmlparser.jericho.MicrosoftConditionalCommentTagTypes
 import net.htmlparser.jericho.PHPTagTypes
@@ -115,6 +116,72 @@ class HtmlParser {
         }
 
         return sb.encloseJson()
+    }
+
+    fun isShorterThanCharSize(filename: String, idx: Int, lines: Int, maxChars: Int): Boolean {
+        val source = createSource(filename)
+
+        val sb = StringBuilder()
+
+        val end = source.getAllElements(HTMLElementName.P).size
+        val segments = source.getAllElements(HTMLElementName.P)
+
+        for (j in idx until end) {
+            if (j == idx + lines) break
+            sb.append(segments[j].textExtractor.setIncludeAttributes(false))
+        }
+
+        return sb.length < maxChars
+    }
+
+    fun getElementsCount(filename: String): Int {
+        val source = createSource(filename)
+        return source.getAllElements(HTMLElementName.P).size
+    }
+
+    fun parseSegmentByRange(filename: String, start: Int, len: Int): Pair<Int, String> {
+        val source = createSource(filename)
+        val size = source.getAllElements(HTMLElementName.P).size
+        val end = if (start + len < size) start + len else size
+
+        var curIdx = start
+        val sb = StringBuilder()
+        for (idx in start until end) {
+            sb.append(source.getAllElements(HTMLElementName.P)[idx])
+            curIdx = idx
+        }
+
+        return Pair(curIdx, sb.toString())
+    }
+
+    fun parseTextBySize(filename: String, start: Int, size: Int): Pair<Int, String> {
+        val source = createSource(filename)
+        val end = source.getAllElements(HTMLElementName.P).size
+        val sb = StringBuilder()
+        var curIdx = start
+        for (idx in start..end) {
+            if (sb.length > size) break
+            sb.append(source.getAllElements(HTMLElementName.P)[idx].textExtractor.setIncludeAttributes(false))
+            curIdx = idx
+        }
+
+        return Pair(curIdx, sb.toString())
+    }
+
+    fun parseText(filename: String): String {
+        val source = createSource(filename)
+
+        val sb = StringBuilder()
+
+        for (segment in source.getAllElements(HTMLElementName.H2)) {
+            sb.append(segment.textExtractor.setIncludeAttributes(true))
+        }
+
+        for (segment in source.getAllElements(HTMLElementName.P)) {
+            sb.append(segment.textExtractor.setIncludeAttributes(false))
+        }
+
+        return sb.toString()
     }
 
     fun parseHead(filename: String): String {

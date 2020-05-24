@@ -85,6 +85,11 @@ internal class HtmlParserTest {
     }
 
     @Test
+    fun parseText() {
+        println(instance.parseText(contentsfile))
+    }
+
+    @Test
     fun parseElement() {
         val header = instance.parseHead(contentsfile)
         println(header)
@@ -222,7 +227,7 @@ internal class HtmlParserTest {
         println(source.cacheDebugInfo)
     }
 
-    fun extractText(filename: String) {
+    private fun extractText(filename: String) {
         var sourceUrlString = filename
         if (sourceUrlString.indexOf(':') == -1) sourceUrlString = "file:$sourceUrlString"
         MicrosoftConditionalCommentTagTypes.register()

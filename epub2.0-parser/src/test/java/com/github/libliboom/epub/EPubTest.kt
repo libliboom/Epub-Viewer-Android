@@ -16,7 +16,7 @@ internal class EPubTest {
     fun init() {
         ePubFile = FileUtils.getResourceDir() + Resource.EPUB_FILE_NAME_01
         destFilePath = FileUtils.getOutputDir()
-        instance = EPub(ePubFile, destFilePath)
+        instance = EPub(ePubFile, destFilePath).load()
     }
 
     @Test
