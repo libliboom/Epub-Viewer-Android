@@ -11,9 +11,10 @@ import com.github.libliboom.epubviewer.dev.EPubFileStub.EXTRACTED_EPUB_FILE_PATH
 import com.github.libliboom.epubviewer.main.activity.ContentsActivity
 import com.github.libliboom.epubviewer.main.activity.SettingsActivity
 import com.github.libliboom.epubviewer.util.file.EPubUtils
+import com.github.libliboom.epubviewer.util.file.EPubUtils.getCustomHead
 import com.github.libliboom.epubviewer.util.file.StorageManager
 import com.github.libliboom.utils.io.FileUtils
-import com.github.libliboom.utils.io.robinary.PageRoBinary.Companion.PAGE_SIZE
+import com.github.libliboom.utils.io.robinary.PageRoBinary.Companion.PAGE_CHAR_SIZE
 import com.github.libliboom.utils.parser.HtmlParser
 import javax.inject.Inject
 
@@ -73,21 +74,18 @@ class EPubReaderViewModel : ViewModel {
         val path = FileUtils.removeFileUri(url)
         val p = ePub.pagination.getPageOfChapter(FileUtils.getFileName(path))
         currentPageIdx.value = p.second
-        loadPageByPageIndex(context, webView, p.second)
+        loadPageByPageIndex(webView, p.second)
     }
 
     fun loadChapterByChapterIndex(context: Context, webView: WebView, idx: Int) {
         val srcFile = getSrcFile(context, idx)
         val p = ePub.pagination.getPageOfChapter(FileUtils.getFileName(srcFile))
         currentPageIdx.value = p.second
-        loadPageByPageIndex(context, webView, p.second)
+        loadPageByPageIndex(webView, p.second)
     }
 
-    fun loadPageByPageIndex(context: Context, webView: WebView, page: Int) {
-        val p = ePub.pagination.getChapterWithNth(page)
-        val chapter = getSrcFile(context, p.first)
-        cacheHead(p, chapter)
-        loadPage(webView, chapter, p.second)
+    fun loadPageByPageIndex(webView: WebView, page: Int) {
+        loadPage(webView, page)
     }
 
     // TODO: 2020/05/18 insert absolute path at initialization
@@ -99,36 +97,26 @@ class EPubReaderViewModel : ViewModel {
         return oebpsDir + EPubUtils.getContentsSrcFileName(srcPath)
     }
 
-    private fun cacheHead(p: Pair<Int, Int>, chapter: String) {
-        if (cache4head.first != p.first) {
-            val head = parser.parseHead(chapter)
-            cache4head = Pair(p.first, head)
-        }
-    }
-
-    private fun loadPage(webView: WebView, path: String, nth: Int) {
-        val head = cache4head.second
-        val body = parser.parseBody(path)
-        var (start, end) = getPoints(nth, body)
+    private fun loadPage(webView: WebView, page: Int) {
+        val head = getCustomHead()
+        val body = ePub.pagination.getContentsOfPage(page)
 
         webView.loadDataWithBaseURL(
             FileUtils.getFileUri(EPubUtils.getOepbsPath(ePub)),
-            head + body.substring(start, end),
+            head + "<p>${body}</p>",
             "text/html",
             "utf-8",
             null
         )
     }
 
-    private var cache4head = Pair(-1, "")
-
     private fun getPoints(nth: Int, body: String): Pair<Int, Int> {
-        var start = nth * PAGE_SIZE
-        var end = (nth + 1) * PAGE_SIZE
+        var start = nth * PAGE_CHAR_SIZE
+        var end = (nth + 1) * PAGE_CHAR_SIZE
 
         // FIXME: 2020/05/20 this is workaround for boundary condition
         if (end > body.length) {
-            start = (nth - 1) * PAGE_SIZE
+            start = (nth - 1) * PAGE_CHAR_SIZE
             end = body.length
         }
 

@@ -28,4 +28,24 @@ object EPubUtils {
     fun getOepbsPath(ePub: EPub): String {
         return ePub.opf.oebpsPath
     }
+
+    fun getCustomHead(): String {
+        return "<head>\n"+
+            "<style type=\"text/css\">\n" +
+            "@font-face {\n" +
+            "    font-family: MyFont;\n" +
+            "    src: url(\"${getFontFile("RobotoMono-Regular")}\")\n" +
+            "}\n" +
+            "body {\n" +
+            "    font-family: MyFont;\n" +
+            "    font-size: medium;\n" +
+            "    text-align: justify;\n" +
+            "}\n" +
+            "</style>\n" +
+            "</head>"
+    }
+
+    private fun getFontFile(fontName: String): String {
+        return "file:///android_asset/fonts/$fontName.ttf"
+    }
 }

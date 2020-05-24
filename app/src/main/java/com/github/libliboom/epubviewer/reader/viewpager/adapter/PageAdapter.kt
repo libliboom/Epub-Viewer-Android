@@ -23,7 +23,7 @@ class PageAdapter(
             web_view.webViewClient = ReaderWebViewClient(viewModel)
             tag = position
         }
-        viewModel.loadPageByPageIndex(context, holder.itemView.web_view, position)
+        viewModel.loadPageByPageIndex(holder.itemView.web_view, position)
     }
 
     override fun getItemCount(): Int {

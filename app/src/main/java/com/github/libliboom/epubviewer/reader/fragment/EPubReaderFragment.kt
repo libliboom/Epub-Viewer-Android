@@ -105,7 +105,7 @@ class EPubReaderFragment : BaseFragment() {
 
     fun reloadCurrentPage() {
         setPageMode()
-        viewModel.loadPageByPageIndex(requireContext(), web_view, bottom_nv_seek_bar.progress)
+        viewModel.loadPageByPageIndex(web_view, bottom_nv_seek_bar.progress)
     }
 
     private fun setPageMode() {
