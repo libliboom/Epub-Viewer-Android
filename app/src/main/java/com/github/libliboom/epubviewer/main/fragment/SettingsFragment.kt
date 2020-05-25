@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
@@ -14,8 +15,10 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
-        val viewMode = preferenceScreen.findPreference<SwitchPreferenceCompat>(KEY_VIEW_MODE)
-        viewMode?.onPreferenceChangeListener = this
+        preferenceScreen.apply {
+            findPreference<SwitchPreferenceCompat>(KEY_VIEW_MODE)?.onPreferenceChangeListener = this@SettingsFragment
+            findPreference<ListPreference>(KEY_ANIMATION_MODE)?.onPreferenceChangeListener = this@SettingsFragment
+        }
     }
 
     override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
@@ -26,6 +29,11 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
             when (key) {
                 KEY_VIEW_MODE -> {
                     SettingsPreference.setViewMode(requireContext(), newValue as Boolean)
+                    sendResult()
+                }
+                KEY_ANIMATION_MODE -> {
+                    val n: String = newValue as String
+                    SettingsPreference.setAnimationMode(requireContext(), n.toInt())
                     sendResult()
                 }
                 else -> Log.i(TAG, "onPreferenceChange: else")
@@ -45,6 +53,7 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
     companion object {
         const val TAG = "SettingsFragment"
         const val KEY_VIEW_MODE = "key_view_mode"
+        const val KEY_ANIMATION_MODE = "key_animation_mode"
 
         fun newInstance() = SettingsFragment()
     }

@@ -5,4 +5,20 @@
     <string name="er_bottom_nv_settings">Settings</string>
     <string name="er_toolbar_title_contents">Contents</string>
     <string name="er_toolbar_title_settings">Setting</string>
+
+    <string-array name="animation">
+        <item>"None"</item>
+        <item>"Cube Out Depth"</item>
+        <item>"Zoom Out Page"</item>
+        <item>"Geo"</item>
+        <item>"Fade Out"</item>
+    </string-array>
+
+    <string-array name="animationAlias">
+        <item>"1"</item>
+        <item>"2"</item>
+        <item>"3"</item>
+        <item>"4"</item>
+        <item>"5"</item>
+    </string-array>
 </resources>

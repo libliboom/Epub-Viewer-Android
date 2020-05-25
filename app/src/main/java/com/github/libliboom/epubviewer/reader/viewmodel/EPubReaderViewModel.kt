@@ -2,6 +2,7 @@ package com.github.libliboom.epubviewer.reader.viewmodel
 
 import android.app.Activity
 import android.content.Context
+import android.view.View
 import android.webkit.WebView
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,6 +14,7 @@ import com.github.libliboom.epubviewer.main.activity.SettingsActivity
 import com.github.libliboom.epubviewer.util.file.EPubUtils
 import com.github.libliboom.epubviewer.util.file.EPubUtils.getCustomHead
 import com.github.libliboom.epubviewer.util.file.StorageManager
+import com.github.libliboom.epubviewer.util.ui.TranslationUtils
 import com.github.libliboom.utils.io.FileUtils
 import com.github.libliboom.utils.io.robinary.PageRoBinary.Companion.PAGE_CHAR_SIZE
 import com.github.libliboom.utils.parser.HtmlParser
@@ -67,6 +69,17 @@ class EPubReaderViewModel : ViewModel {
                 currentChapterIdx = idx
                 break
             }
+        }
+    }
+
+    fun getEffect(n: Int): (page: View, position: Float) -> Unit {
+        return when (n) {
+            1 -> TranslationUtils.effectNone()
+            2 -> TranslationUtils.effectCubeOutDepth()
+            3 -> TranslationUtils.effectZoomOutPageEffect()
+            4 -> TranslationUtils.effectGeo()
+            5 -> TranslationUtils.effectFadeOut()
+            else -> TranslationUtils.effectNone()
         }
     }
 

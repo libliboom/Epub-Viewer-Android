@@ -6,4 +6,11 @@
         app:summary="You can turn Vertical/Horizontal mode as on/off."
         app:title="Viewer Mode" />
 
+    <androidx.preference.ListPreference
+        app:key="key_animation_mode"
+        app:summary="This option if selected will allow the effect to show on turning page"
+        app:title="Animation"
+        app:entries="@array/animation"
+        app:entryValues="@array/animationAlias"/>
+
 </PreferenceScreen>

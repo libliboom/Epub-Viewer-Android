@@ -105,6 +105,7 @@ class EPubReaderFragment : BaseFragment() {
 
     fun reloadCurrentPage() {
         setPageMode()
+        setAnimationMode()
         viewModel.loadPageByPageIndex(web_view, bottom_nv_seek_bar.progress)
     }
 
@@ -112,6 +113,13 @@ class EPubReaderFragment : BaseFragment() {
         val pageMode = SettingsPreference.getViewMode(context)
         if (pageMode) view_pager.orientation = ViewPager2.ORIENTATION_VERTICAL
         else view_pager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+    }
+
+    private fun setAnimationMode() {
+        val effectNumber = SettingsPreference.getAnimationMode(requireContext())
+        val effect = viewModel.getEffect(effectNumber)
+        val transformer = ViewPager2.PageTransformer(effect)
+        view_pager.setPageTransformer(transformer)
     }
 
     companion object {
