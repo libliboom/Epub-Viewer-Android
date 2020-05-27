@@ -24,11 +24,10 @@ import javax.inject.Inject
 
 class EPubReaderViewModel : ViewModel {
 
-    var currentChapterIdx = 0
     var currentPageIdx = MutableLiveData(0)
-
     // TODO: 2020/05/27 Wrap it up as class later
     var pageCountByRendering = MutableLiveData(0)
+
     val pages4ChapterByRendering = mutableListOf<Pair<Int, Int>>()
 
     lateinit var ePub: EPub
@@ -37,6 +36,7 @@ class EPubReaderViewModel : ViewModel {
     private val chapters = mutableListOf<String>()
     private val decompressedRootPath = EXTRACTED_EPUB_FILE_PATH
 
+    private var currentChapterIdx = 0
     private var chapterSize = 0
 
     @Inject
@@ -110,6 +110,22 @@ class EPubReaderViewModel : ViewModel {
         val p = ePub.pagination.getPageOfChapter(FileUtils.getFileName(path))
         currentPageIdx.value = p.second
         loadPageByPageIndex(context, webView, p.second)
+    }
+
+    fun loadPreviousChapter(context: Context, webView: WebView) {
+        val prev = adjustmentChapter(--currentChapterIdx)
+        loadChapterByChapterIndex(context, webView, prev)
+    }
+
+    fun loadNextChapter(context: Context, webView: WebView) {
+        val next = adjustmentChapter(++currentChapterIdx)
+        loadChapterByChapterIndex(context, webView, next)
+    }
+
+    fun updatePageIndex(context: Context, nth: Int) {
+        val srcFile = getSrcFile(context, currentChapterIdx)
+        val p = ePub.pagination.getPageOfChapter(FileUtils.getFileName(srcFile))
+        //currentPageIdx.value = p.second + nth
     }
 
     fun loadChapterByChapterIndex(context: Context, webView: WebView, idx: Int) {

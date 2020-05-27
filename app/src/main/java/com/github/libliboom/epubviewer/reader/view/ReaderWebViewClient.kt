@@ -31,8 +31,12 @@ class ReaderWebViewClient(private val viewModel: EPubReaderViewModel) : WebViewC
             "var height = window.innerHeight; " +
             "window.scrollTo(0, height*page);" +
             "}"
-
         view?.loadUrl(loadJs)
+
+        val nth = "javascript:function getNth() {" +
+            "return Math.floor(window.scrollY/window.innerHeight)+1; " +
+            "}"
+        view?.loadUrl(nth)
     }
 
     override fun onPageFinished(view: WebView?, url: String?) {
