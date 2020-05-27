@@ -168,6 +168,22 @@ class HtmlParser {
         return Pair(curIdx, sb.toString())
     }
 
+    fun parseElement(filename: String): String {
+        val source = createSource(filename)
+
+        val sb = StringBuilder()
+
+        for (segment in source.getAllElements(HTMLElementName.H2)) {
+            sb.append(segment.textExtractor.setIncludeAttributes(true))
+        }
+
+        for (segment in source.getAllElements(HTMLElementName.P)) {
+            sb.append(segment.textExtractor.setIncludeAttributes(false))
+        }
+
+        return sb.toString()
+    }
+
     fun parseText(filename: String): String {
         val source = createSource(filename)
 

@@ -8,12 +8,17 @@ import com.github.libliboom.utils.parser.HtmlParser
 class PageRoBinary(private val filelist: List<String>) : BlobRoBinary() {
 
     var pageCount = 0
+    var pages4Chapter = mutableListOf<Pair<Int, Int>>()
 
-    private val pages4Chapter = mutableListOf<Pair<Int, Int>>()
     private val pages4Contents = mutableMapOf<Int, String>()
 
     init {
-        calculatePage()
+        //calculatePage()
+    }
+
+    constructor(filelist: List<String>, a: Int,  b: MutableList<Pair<Int, Int>>) : this(filelist) {
+        pageCount = a
+        pages4Chapter = b
     }
 
     private fun calculatePage() {

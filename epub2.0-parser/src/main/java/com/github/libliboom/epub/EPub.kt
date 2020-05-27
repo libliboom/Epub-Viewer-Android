@@ -17,6 +17,8 @@ import java.io.File
  * - calculate page blob
  * ...
  */
+
+// TODO: 2020/05/27 Tidy up legacy code for layoutManager
 class EPub(filePath: String, decompressedPath: String) {
     // TODO: 2020/05/14 check all path if the last char is file separator or not
     private val filePath = filePath
@@ -41,11 +43,15 @@ class EPub(filePath: String, decompressedPath: String) {
             initOpenContainerFormat()
             decompress()
             initOpenPackageFormat()
-            initPagination()
+            //initPagination()
         } catch (e: Exception) {
             e.printStackTrace()
         }
         return this
+    }
+
+    fun pagination(filelist: List<String>, a: Int,  b: MutableList<Pair<Int, Int>>) {
+        pagination = PageRoBinary(filelist, a, b)
     }
 
     private fun initOpenContainerFormat() {
@@ -64,10 +70,16 @@ class EPub(filePath: String, decompressedPath: String) {
     }
 
     private fun initPagination() {
+        val filelist = getFileList()
+        pagination = PageRoBinary(filelist)
+    }
+
+    fun getFileList(): ArrayList<String> {
         val filelist = ArrayList<String>()
         for (src in opf.ncx.navMap.values) {
             filelist += (opf.oebpsPath + src.contentSrc)
         }
-        pagination = PageRoBinary(filelist)
+
+        return filelist
     }
 }
