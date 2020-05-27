@@ -4,15 +4,17 @@ import android.app.Activity
 import android.content.Context
 import android.view.View
 import android.webkit.WebView
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.github.libliboom.epub.EPub
 import com.github.libliboom.epub.outline.opf.NavigationControlXml
+import com.github.libliboom.epubviewer.R
 import com.github.libliboom.epubviewer.dev.EPubFileStub.EXTRACTED_EPUB_FILE_PATH
 import com.github.libliboom.epubviewer.main.activity.ContentsActivity
 import com.github.libliboom.epubviewer.main.activity.SettingsActivity
+import com.github.libliboom.epubviewer.reader.view.ReaderMeasureFragment
 import com.github.libliboom.epubviewer.util.file.EPubUtils
-import com.github.libliboom.epubviewer.util.file.EPubUtils.getCustomHead
 import com.github.libliboom.epubviewer.util.file.StorageManager
 import com.github.libliboom.epubviewer.util.ui.TranslationUtils
 import com.github.libliboom.utils.io.FileUtils
@@ -24,6 +26,10 @@ class EPubReaderViewModel : ViewModel {
 
     var currentChapterIdx = 0
     var currentPageIdx = MutableLiveData(0)
+
+    // TODO: 2020/05/27 Wrap it up as class later
+    var pageCountByRendering = MutableLiveData(0)
+    val pages4ChapterByRendering = mutableListOf<Pair<Int, Int>>()
 
     lateinit var ePub: EPub
     lateinit var ePubFilePath: String
@@ -61,6 +67,22 @@ class EPubReaderViewModel : ViewModel {
         chapterSize = chapters.size
     }
 
+    fun calcPageCount(activity: FragmentActivity) {
+        val filelist = ArrayList<String>()
+        for (src in ePub.opf.ncx.navMap.values) {
+            filelist += (ePub.opf.oebpsPath + src.contentSrc)
+        }
+
+        activity.supportFragmentManager.beginTransaction()
+            .add(R.id.frame_layout_fragment, ReaderMeasureFragment.newInstance(filelist))
+            .addToBackStack(null)
+            .commit()
+    }
+
+    fun getPageCount(): MutableLiveData<Int> {
+        return pageCountByRendering
+    }
+
     fun updateChapterIndex(url: String) {
         val navMap = EPubUtils.getNavMap(ePub)
         for ((idx, p) in navMap.values.withIndex()) {
@@ -87,40 +109,33 @@ class EPubReaderViewModel : ViewModel {
         val path = FileUtils.removeFileUri(url)
         val p = ePub.pagination.getPageOfChapter(FileUtils.getFileName(path))
         currentPageIdx.value = p.second
-        loadPageByPageIndex(webView, p.second)
+        loadPageByPageIndex(context, webView, p.second)
     }
 
     fun loadChapterByChapterIndex(context: Context, webView: WebView, idx: Int) {
-        val srcFile = getSrcFile(context, idx)
+        currentChapterIdx = adjustmentChapter(idx)
+        val srcFile = getSrcFile(context, currentChapterIdx)
         val p = ePub.pagination.getPageOfChapter(FileUtils.getFileName(srcFile))
         currentPageIdx.value = p.second
-        loadPageByPageIndex(webView, p.second)
+        loadPageByPageIndex(context, webView, p.second)
     }
 
-    fun loadPageByPageIndex(webView: WebView, page: Int) {
-        loadPage(webView, page)
+    fun loadPageByPageIndex(context: Context, webView: WebView, page: Int) {
+        val p = ePub.pagination.getChapterWithNth(page)
+        val path = getSrcFile(context, p.first)
+        loadPage(webView, path, p.second)
+    }
+
+    private fun loadPage(webView: WebView, path: String, nth: Int) {
+        webView.loadUrl(FileUtils.getFileUri(path) + "${EPubUtils.DELIMITER_NTH}$nth")
     }
 
     // TODO: 2020/05/18 insert absolute path at initialization
     private fun getSrcFile(context: Context, next: Int): String {
-        currentChapterIdx = adjustmentChapter(next)
         val decompressPath = StorageManager.getExtractedPath(context)
         val oebpsDir = FileUtils.getExtractedOebpsPath(decompressPath, ePubFilePath)
-        val srcPath = chapters[currentChapterIdx]
+        val srcPath = chapters[next]
         return oebpsDir + EPubUtils.getContentsSrcFileName(srcPath)
-    }
-
-    private fun loadPage(webView: WebView, page: Int) {
-        val head = getCustomHead()
-        val body = ePub.pagination.getContentsOfPage(page)
-
-        webView.loadDataWithBaseURL(
-            FileUtils.getFileUri(EPubUtils.getOepbsPath(ePub)),
-            head + "<p>${body}</p>",
-            "text/html",
-            "utf-8",
-            null
-        )
     }
 
     private fun getPoints(nth: Int, body: String): Pair<Int, Int> {

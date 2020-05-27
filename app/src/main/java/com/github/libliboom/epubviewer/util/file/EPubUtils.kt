@@ -5,6 +5,8 @@ import com.github.libliboom.epub.outline.opf.NavigationControlXml
 
 object EPubUtils {
 
+    const val DELIMITER_NTH = "#"
+
     fun getContentsSrcFileName(filePath: String): String {
         return filePath.split("#")[0]
     }

@@ -35,11 +35,17 @@ class EPubReaderFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         setupBottomNavigation()
 
-        viewModel.initEpub(requireContext())
-
-        setPageMode()
-        setupSeekBar()
-        setupViewPager()
+        viewModel.run {
+            initEpub(requireContext())
+            calcPageCount(requireActivity())
+            pageCountByRendering.observe(requireActivity(),
+                Observer {
+                    setPageMode()
+                    setupSeekBar()
+                    setupViewPager()
+                    setupPagination()
+                })
+        }
     }
 
     private fun setupBottomNavigation() {
@@ -57,8 +63,8 @@ class EPubReaderFragment : BaseFragment() {
     @SuppressLint("CheckResult")
     private fun setupSeekBar() {
         bottom_nv_seek_bar.apply {
-            progress = 0
-            max = viewModel.ePub.pagination.pageCount
+            progress = 1 // based on 1 page
+            max = viewModel.getPageCount().value!!
         }
 
         updateCurrentPageInfo()
@@ -83,7 +89,7 @@ class EPubReaderFragment : BaseFragment() {
         view_pager.pageSelections()
             .subscribeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
             .subscribe {e ->
-                bottom_nv_seek_bar.progress = e
+                bottom_nv_seek_bar.progress = e + 1 // based on 1 page
                 tv_page_info.text = "${bottom_nv_seek_bar.progress}/${bottom_nv_seek_bar.max}"
             }
     }
@@ -99,14 +105,25 @@ class EPubReaderFragment : BaseFragment() {
         }
     }
 
+    private fun setupPagination() {
+        viewModel.ePub.apply {
+            pagination(
+                viewModel.ePub.getFileList(),
+                viewModel.pageCountByRendering.value!!,
+                viewModel.pages4ChapterByRendering
+            )
+        }
+    }
+
     fun loadSpecificChapter(idx: Int) {
         viewModel.loadChapterByChapterIndex(requireContext(), web_view, idx)
     }
 
+    // TODO: 2020/05/27 when change mode
     fun reloadCurrentPage() {
         setPageMode()
         setAnimationMode()
-        viewModel.loadPageByPageIndex(web_view, bottom_nv_seek_bar.progress)
+        //viewModel.loadPageByPageIndex(web_view, bottom_nv_seek_bar.progress)
     }
 
     private fun setPageMode() {

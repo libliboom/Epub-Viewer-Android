@@ -1,6 +1,7 @@
 package com.github.libliboom.epubviewer.reader.viewpager.adapter
 
 import android.content.Context
+import android.view.MotionEvent
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.github.libliboom.epubviewer.reader.view.ReaderWebViewClient
@@ -18,15 +19,17 @@ class PageAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        holder.itemView.apply {
-            web_view.settings.javaScriptEnabled = true
-            web_view.webViewClient = ReaderWebViewClient(viewModel)
+        holder.itemView.web_view.apply {
+            settings.javaScriptEnabled = true
+            isScrollContainer = false
+            webViewClient = ReaderWebViewClient(viewModel)
+            setOnTouchListener { _, event ->  event.action == MotionEvent.ACTION_MOVE }
             tag = position
         }
-        viewModel.loadPageByPageIndex(holder.itemView.web_view, position)
+        viewModel.loadPageByPageIndex(context, holder.itemView.web_view, position)
     }
 
     override fun getItemCount(): Int {
-        return viewModel.ePub.pagination.pageCount
+        return viewModel.getPageCount().value!!
     }
 }

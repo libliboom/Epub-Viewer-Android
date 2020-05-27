@@ -3,4 +3,5 @@
     android:id="@+id/web_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:scrollbars="none"
     android:layout_margin="@dimen/reader_view_margin" />
