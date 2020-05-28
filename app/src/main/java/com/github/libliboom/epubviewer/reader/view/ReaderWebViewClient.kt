@@ -5,8 +5,13 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import com.github.libliboom.epubviewer.db.preference.SettingsPreference
 import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel
 import com.github.libliboom.epubviewer.util.file.EPubUtils
+import com.github.libliboom.epubviewer.util.js.Js
+import com.github.libliboom.epubviewer.util.js.Js.callLoad
+import com.github.libliboom.epubviewer.util.js.Js.getNthJs
+import com.github.libliboom.epubviewer.util.js.Js.loadJs
 import java8.util.stream.StreamSupport
 
 // REFACTORING: 2020/05/18 init with dagger
@@ -26,22 +31,23 @@ class ReaderWebViewClient(private val viewModel: EPubReaderViewModel) : WebViewC
 
     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
         super.onPageStarted(view, parseUri(url!!), favicon)
-
-        val loadJs = "javascript:function load(page) {" +
-            "var height = window.innerHeight; " +
-            "window.scrollTo(0, height*page);" +
-            "}"
-        view?.loadUrl(loadJs)
-
-        val nth = "javascript:function getNth() {" +
-            "return Math.floor(window.scrollY/window.innerHeight)+1; " +
-            "}"
-        view?.loadUrl(nth)
+        view?.loadUrl(loadJs())
+        view?.loadUrl(getNthJs())
     }
 
     override fun onPageFinished(view: WebView?, url: String?) {
         super.onPageFinished(view, parseUri(url!!))
-        view?.evaluateJavascript("javascript:load(${parseNth(url!!)})") {}
+        val pageMode = SettingsPreference.getViewMode(view?.context)
+        if (pageMode) {
+            view?.run {
+                loadUrl(Js.columns4HorizontalJs())
+                evaluateJavascript(Js.callColumns()) {
+                    scrollTo((parseNth(url!!).toInt())*view.width, 0)
+                }
+            }
+        } else {
+            view?.evaluateJavascript(callLoad(parseNth(url!!))) {}
+        }
     }
 
     private fun isWebProtocol(url: String) = StreamSupport.stream(webProtocols)

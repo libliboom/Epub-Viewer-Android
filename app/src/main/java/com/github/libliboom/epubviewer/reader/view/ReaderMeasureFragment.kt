@@ -9,7 +9,14 @@ import android.webkit.WebViewClient
 import androidx.lifecycle.ViewModelProvider
 import com.github.libliboom.epubviewer.R
 import com.github.libliboom.epubviewer.base.BaseFragment
+import com.github.libliboom.epubviewer.db.preference.SettingsPreference
 import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel
+import com.github.libliboom.epubviewer.util.js.Js.calcPage4HorizontalJs
+import com.github.libliboom.epubviewer.util.js.Js.calcPage4VerticalJs
+import com.github.libliboom.epubviewer.util.js.Js.callColumns
+import com.github.libliboom.epubviewer.util.js.Js.callPageCount
+import com.github.libliboom.epubviewer.util.js.Js.columns4HorizontalJs
+import com.github.libliboom.epubviewer.util.js.Js.sumPageCount
 import com.github.libliboom.utils.io.FileUtils
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableEmitter
@@ -44,9 +51,9 @@ class ReaderMeasureFragment : BaseFragment() {
             .subscribe {
                 if (idx++ < len) {
                     web_view_measure.loadUrl(FileUtils.getFileUri(filelist[idx]))
-                    viewModel.pages4ChapterByRendering.add(Pair(idx, tot++))
+                    viewModel.pages4ChapterByRendering.add(Pair(idx, tot))
                 } else {
-                    viewModel.pages4ChapterByRendering.add(Pair(idx, tot++))
+                    viewModel.pages4ChapterByRendering.add(Pair(idx, tot))
                     Handler().postDelayed({
                         viewModel.pageCountByRendering.value = tot
                         requireActivity().onBackPressed()
@@ -57,7 +64,7 @@ class ReaderMeasureFragment : BaseFragment() {
 
     inner class PageHelper {
         @JavascriptInterface
-        fun printPageCount(page: String) {
+        fun sumPageCount(page: String) {
             tot += page.toInt()
         }
     }
@@ -81,19 +88,25 @@ class RxWebViewWrapper(private val webView: WebView) : ObservableOnSubscribe<Web
         webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
-
-                val calcPageJs = "javascript:function getPageCount() {" +
-                    "var d = document.getElementsByTagName('body')[0];" +
-                    "var innerH = window.innerHeight; " +
-                    "var fullH = d.offsetHeight; " +
-                    "var pageCount = Math.floor(fullH/innerH)+1;" +
-                    "return pageCount;" +
-                    "}"
-                view?.loadUrl(calcPageJs)
-                view?.evaluateJavascript("javascript:getPageCount()") { page ->
-                    view?.loadUrl("javascript:Android.printPageCount($page)")
+                val pageMode = SettingsPreference.getViewMode(webView.context)
+                if (pageMode) {
+                    view?.run {
+                        loadUrl(columns4HorizontalJs())
+                        loadUrl(calcPage4HorizontalJs())
+                        evaluateJavascript(callColumns()) {
+                            evaluateJavascript(callPageCount()) { page ->
+                                loadUrl(sumPageCount(page))
+                            }
+                        }
+                    }
+                } else {
+                    view?.run {
+                        loadUrl(calcPage4VerticalJs())
+                        evaluateJavascript(callPageCount()) { page ->
+                            loadUrl(sumPageCount(page))
+                        }
+                    }
                 }
-
                 emitter.onNext(WebViewEvent.PageManager(url))
             }
         }

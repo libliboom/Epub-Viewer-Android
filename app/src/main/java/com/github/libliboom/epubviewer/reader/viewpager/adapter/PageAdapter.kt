@@ -17,7 +17,9 @@ class PageAdapter(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return PageViewHolder(parent)
+        val holder = PageViewHolder(parent)
+        holder.setIsRecyclable(false)
+        return holder
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -51,9 +53,8 @@ class PageAdapter(
                     }
                 })
             }
-            tag = position
+            viewModel.loadPageByPageIndex(context, holder.itemView.web_view, position)
         }
-        viewModel.loadPageByPageIndex(context, holder.itemView.web_view, position)
     }
 
     override fun getItemCount(): Int {
