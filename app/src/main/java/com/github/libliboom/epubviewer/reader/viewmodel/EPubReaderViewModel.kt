@@ -94,6 +94,12 @@ class EPubReaderViewModel : ViewModel {
         }
     }
 
+    fun updateChapterIndex(page: Int) {
+        if (ePub.pagination.pages4Chapter.size == 0) return
+        val p = ePub.pagination.getChapterWithNth(page)
+        currentChapterIdx = adjustmentChapter(p.first)
+    }
+
     fun getEffect(n: Int): (page: View, position: Float) -> Unit {
         return when (n) {
             1 -> TranslationUtils.effectNone()

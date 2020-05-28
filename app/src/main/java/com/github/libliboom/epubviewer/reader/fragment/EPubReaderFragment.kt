@@ -82,6 +82,7 @@ class EPubReaderFragment : BaseFragment() {
                 when (seekBarChangeEvent) {
                     is SeekBarStopChangeEvent -> {
                         updateCurrentPageInfo()
+                        viewModel.updateChapterIndex(bottom_nv_seek_bar.progress)
                     }
                 }
             }
@@ -91,6 +92,7 @@ class EPubReaderFragment : BaseFragment() {
             .subscribe {e ->
                 bottom_nv_seek_bar.progress = e + 1 // based on 1 page
                 tv_page_info.text = "${bottom_nv_seek_bar.progress}/${bottom_nv_seek_bar.max}"
+                viewModel.updateChapterIndex(bottom_nv_seek_bar.progress)
             }
     }
 
