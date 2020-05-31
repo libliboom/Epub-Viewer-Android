@@ -6,25 +6,27 @@ import com.github.libliboom.epubviewer.base.BaseViewHolder
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.item_contents.view.tv_contents_item
+import kotlinx.android.synthetic.main.item_contents.view.tv_srcs_item
 
 class ContentsViewHolder(private val view: View) : BaseViewHolder(view) {
 
-    fun onBindSubject(publishSubject: PublishSubject<Int>) {
+    fun onBindSubject(publishSubject: PublishSubject<String>) {
         getClickObservable().subscribe(publishSubject)
     }
 
     override fun onBindItem(context: Context, item: BaseItem) {
         item as Contents
         view.tv_contents_item.text = item.contents
+        view.tv_srcs_item.text = item.src
     }
 
-    private fun getClickObservable(): Observable<Int> {
+    private fun getClickObservable(): Observable<String> {
         return Observable.create { e ->
             view.tv_contents_item.setOnClickListener {
-                e.onNext(adapterPosition)
+                e.onNext(view.tv_srcs_item.text.toString())
             }
         }
     }
 
-    data class Contents(val contents: String) : BaseItem()
+    data class Contents(val contents: String, val src: String) : BaseItem()
 }

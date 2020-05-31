@@ -29,12 +29,16 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
             when (key) {
                 KEY_VIEW_MODE -> {
                     SettingsPreference.setViewMode(requireContext(), newValue as Boolean)
-                    sendResult()
+                    val intent = Intent()
+                    intent.putExtra(EXTRA_SETTINGS_VIEW_MODE, true)
+                    sendResult(intent)
                 }
                 KEY_ANIMATION_MODE -> {
                     val n: String = newValue as String
                     SettingsPreference.setAnimationMode(requireContext(), n.toInt())
-                    sendResult()
+                    val intent = Intent()
+                    intent.putExtra(EXTRA_SETTINGS_ANIMATION_MODE, true)
+                    sendResult(intent)
                 }
                 else -> Log.i(TAG, "onPreferenceChange: else")
             }
@@ -43,9 +47,9 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
         return true
     }
 
-    private fun sendResult() {
+    private fun sendResult(intent: Intent) {
         requireActivity().run {
-            setResult(Activity.RESULT_OK, Intent())
+            setResult(Activity.RESULT_OK, intent)
             finish()
         }
     }
@@ -54,6 +58,8 @@ class SettingsFragment : PreferenceFragmentCompat(), Preference.OnPreferenceChan
         const val TAG = "SettingsFragment"
         const val KEY_VIEW_MODE = "key_view_mode"
         const val KEY_ANIMATION_MODE = "key_animation_mode"
+        const val EXTRA_SETTINGS_VIEW_MODE = "com.github.libliboom.epubviewer.main.fragment.view_mode"
+        const val EXTRA_SETTINGS_ANIMATION_MODE = "com.github.libliboom.epubviewer.main.fragment.animation_mode"
 
         fun newInstance() = SettingsFragment()
     }

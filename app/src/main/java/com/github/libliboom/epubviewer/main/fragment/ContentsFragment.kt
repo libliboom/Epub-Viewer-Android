@@ -21,7 +21,8 @@ class ContentsFragment : BaseFragment() {
     @Inject
     lateinit var requestManager: RequestManager
 
-    private lateinit var contents: ArrayList<String>
+    private lateinit var contentsList: ArrayList<String>
+    private lateinit var srcs: ArrayList<String>
 
     override fun getLayoutId() = R.layout.fragment_contents
 
@@ -44,8 +45,9 @@ class ContentsFragment : BaseFragment() {
     private fun initAdapter() {
         arguments?.run {
             val cover = getString(ARGS_COVER) ?: ""
-            contents = getStringArrayList(ARGS_CHAPTERS_LIST) ?: ArrayList<String>()
-            contentsAdapter.init(cover, contents)
+            contentsList = getStringArrayList(ARGS_CHAPTERS_LIST) ?: ArrayList()
+            srcs = getStringArrayList(ARGS_SRC_LIST) ?: ArrayList()
+            contentsAdapter.init(cover, contentsList, srcs)
         }
 
         contentsAdapter.getPublishSubject().subscribe {
@@ -72,12 +74,16 @@ class ContentsFragment : BaseFragment() {
     companion object {
         const val ARGS_COVER = "cover"
         const val ARGS_CHAPTERS_LIST = "contents_chapters_list"
+        const val ARGS_SRC_LIST = "contents_src_list"
         const val EXTRA_INDEX_OF_CHAPTER = "com.github.libliboom.epubviewer.main.fragment.index_of_chapter"
 
-        fun newInstance(cover: String, chapters: ArrayList<String>): ContentsFragment {
+        fun newInstance(cover: String,
+                        chapters: ArrayList<String>,
+                        srcs: ArrayList<String>): ContentsFragment {
             val args = Bundle()
             args.putString(ARGS_COVER, cover)
             args.putStringArrayList(ARGS_CHAPTERS_LIST, chapters)
+            args.putStringArrayList(ARGS_SRC_LIST, srcs)
 
             val fragment = ContentsFragment()
             fragment.arguments = args

@@ -10,6 +10,14 @@ object Js {
             "}"
     }
 
+    fun callHNth(): String = "javascript:getHNth()"
+    fun getHNthJs(): String {
+        return "javascript:function getHNth() {" +
+            "return Math.floor(window.pageXOffset/window.innerWidth)+1; " +
+            "}"
+    }
+
+    fun callNth(): String = "javascript:getNth()"
     fun getNthJs(): String {
         return "javascript:function getNth() {" +
             "return Math.floor(window.scrollY/window.innerHeight)+1; " +

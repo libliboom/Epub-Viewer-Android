@@ -8,8 +8,12 @@ import android.webkit.WebViewClient
 import com.github.libliboom.epubviewer.db.preference.SettingsPreference
 import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel
 import com.github.libliboom.epubviewer.util.file.EPubUtils
-import com.github.libliboom.epubviewer.util.js.Js
+import com.github.libliboom.epubviewer.util.file.EPubUtils.DELIMITER_NTH
+import com.github.libliboom.epubviewer.util.js.Js.callColumns
 import com.github.libliboom.epubviewer.util.js.Js.callLoad
+import com.github.libliboom.epubviewer.util.js.Js.callNth
+import com.github.libliboom.epubviewer.util.js.Js.columns4HorizontalJs
+import com.github.libliboom.epubviewer.util.js.Js.getHNthJs
 import com.github.libliboom.epubviewer.util.js.Js.getNthJs
 import com.github.libliboom.epubviewer.util.js.Js.loadJs
 import java8.util.stream.StreamSupport
@@ -24,7 +28,12 @@ class ReaderWebViewClient(private val viewModel: EPubReaderViewModel) : WebViewC
         if (isWebProtocol(url)) {
             launchBrowser(url, view)
         } else {
-            loadChapter(view, url)
+            val uri = parseUri(url!!)
+            if (url.split("#").size == 2) {
+                view.loadUrl(uri)
+            } else {
+                loadChapter(view, uri)
+            }
         }
         return true
     }
@@ -33,27 +42,54 @@ class ReaderWebViewClient(private val viewModel: EPubReaderViewModel) : WebViewC
         super.onPageStarted(view, parseUri(url!!), favicon)
         view?.loadUrl(loadJs())
         view?.loadUrl(getNthJs())
+        view?.loadUrl(getHNthJs())
     }
 
     override fun onPageFinished(view: WebView?, url: String?) {
         super.onPageFinished(view, parseUri(url!!))
-        val pageMode = SettingsPreference.getViewMode(view?.context)
-        if (pageMode) {
-            view?.run {
-                loadUrl(Js.columns4HorizontalJs())
-                evaluateJavascript(Js.callColumns()) {
-                    scrollTo((parseNth(url!!).toInt())*view.width, 0)
+
+        if (SettingsPreference.getViewMode(view?.context)) {
+            setHorizontalMode(view, url)
+        } else {
+            setVerticalMode(url, view)
+        }
+    }
+
+    private fun setHorizontalMode(view: WebView?, url: String) {
+        view?.run {
+            loadUrl(columns4HorizontalJs())
+            if (isTurningPage(url)) {
+                evaluateJavascript(callColumns()) {
+                    scrollTo((parseNth(url!!).toInt()) * getWidth(view), 0)
+                }
+            } else {
+                evaluateJavascript(callColumns()) {
+                    view?.evaluateJavascript(callNth()) { n ->
+                        val nth = n.toInt() - 1  // workaround
+                        viewModel.updatePageIndex(view.context, url, nth)
+                    }
                 }
             }
+        }
+    }
+
+    private fun setVerticalMode(url: String, view: WebView?) {
+        if (isTurningPage(url)) { // turningSpine
+            val nth = parseNth(url)
+            view?.evaluateJavascript(callLoad(nth)) {
+                viewModel.updatePageIndex(view.context, url, nth.toInt())
+            }
         } else {
-            view?.evaluateJavascript(callLoad(parseNth(url!!))) {}
+            view?.evaluateJavascript(callNth()) { n ->
+                viewModel.updatePageIndex(view.context, url, n.toInt())
+            }
         }
     }
 
     private fun isWebProtocol(url: String) = StreamSupport.stream(webProtocols)
         .anyMatch { p -> url.startsWith(p) }
 
-    private fun parseUri(url: String): String = url.split("#")[0]
+    private fun parseUri(url: String): String = url.split(EPubUtils.DELIMITER_NTH)[0]
 
     private fun parseNth(url: String): String = url.split(EPubUtils.DELIMITER_NTH)[1]
 
@@ -69,6 +105,10 @@ class ReaderWebViewClient(private val viewModel: EPubReaderViewModel) : WebViewC
             loadChapterByUrl(view.context, view, url)
         }
     }
+
+    private fun isTurningPage(url: String) = url.split(DELIMITER_NTH).size == 2
+
+    private fun getWidth(view: WebView) = (view.width + 3) // workaround
 
     companion object {
         val webProtocols = listOf("https://", "http://")

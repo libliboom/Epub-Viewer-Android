@@ -21,6 +21,7 @@ import com.github.libliboom.utils.io.FileUtils
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableEmitter
 import io.reactivex.rxjava3.core.ObservableOnSubscribe
+import java8.util.stream.StreamSupport
 import kotlinx.android.synthetic.main.fragment_reader_meaure.spinner
 import kotlinx.android.synthetic.main.fragment_reader_meaure.web_view_measure
 
@@ -40,26 +41,34 @@ class ReaderMeasureFragment : BaseFragment() {
 
         spinner.visibility = View.VISIBLE
 
-        val filelist = arguments?.getStringArrayList(ARGS_FILE_LIST)!!
+        val f = arguments?.getStringArrayList(ARGS_FILE_LIST)!!
+        val filelist = StreamSupport.stream(f)
+            .map { f -> FileUtils.getFileName(f) }
+            .distinct()
+            .toArray()
+
         web_view_measure.settings.javaScriptEnabled = true
         web_view_measure.addJavascriptInterface(PageHelper(), "Android")
 
         var idx = 0
         val len = filelist.size - 1
-        web_view_measure.loadUrl(FileUtils.getFileUri(filelist[0]))
+        web_view_measure.loadUrl(FileUtils.getFileUri(filelist[0] as String))
         Observable.create(RxWebViewWrapper(web_view_measure))
-            .subscribe {
+            .doOnError({})
+            .subscribe({
                 if (idx++ < len) {
-                    web_view_measure.loadUrl(FileUtils.getFileUri(filelist[idx]))
+                    web_view_measure.loadUrl(FileUtils.getFileUri(filelist[idx] as String))
                     viewModel.pages4ChapterByRendering.add(Pair(idx, tot))
                 } else {
                     viewModel.pages4ChapterByRendering.add(Pair(idx, tot))
                     Handler().postDelayed({
-                        viewModel.pageCountByRendering.value = tot
+                        viewModel.pageCountByRendering.value = tot + 1
                         requireActivity().onBackPressed()
                     }, 1000)
                 }
-            }
+            }, {
+                viewModel.onBackPressed()
+            })
     }
 
     inner class PageHelper {

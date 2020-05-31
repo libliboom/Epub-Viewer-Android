@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!DOCTYPE ncx PUBLIC '-//NISO//DTD ncx 2005-1//EN' 'http://www.daisy.org/z3986/2005/ncx-2005-1.dtd'>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="en">
+  <head>
+    <meta name="dtb:uid" content="http://www.gutenberg.org/2542"/>
+    <meta name="dtb:depth" content="3"/>
+    <meta name="dtb:generator" content="Ebookmaker 0.8.9 by Project Gutenberg"/>
+    <meta name="dtb:totalPageCount" content="0"/>
+    <meta name="dtb:maxPageNumber" content="0"/>
+  </head>
+  <docTitle>
+    <text>A Doll's House : a play</text>
+  </docTitle>
+  <navMap>
+    <navPoint id="np-1" playOrder="1">
+      <navLabel>
+        <text>A DOLL'S HOUSE</text>
+      </navLabel>
+      <content src="@public@vhost@g@gutenberg@html@files@2542@2542-h@2542-h-0.htm.html#pgepubid00000"/>
+      <navPoint id="np-2" playOrder="2">
+        <navLabel>
+          <text>ACT I.</text>
+        </navLabel>
+        <content src="@public@vhost@g@gutenberg@html@files@2542@2542-h@2542-h-0.htm.html#pgepubid00001"/>
+        <navPoint id="np-3" playOrder="3">
+          <navLabel>
+            <text>ACT II.</text>
+          </navLabel>
+          <content src="@public@vhost@g@gutenberg@html@files@2542@2542-h@2542-h-0.htm.html#pgepubid00002"/>
+        </navPoint>
+        <navPoint id="np-4" playOrder="4">
+          <navLabel>
+            <text>ACT III.</text>
+          </navLabel>
+          <content src="@public@vhost@g@gutenberg@html@files@2542@2542-h@2542-h-0.htm.html#pgepubid00003"/>
+        </navPoint>
+        <navPoint id="np-5" playOrder="5">
+          <navLabel>
+            <text>DRAMATIS PERSONAE</text>
+          </navLabel>
+          <content src="@public@vhost@g@gutenberg@html@files@2542@2542-h@2542-h-0.htm.html#pgepubid00004"/>
+        </navPoint>
+      </navPoint>
+    </navPoint>
+    <navPoint id="np-6" playOrder="6">
+      <navLabel>
+        <text>A DOLL'S HOUSE</text>
+      </navLabel>
+      <content src="@public@vhost@g@gutenberg@html@files@2542@2542-h@2542-h-0.htm.html#pgepubid00005"/>
+      <navPoint id="np-7" playOrder="7">
+        <navLabel>
+          <text>ACT I</text>
+        </navLabel>
+        <content src="@public@vhost@g@gutenberg@html@files@2542@2542-h@2542-h-0.htm.html#pgepubid00006"/>
+        <navPoint id="np-8" playOrder="8">
+          <navLabel>
+            <text>ACT II</text>
+          </navLabel>
+          <content src="@public@vhost@g@gutenberg@html@files@2542@2542-h@2542-h-1.htm.html#pgepubid00007"/>
+        </navPoint>
+        <navPoint id="np-9" playOrder="9">
+          <navLabel>
+            <text>ACT III</text>
+          </navLabel>
+          <content src="@public@vhost@g@gutenberg@html@files@2542@2542-h@2542-h-2.htm.html#pgepubid00008"/>
+        </navPoint>
+      </navPoint>
+    </navPoint>
+  </navMap>
+</ncx>

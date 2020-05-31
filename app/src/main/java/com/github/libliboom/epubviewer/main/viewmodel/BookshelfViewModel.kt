@@ -2,12 +2,7 @@ package com.github.libliboom.epubviewer.main.viewmodel
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
-import com.github.libliboom.epubviewer.dev.EPubFileStub.ASSET_EXTRACTED_COVER_FILE_PATH_01
-import com.github.libliboom.epubviewer.dev.EPubFileStub.ASSET_EXTRACTED_COVER_FILE_PATH_02
-import com.github.libliboom.epubviewer.dev.EPubFileStub.ASSET_EXTRACTED_COVER_FILE_PATH_03
-import com.github.libliboom.epubviewer.dev.EPubFileStub.ASSET_EXTRACTED_COVER_FILE_PATH_04
-import com.github.libliboom.epubviewer.dev.EPubFileStub.ASSET_EXTRACTED_COVER_FILE_PATH_05
-import com.github.libliboom.epubviewer.dev.EPubFileStub.BOOKS_PATH
+import com.github.libliboom.epubviewer.dev.EPubFileStub
 import com.github.libliboom.epubviewer.util.file.StorageManager
 import com.github.libliboom.utils.io.FileUtils
 import java.io.File
@@ -22,11 +17,10 @@ class BookshelfViewModel : ViewModel {
     var ePubFiles = listOf<String>()
 
     val coverPaths = listOf(
-        ASSET_EXTRACTED_COVER_FILE_PATH_01,
-        ASSET_EXTRACTED_COVER_FILE_PATH_02,
-        ASSET_EXTRACTED_COVER_FILE_PATH_03,
-        ASSET_EXTRACTED_COVER_FILE_PATH_04,
-        ASSET_EXTRACTED_COVER_FILE_PATH_05
+        EPubFileStub.ASSET_EXTRACTED_COVER_FILE_PATH_01,
+        EPubFileStub.ASSET_EXTRACTED_COVER_FILE_PATH_02,
+        EPubFileStub.ASSET_EXTRACTED_COVER_FILE_PATH_03,
+        EPubFileStub.ASSET_EXTRACTED_COVER_FILE_PATH_04
     )
 
     @Inject
@@ -45,7 +39,7 @@ class BookshelfViewModel : ViewModel {
 
         try {
             for (f in ePubFiles) {
-                val assetsFile = BOOKS_PATH + f
+                val assetsFile = EPubFileStub.BOOKS_PATH + f
                 istream = context.assets.open(assetsFile)
                 ostream = FileOutputStream(File(cachedBooksPath + f))
                 FileUtils.copy(istream, ostream)

@@ -5,11 +5,7 @@ import com.github.libliboom.epub.outline.opf.NavigationControlXml
 
 object EPubUtils {
 
-    const val DELIMITER_NTH = "#"
-
-    fun getContentsSrcFileName(filePath: String): String {
-        return filePath.split("#")[0]
-    }
+    const val DELIMITER_NTH = "#!"
 
     fun getNavMap(ePub: EPub): Map<String, NavigationControlXml.NavPoint> {
         return ePub.opf.ncx.navMap.toMap()

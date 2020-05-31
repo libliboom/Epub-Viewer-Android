@@ -34,7 +34,10 @@ class EPubReaderFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupBottomNavigation()
+        load()
+    }
 
+    private fun load() {
         viewModel.run {
             initEpub(requireContext())
             calcPageCount(requireActivity())
@@ -71,9 +74,14 @@ class EPubReaderFragment : BaseFragment() {
 
         viewModel.currentPageIdx.observe(requireActivity(),
             Observer { idx ->
-                bottom_nv_seek_bar.progress = idx
-                updateCurrentPageInfo()
-                bottom_nv_seek_bar.invalidate()
+                val curPage = idx
+                updatePageInfo(curPage)
+
+                if(SettingsPreference.getViewMode(context)) {
+                    view_pager.setCurrentItem(curPage, false)
+                } else {
+                    bottom_nv_seek_bar.progress = curPage
+                }
             })
 
         RxSeekBar.changeEvents(bottom_nv_seek_bar)
@@ -81,8 +89,13 @@ class EPubReaderFragment : BaseFragment() {
             .subscribe { seekBarChangeEvent ->
                 when (seekBarChangeEvent) {
                     is SeekBarStopChangeEvent -> {
-                        updateCurrentPageInfo()
-                        viewModel.updateChapterIndex(bottom_nv_seek_bar.progress)
+                        val curPage = bottom_nv_seek_bar.progress
+                        updatePageInfo(curPage)
+                        if(SettingsPreference.getViewMode(context)) {
+                            view_pager.setCurrentItem(curPage, false)
+                        } else {
+                            viewModel.loadPageByIndex(requireContext(), web_view, curPage)
+                        }
                     }
                 }
             }
@@ -90,10 +103,14 @@ class EPubReaderFragment : BaseFragment() {
         view_pager.pageSelections()
             .subscribeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
             .subscribe {e ->
-                bottom_nv_seek_bar.progress = e + 1 // based on 1 page
-                tv_page_info.text = "${bottom_nv_seek_bar.progress}/${bottom_nv_seek_bar.max}"
-                viewModel.updateChapterIndex(bottom_nv_seek_bar.progress)
+                val curPage = e
+                bottom_nv_seek_bar.progress = curPage
+                updatePageInfo(curPage)
             }
+    }
+
+    private fun updatePageInfo(curPage: Int) {
+        tv_page_info.text = "${curPage + 1}/${bottom_nv_seek_bar.max}"
     }
 
     private fun updateCurrentPageInfo() {
@@ -102,29 +119,40 @@ class EPubReaderFragment : BaseFragment() {
 
     private fun setupViewPager() {
         view_pager.apply {
-            offscreenPageLimit = 1
-            adapter = PageAdapter(requireContext(), viewModel)
+            offscreenPageLimit = 3
+            //adapter = PageAdapter(requireContext(), viewModel)
+            val pageAdapter = PageAdapter(requireContext(), viewModel)
+            pageAdapter.setHasStableIds(true)
+            adapter = pageAdapter
         }
     }
 
     private fun setupPagination() {
         viewModel.ePub.apply {
             pagination(
-                viewModel.ePub.getFileList(),
+                viewModel.ePub.getSpineList(),
                 viewModel.pageCountByRendering.value!!,
                 viewModel.pages4ChapterByRendering
             )
         }
     }
 
-    fun loadSpecificChapter(idx: Int) {
-        viewModel.loadChapterByChapterIndex(requireContext(), web_view, idx)
+    fun loadSpecificSpine(idx: Int) {
+        viewModel.loadSpineByIndex(requireContext(), web_view, idx)
     }
 
+    fun loadSpecificSpine(path: String) {
+        viewModel.loadChapterByAbsolutePath(requireContext(), web_view, path)
+    }
+
+    // FIXME: 2020/05/31 
     fun reloadCurrentPage() {
-        setPageMode()
+        //load()
+        //setPageMode()
+    }
+
+    fun applyAnimation() {
         setAnimationMode()
-        viewModel.loadPageByPageIndex(requireContext(), web_view, bottom_nv_seek_bar.progress)
     }
 
     private fun setPageMode() {

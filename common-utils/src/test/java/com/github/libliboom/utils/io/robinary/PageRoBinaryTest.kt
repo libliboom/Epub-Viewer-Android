@@ -30,7 +30,7 @@ internal class PageRoBinaryTest {
 
     @Test
     fun getChapterWithNth() {
-        val p = pagination.getChapterWithNth(573)
+        val p = pagination.getSpineWithNth(573)
         println(p)
     }
 

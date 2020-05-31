@@ -74,4 +74,9 @@ object FileUtils {
     private fun convertToPath(file: String): String {
         return if (file.last() == '/') file else "$file/"
     }
+
+    fun getLinkUri(uri: String): String {
+        return uri
+        //return uri.replace("pgepubid","link2HCH")
+    }
 }

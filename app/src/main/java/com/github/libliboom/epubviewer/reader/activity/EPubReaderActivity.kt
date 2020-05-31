@@ -7,6 +7,8 @@ import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.github.libliboom.epubviewer.R
 import com.github.libliboom.epubviewer.main.fragment.ContentsFragment.Companion.EXTRA_INDEX_OF_CHAPTER
+import com.github.libliboom.epubviewer.main.fragment.SettingsFragment.Companion.EXTRA_SETTINGS_ANIMATION_MODE
+import com.github.libliboom.epubviewer.main.fragment.SettingsFragment.Companion.EXTRA_SETTINGS_VIEW_MODE
 import com.github.libliboom.epubviewer.reader.fragment.EPubReaderFragment
 import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel
 import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel.Companion.REQUEST_CODE_CHAPTER
@@ -28,7 +30,7 @@ import javax.inject.Inject
 class EPubReaderActivity : ReaderActivity() {
 
     @Inject
-    lateinit var mEPubReaderFragment: EPubReaderFragment
+    lateinit var ePubReaderFragment: EPubReaderFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +39,7 @@ class EPubReaderActivity : ReaderActivity() {
         updateViewModel()
 
         supportFragmentManager.beginTransaction()
-            .add(R.id.frame_layout_fragment, mEPubReaderFragment)
+            .add(R.id.frame_layout_fragment, ePubReaderFragment)
             .commit()
     }
 
@@ -47,11 +49,14 @@ class EPubReaderActivity : ReaderActivity() {
 
         when (requestCode) {
             REQUEST_CODE_CHAPTER -> {
-                val index = data?.getIntExtra(EXTRA_INDEX_OF_CHAPTER, 0) ?: 0
-                mEPubReaderFragment.loadSpecificChapter(index)
+                val path = data?.getStringExtra(EXTRA_INDEX_OF_CHAPTER)
+                path?.let { ePubReaderFragment.loadSpecificSpine(path) }
             }
             REQUEST_CODE_VIEW_MODE -> {
-                mEPubReaderFragment.reloadCurrentPage()
+                val changed = data?.getBooleanExtra(EXTRA_SETTINGS_VIEW_MODE,false)
+                if (changed == true) ePubReaderFragment.reloadCurrentPage()
+                val effected = data?.getBooleanExtra(EXTRA_SETTINGS_ANIMATION_MODE,false)
+                if (effected == true) ePubReaderFragment.applyAnimation()
             }
         }
     }

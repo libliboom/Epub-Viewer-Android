@@ -58,7 +58,7 @@ class PageRoBinary(private val filelist: List<String>) : BlobRoBinary() {
         return pair
     }
 
-    fun getChapterWithNth(page: Int): Pair<Int, Int> {
+    fun getSpineWithNth(page: Int): Pair<Int, Int> {
         val chapter = findChapter(0, pages4Chapter.size - 1, page)
         val nth = page - pages4Chapter[chapter].second// 'cause base on zero
         return Pair(chapter, nth)
