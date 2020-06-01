@@ -9,6 +9,7 @@ import com.github.libliboom.epubviewer.db.preference.SettingsPreference
 import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel
 import com.github.libliboom.epubviewer.util.file.EPubUtils
 import com.github.libliboom.epubviewer.util.file.EPubUtils.DELIMITER_NTH
+import com.github.libliboom.epubviewer.util.js.Js.setStyle
 import com.github.libliboom.epubviewer.util.js.Js.callColumns
 import com.github.libliboom.epubviewer.util.js.Js.callLoad
 import com.github.libliboom.epubviewer.util.js.Js.callNth
@@ -40,6 +41,7 @@ class ReaderWebViewClient(private val viewModel: EPubReaderViewModel) : WebViewC
 
     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
         super.onPageStarted(view, parseUri(url!!), favicon)
+        view?.loadUrl(setStyle())
         view?.loadUrl(loadJs())
         view?.loadUrl(getNthJs())
         view?.loadUrl(getHNthJs())

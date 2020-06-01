@@ -16,6 +16,7 @@ import com.github.libliboom.epubviewer.util.js.Js.calcPage4VerticalJs
 import com.github.libliboom.epubviewer.util.js.Js.callColumns
 import com.github.libliboom.epubviewer.util.js.Js.callPageCount
 import com.github.libliboom.epubviewer.util.js.Js.columns4HorizontalJs
+import com.github.libliboom.epubviewer.util.js.Js.setStyle
 import com.github.libliboom.epubviewer.util.js.Js.sumPageCount
 import com.github.libliboom.utils.io.FileUtils
 import io.reactivex.rxjava3.core.Observable
@@ -97,6 +98,7 @@ class RxWebViewWrapper(private val webView: WebView) : ObservableOnSubscribe<Web
         webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
+                view?.loadUrl(setStyle())
                 val pageMode = SettingsPreference.getViewMode(webView.context)
                 if (pageMode) {
                     view?.run {
