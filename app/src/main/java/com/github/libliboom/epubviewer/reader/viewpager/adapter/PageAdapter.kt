@@ -52,7 +52,10 @@ class PageAdapter(
                         if (nth == "null") return
                         if (pNth == nth.toInt()) return
                         val newNth = ceil(nth.toDouble()).toInt()
-                        viewModel.updatePageIndex(context, url, newNth)
+                        viewModel.run {
+                            unlockPaging()
+                            updatePageIndex(context, url, newNth)
+                        }
                         pNth = nth.toInt()
                     }
                 })

@@ -27,6 +27,7 @@ class EPubReaderViewModel : ViewModel {
     var currentPageIdx = MutableLiveData(0)
     // TODO: 2020/05/27 Wrap it up as class later
     var pageCountByRendering = MutableLiveData(0)
+    var pageLock = true
 
     val pages4ChapterByRendering = mutableListOf<Pair<Int, Int>>()
 
@@ -150,6 +151,10 @@ class EPubReaderViewModel : ViewModel {
         val path = getSpinePath(context, currentSpineIdx)
         val p = ePub.pagination.getPageOfChapter(FileUtils.getFileName(path))
         loadPage(webView, path, 0)
+    }
+
+    fun unlockPaging() {
+        pageLock = false
     }
 
     fun updatePageIndex(context: Context, url: String, nth: Int) {

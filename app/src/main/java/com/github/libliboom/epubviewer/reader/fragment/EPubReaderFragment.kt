@@ -1,6 +1,5 @@
 package com.github.libliboom.epubviewer.reader.fragment
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -30,7 +29,6 @@ class EPubReaderFragment : BaseFragment() {
 
     override fun getLayoutId() = R.layout.fragment_epub_reader
 
-    @SuppressLint("CheckResult")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupBottomNavigation()
@@ -63,7 +61,6 @@ class EPubReaderFragment : BaseFragment() {
         }
     }
 
-    @SuppressLint("CheckResult")
     private fun setupSeekBar() {
         bottom_nv_seek_bar.apply {
             progress = 1 // based on 1 page
@@ -74,6 +71,8 @@ class EPubReaderFragment : BaseFragment() {
 
         viewModel.currentPageIdx.observe(requireActivity(),
             Observer { idx ->
+                if (lockedPaging(idx)) return@Observer
+
                 val curPage = idx
                 updatePageInfo(curPage)
 
@@ -108,6 +107,8 @@ class EPubReaderFragment : BaseFragment() {
                 updatePageInfo(curPage)
             }
     }
+
+    private fun lockedPaging(idx: Int?) = idx != 0 && viewModel.pageLock
 
     private fun updatePageInfo(curPage: Int) {
         tv_page_info.text = "${curPage + 1}/${bottom_nv_seek_bar.max}"
