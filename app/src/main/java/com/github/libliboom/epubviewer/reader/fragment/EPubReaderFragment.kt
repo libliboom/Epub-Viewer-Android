@@ -1,16 +1,20 @@
 package com.github.libliboom.epubviewer.reader.fragment
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import android.widget.Toast
+import androidx.core.view.get
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.github.libliboom.epubviewer.R
 import com.github.libliboom.epubviewer.base.BaseFragment
 import com.github.libliboom.epubviewer.db.preference.SettingsPreference
-import com.github.libliboom.epubviewer.reader.viewpager.adapter.PageAdapter
+import com.github.libliboom.epubviewer.reader.view.ReaderWebView
 import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel
+import com.github.libliboom.epubviewer.reader.viewpager.adapter.PageAdapter
 import com.jakewharton.rxbinding2.widget.RxSeekBar
 import com.jakewharton.rxbinding2.widget.SeekBarStopChangeEvent
 import com.jakewharton.rxbinding4.viewpager2.pageSelections
@@ -19,7 +23,7 @@ import kotlinx.android.synthetic.main.fragment_epub_reader.bottom_nv_reader
 import kotlinx.android.synthetic.main.fragment_epub_reader.bottom_nv_seek_bar
 import kotlinx.android.synthetic.main.fragment_epub_reader.tv_page_info
 import kotlinx.android.synthetic.main.fragment_epub_reader.view_pager
-import kotlinx.android.synthetic.main.item_web_view.web_view
+import kotlinx.android.synthetic.main.item_web_view.view.web_view
 
 class EPubReaderFragment : BaseFragment() {
 
@@ -37,8 +41,10 @@ class EPubReaderFragment : BaseFragment() {
 
     private fun load() {
         viewModel.run {
+            viewModel.pageLock = true
+            initDatabase(requireContext(), requireActivity())
             initEpub(requireContext())
-            calcPageCount(requireActivity())
+            calcPageIfNotCached()
             pageCountByRendering.observe(requireActivity(),
                 Observer {
                     setPageMode()
@@ -47,6 +53,14 @@ class EPubReaderFragment : BaseFragment() {
                     setupPagination()
                 })
         }
+    }
+
+    private fun EPubReaderViewModel.calcPageIfNotCached() {
+        Handler().postDelayed({
+            if (!cached(requireContext())) {
+                calcPageCount(requireActivity())
+            }
+        }, 100)
     }
 
     private fun setupBottomNavigation() {
@@ -93,7 +107,8 @@ class EPubReaderFragment : BaseFragment() {
                         if(SettingsPreference.getViewMode(context)) {
                             view_pager.setCurrentItem(curPage, false)
                         } else {
-                            viewModel.loadPageByIndex(requireContext(), web_view, curPage)
+                            val webView = getCurrentWebView()
+                            webView?.let { viewModel.loadPageByIndex(requireContext(), it, curPage) }
                         }
                     }
                 }
@@ -101,11 +116,15 @@ class EPubReaderFragment : BaseFragment() {
 
         view_pager.pageSelections()
             .subscribeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
-            .subscribe {e ->
+            .subscribe { e ->
                 val curPage = e
                 bottom_nv_seek_bar.progress = curPage
                 updatePageInfo(curPage)
             }
+    }
+
+    private fun getCurrentWebView(): ReaderWebView? {
+        return (view_pager[0] as RecyclerView).findViewHolderForAdapterPosition(view_pager.currentItem)?.itemView?.web_view
     }
 
     private fun lockedPaging(idx: Int?) = idx != 0 && viewModel.pageLock
@@ -121,7 +140,6 @@ class EPubReaderFragment : BaseFragment() {
     private fun setupViewPager() {
         view_pager.apply {
             offscreenPageLimit = 3
-            //adapter = PageAdapter(requireContext(), viewModel)
             val pageAdapter = PageAdapter(requireContext(), viewModel)
             pageAdapter.setHasStableIds(true)
             adapter = pageAdapter
@@ -139,17 +157,24 @@ class EPubReaderFragment : BaseFragment() {
     }
 
     fun loadSpecificSpine(idx: Int) {
-        viewModel.loadSpineByIndex(requireContext(), web_view, idx)
+        val webView = getCurrentWebView()
+        if (webView != null) {
+            viewModel.loadSpineByIndex(requireContext(), webView, idx)
+        }
     }
 
     fun loadSpecificSpine(path: String) {
-        viewModel.loadChapterByAbsolutePath(requireContext(), web_view, path)
+        val webView = getCurrentWebView()
+        if (webView != null) {
+            viewModel.loadChapterByAbsolutePath(requireContext(), webView, path)
+        }
     }
 
-    // FIXME: 2020/05/31 
     fun reloadCurrentPage() {
-        //load()
-        //setPageMode()
+        setPageMode()
+        if (!viewModel.cached(requireContext())) {
+            load()
+        }
     }
 
     fun applyAnimation() {

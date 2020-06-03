@@ -9,7 +9,6 @@ import com.github.libliboom.epubviewer.db.preference.SettingsPreference
 import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel
 import com.github.libliboom.epubviewer.util.file.EPubUtils
 import com.github.libliboom.epubviewer.util.file.EPubUtils.DELIMITER_NTH
-import com.github.libliboom.epubviewer.util.js.Js.setStyle
 import com.github.libliboom.epubviewer.util.js.Js.callColumns
 import com.github.libliboom.epubviewer.util.js.Js.callLoad
 import com.github.libliboom.epubviewer.util.js.Js.callNth
@@ -17,6 +16,7 @@ import com.github.libliboom.epubviewer.util.js.Js.columns4HorizontalJs
 import com.github.libliboom.epubviewer.util.js.Js.getHNthJs
 import com.github.libliboom.epubviewer.util.js.Js.getNthJs
 import com.github.libliboom.epubviewer.util.js.Js.loadJs
+import com.github.libliboom.epubviewer.util.js.Js.setStyle
 import java8.util.stream.StreamSupport
 
 // REFACTORING: 2020/05/18 init with dagger
@@ -49,6 +49,7 @@ class ReaderWebViewClient(private val viewModel: EPubReaderViewModel) : WebViewC
 
     override fun onPageFinished(view: WebView?, url: String?) {
         super.onPageFinished(view, parseUri(url!!))
+        view?.loadUrl(setStyle())
 
         if (SettingsPreference.getViewMode(view?.context)) {
             setHorizontalMode(view, url)

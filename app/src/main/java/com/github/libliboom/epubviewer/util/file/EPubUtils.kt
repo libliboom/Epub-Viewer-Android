@@ -27,6 +27,10 @@ object EPubUtils {
         return ePub.opf.oebpsPath
     }
 
+    fun getMode(mode: Boolean): String {
+        return if (mode) "horizontal" else "vertical"
+    }
+
     fun getCustomHead(): String {
         return "<head>\n"+
             "<style type=\"text/css\">\n" +

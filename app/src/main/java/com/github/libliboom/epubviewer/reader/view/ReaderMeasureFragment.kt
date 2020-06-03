@@ -10,7 +10,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.github.libliboom.epubviewer.R
 import com.github.libliboom.epubviewer.base.BaseFragment
 import com.github.libliboom.epubviewer.db.preference.SettingsPreference
+import com.github.libliboom.epubviewer.db.room.Book
 import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel
+import com.github.libliboom.epubviewer.util.file.EPubUtils
 import com.github.libliboom.epubviewer.util.js.Js.calcPage4HorizontalJs
 import com.github.libliboom.epubviewer.util.js.Js.calcPage4VerticalJs
 import com.github.libliboom.epubviewer.util.js.Js.callColumns
@@ -25,6 +27,7 @@ import io.reactivex.rxjava3.core.ObservableOnSubscribe
 import java8.util.stream.StreamSupport
 import kotlinx.android.synthetic.main.fragment_reader_meaure.spinner
 import kotlinx.android.synthetic.main.fragment_reader_meaure.web_view_measure
+import org.json.JSONObject
 
 class ReaderMeasureFragment : BaseFragment() {
 
@@ -64,12 +67,22 @@ class ReaderMeasureFragment : BaseFragment() {
                     viewModel.pages4ChapterByRendering.add(Pair(idx, tot))
                     Handler().postDelayed({
                         viewModel.pageCountByRendering.value = tot + 1
+                        insertBook()
                         requireActivity().onBackPressed()
                     }, 1000)
                 }
             }, {
                 viewModel.onBackPressed()
             })
+    }
+
+    private fun insertBook() {
+        val m = EPubUtils.getMode(SettingsPreference.getViewMode(context))
+        val map = viewModel.pages4ChapterByRendering
+            .map { it.first.toString() to it.second.toString() }.toMap()
+        val jsonMap = JSONObject(map).toString()
+        val filename = arguments?.getString(ARGS_FILE_NAME)!!
+        viewModel.insert(Book("$filename-$m", "${tot + 1}", jsonMap))
     }
 
     inner class PageHelper {
@@ -81,10 +94,12 @@ class ReaderMeasureFragment : BaseFragment() {
 
     companion object {
         const val ARGS_FILE_LIST = "contents_file_list"
+        const val ARGS_FILE_NAME = "file_name"
 
-        fun newInstance(files: ArrayList<String>): ReaderMeasureFragment {
+        fun newInstance(files: ArrayList<String>, filename: String): ReaderMeasureFragment {
             val args = Bundle()
             args.putStringArrayList(ARGS_FILE_LIST, files)
+            args.putString(ARGS_FILE_NAME, filename)
 
             val fragment = ReaderMeasureFragment()
             fragment.arguments = args

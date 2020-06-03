@@ -5,11 +5,19 @@ import android.content.Context
 import android.view.View
 import android.webkit.WebView
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.github.libliboom.epub.EPub
 import com.github.libliboom.epub.outline.opf.NavigationControlXml
 import com.github.libliboom.epubviewer.R
+import com.github.libliboom.epubviewer.db.preference.SettingsPreference
+import com.github.libliboom.epubviewer.db.room.Book
+import com.github.libliboom.epubviewer.db.room.BookRepository
+import com.github.libliboom.epubviewer.db.room.BookRoomDatabase
 import com.github.libliboom.epubviewer.dev.EPubFileStub.EXTRACTED_EPUB_FILE_PATH
 import com.github.libliboom.epubviewer.main.activity.ContentsActivity
 import com.github.libliboom.epubviewer.main.activity.SettingsActivity
@@ -20,16 +28,18 @@ import com.github.libliboom.epubviewer.util.ui.TranslationUtils
 import com.github.libliboom.utils.io.FileUtils
 import com.github.libliboom.utils.io.robinary.PageRoBinary.Companion.PAGE_CHAR_SIZE
 import com.github.libliboom.utils.parser.HtmlParser
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class EPubReaderViewModel : ViewModel {
+class EPubReaderViewModel : ViewModel, LifecycleObserver {
 
     var currentPageIdx = MutableLiveData(0)
     // TODO: 2020/05/27 Wrap it up as class later
     var pageCountByRendering = MutableLiveData(0)
     var pageLock = true
-
-    val pages4ChapterByRendering = mutableListOf<Pair<Int, Int>>()
+    var pages4ChapterByRendering = mutableListOf<Pair<Int, Int>>()
 
     lateinit var ePub: EPub
     lateinit var ePubFilePath: String
@@ -42,6 +52,9 @@ class EPubReaderViewModel : ViewModel {
     private var currentChapterIdx = 0
     private var currentSpineIdx = 0
     private var chapterSize = 0
+
+    private lateinit var repository: BookRepository
+    private lateinit var allBooks: LiveData<List<Book>>
 
     @Inject
     constructor()
@@ -59,6 +72,43 @@ class EPubReaderViewModel : ViewModel {
         activity.startActivityForResult(
             SettingsActivity.newIntent(activity), REQUEST_CODE_VIEW_MODE
         )
+    }
+
+    fun cached(context: Context): Boolean {
+        allBooks.value?.let {
+            for (book in allBooks.value!!.iterator()) {
+                val m = EPubUtils.getMode(SettingsPreference.getViewMode(context))
+                if (book.config == "${getFileName()}-$m") {
+                    val gson = Gson()
+                    val mapType = object : TypeToken<Map<Int, Int>>() {}.type
+                    var tutorialMap: Map<Int, Int> = gson.fromJson(book.chapters, mapType)
+                    pages4ChapterByRendering = tutorialMap.toList().toMutableList()
+                    pageCountByRendering.value = book.page.toInt()
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    fun initDatabase(context: Context, activity: FragmentActivity) {
+        val bookDao = BookRoomDatabase.getDatabase(context, viewModelScope).bookDao()
+        repository = BookRepository(bookDao)
+        insert(Book("", "", "")) // workaround
+        allBooks = repository.allBooks
+        allBooks.observe(activity, Observer{})
+    }
+
+    fun insert(book: Book) = viewModelScope.launch {
+        repository.insert(book)
+    }
+
+    fun delete(book: Book) = viewModelScope.launch {
+        repository.delete(book)
+    }
+
+    private fun getFileName(): String {
+        return ePubFilePath.split(".")[0]
     }
 
     fun initEpub(context: Context) {
@@ -81,7 +131,7 @@ class EPubReaderViewModel : ViewModel {
         }
 
         activity.supportFragmentManager.beginTransaction()
-            .add(R.id.frame_layout_fragment, ReaderMeasureFragment.newInstance(filelist))
+            .add(R.id.frame_layout_fragment, ReaderMeasureFragment.newInstance(filelist, getFileName()))
             .addToBackStack(null)
             .commit()
     }
@@ -149,7 +199,11 @@ class EPubReaderViewModel : ViewModel {
     fun loadSpineByIndex(context: Context, webView: WebView, idx: Int) {
         currentSpineIdx = adjustmentSpine(idx)
         val path = getSpinePath(context, currentSpineIdx)
-        val p = ePub.pagination.getPageOfChapter(FileUtils.getFileName(path))
+        loadPage(webView, path, 0)
+    }
+
+    fun loadCurrentSpine(context: Context, webView: WebView) {
+        val path = getSpinePath(context, currentSpineIdx)
         loadPage(webView, path, 0)
     }
 
