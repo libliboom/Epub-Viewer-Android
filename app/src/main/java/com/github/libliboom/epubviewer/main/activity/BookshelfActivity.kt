@@ -19,7 +19,7 @@ class BookshelfActivity : BaseActivity() {
         viewModel.initResources(applicationContext)
 
         supportFragmentManager.beginTransaction()
-            .add(R.id.frame_layout_fragment, BookshelfFragment.newInstance())
+            .add(R.id.reader_frame_layout, BookshelfFragment.newInstance())
             .commit()
     }
 

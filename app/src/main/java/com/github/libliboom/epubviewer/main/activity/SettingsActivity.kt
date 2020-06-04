@@ -19,7 +19,7 @@ class SettingsActivity : ReaderActivity() {
         updateTitle(getString(R.string.er_toolbar_title_settings))
 
         supportFragmentManager.beginTransaction()
-            .add(R.id.frame_layout_fragment, fragment)
+            .add(R.id.reader_frame_layout, fragment)
             .commit()
     }
 

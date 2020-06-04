@@ -8,9 +8,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.RequestManager
 import com.github.libliboom.epubviewer.R
 import com.github.libliboom.epubviewer.base.BaseFragment
+import com.github.libliboom.epubviewer.databinding.FragmentContentsBinding
 import com.github.libliboom.epubviewer.main.recycler.adapter.ContentsAdapter
-import kotlinx.android.synthetic.main.fragment_contents.iv_contents
-import kotlinx.android.synthetic.main.fragment_contents.rv_contents
 import javax.inject.Inject
 
 class ContentsFragment : BaseFragment() {
@@ -20,6 +19,10 @@ class ContentsFragment : BaseFragment() {
 
     @Inject
     lateinit var requestManager: RequestManager
+
+    private val binding: FragmentContentsBinding by lazy {
+        getBinding() as FragmentContentsBinding
+    }
 
     private lateinit var contentsList: ArrayList<String>
     private lateinit var srcs: ArrayList<String>
@@ -38,7 +41,7 @@ class ContentsFragment : BaseFragment() {
         arguments?.getString(ARGS_COVER)?.let {
             requestManager
                 .load(it)
-                .into(iv_contents)
+                .into(binding.contentsIvCover)
         }
     }
 
@@ -58,7 +61,7 @@ class ContentsFragment : BaseFragment() {
     }
 
     private fun initRecyclerView() {
-        rv_contents.apply {
+        binding.contentsRvChapters.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = contentsAdapter
         }

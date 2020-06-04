@@ -19,7 +19,7 @@ class ContentsActivity : ReaderActivity() {
         val srcs = intent.getStringArrayListExtra(EXTRA_SRCS)
 
         supportFragmentManager.beginTransaction()
-            .add(R.id.frame_layout_fragment, ContentsFragment.newInstance(cover, chapters, srcs))
+            .add(R.id.reader_frame_layout, ContentsFragment.newInstance(cover, chapters, srcs))
             .commit()
     }
 

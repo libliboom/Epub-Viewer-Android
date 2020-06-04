@@ -39,7 +39,7 @@ class EPubReaderActivity : ReaderActivity() {
         updateViewModel()
 
         supportFragmentManager.beginTransaction()
-            .add(R.id.frame_layout_fragment, ePubReaderFragment)
+            .add(R.id.reader_frame_layout, ePubReaderFragment)
             .commit()
     }
 

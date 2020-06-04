@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.github.libliboom.epubviewer.R
 import com.github.libliboom.epubviewer.base.BaseFragment
+import com.github.libliboom.epubviewer.databinding.FragmentBookshelfBinding
 import com.github.libliboom.epubviewer.main.recycler.adapter.BookListAdapter
 import com.github.libliboom.epubviewer.main.viewmodel.BookshelfViewModel
 import com.github.libliboom.epubviewer.reader.activity.EPubReaderActivity
@@ -22,6 +23,10 @@ class BookshelfFragment : BaseFragment() {
 
     @Inject
     lateinit var requestManager: RequestManager
+
+    private val binding: FragmentBookshelfBinding by lazy {
+        getBinding() as FragmentBookshelfBinding
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

@@ -9,6 +9,7 @@ import android.webkit.WebViewClient
 import androidx.lifecycle.ViewModelProvider
 import com.github.libliboom.epubviewer.R
 import com.github.libliboom.epubviewer.base.BaseFragment
+import com.github.libliboom.epubviewer.databinding.FragmentReaderMeaureBinding
 import com.github.libliboom.epubviewer.db.preference.SettingsPreference
 import com.github.libliboom.epubviewer.db.room.Book
 import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel
@@ -25,14 +26,16 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableEmitter
 import io.reactivex.rxjava3.core.ObservableOnSubscribe
 import java8.util.stream.StreamSupport
-import kotlinx.android.synthetic.main.fragment_reader_meaure.spinner
-import kotlinx.android.synthetic.main.fragment_reader_meaure.web_view_measure
 import org.json.JSONObject
 
 class ReaderMeasureFragment : BaseFragment() {
 
     private val viewModel: EPubReaderViewModel by lazy {
         ViewModelProvider(requireActivity(), factory).get(EPubReaderViewModel::class.java)
+    }
+
+    private val binding: FragmentReaderMeaureBinding by lazy {
+        getBinding() as FragmentReaderMeaureBinding
     }
 
     override fun getLayoutId() = R.layout.fragment_reader_meaure
@@ -43,7 +46,7 @@ class ReaderMeasureFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        spinner.visibility = View.VISIBLE
+        binding.measureSpinner.visibility = View.VISIBLE
 
         val f = arguments?.getStringArrayList(ARGS_FILE_LIST)!!
         val filelist = StreamSupport.stream(f)
@@ -51,17 +54,19 @@ class ReaderMeasureFragment : BaseFragment() {
             .distinct()
             .toArray()
 
-        web_view_measure.settings.javaScriptEnabled = true
-        web_view_measure.addJavascriptInterface(PageHelper(), "Android")
+        binding.measureWebView.apply {
+            settings.javaScriptEnabled = true
+            addJavascriptInterface(PageHelper(), "Android")
+        }
 
         var idx = 0
         val len = filelist.size - 1
-        web_view_measure.loadUrl(FileUtils.getFileUri(filelist[0] as String))
-        Observable.create(RxWebViewWrapper(web_view_measure))
+        binding.measureWebView.loadUrl(FileUtils.getFileUri(filelist[0] as String))
+        Observable.create(RxWebViewWrapper(binding.measureWebView))
             .doOnError({})
             .subscribe({
                 if (idx++ < len) {
-                    web_view_measure.loadUrl(FileUtils.getFileUri(filelist[idx] as String))
+                    binding.measureWebView.loadUrl(FileUtils.getFileUri(filelist[idx] as String))
                     viewModel.pages4ChapterByRendering.add(Pair(idx, tot))
                 } else {
                     viewModel.pages4ChapterByRendering.add(Pair(idx, tot))
