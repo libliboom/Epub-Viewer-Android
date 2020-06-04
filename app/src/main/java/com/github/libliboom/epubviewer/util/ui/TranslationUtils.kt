@@ -14,7 +14,6 @@ object TranslationUtils {
             when {
                 position < -1 -> {
                     page.alpha = 0f
-
                 }
                 position <= 0 -> {
                     page.apply {
@@ -29,7 +28,6 @@ object TranslationUtils {
                         pivotX = 0f
                         rotationY = 90 * abs(position)
                     }
-
                 }
                 else -> {
                     page.alpha = 0f
@@ -61,17 +59,14 @@ object TranslationUtils {
             when {
                 position < -1 -> {
                     page.alpha = 0f
-
                 }
                 position <= 0 -> {
                     page.alpha = 1f
                     page.rotation = 360 * (1 - abs(position))
-
                 }
                 position <= 1 -> {
                     page.alpha = 1f
-                    page.rotation = -360 * (1 - Math.abs(position))
-
+                    page.rotation = -360 * (1 - abs(position))
                 }
                 else -> {
                     page.alpha = 0f
@@ -87,19 +82,16 @@ object TranslationUtils {
             when {
                 position < -1 -> {
                     page.alpha = 0f
-
                 }
                 position <= 0 -> {
                     page.alpha = 1f
                     page.pivotX = 0f
                     page.rotationY = 90 * abs(position)
-
                 }
                 position <= 1 -> {
                     page.alpha = 1f
                     page.pivotX = page.width.toFloat()
                     page.rotationY = -90 * abs(position)
-
                 }
                 else -> {
                     page.alpha = 0f

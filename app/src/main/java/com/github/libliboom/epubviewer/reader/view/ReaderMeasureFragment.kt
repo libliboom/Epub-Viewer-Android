@@ -63,22 +63,28 @@ class ReaderMeasureFragment : BaseFragment() {
         val len = filelist.size - 1
         binding.measureWebView.loadUrl(FileUtils.getFileUri(filelist[0] as String))
         Observable.create(RxWebViewWrapper(binding.measureWebView))
-            .doOnError({})
-            .subscribe({
-                if (idx++ < len) {
-                    binding.measureWebView.loadUrl(FileUtils.getFileUri(filelist[idx] as String))
-                    viewModel.pages4ChapterByRendering.add(Pair(idx, tot))
-                } else {
-                    viewModel.pages4ChapterByRendering.add(Pair(idx, tot))
-                    Handler().postDelayed({
-                        viewModel.pageCountByRendering.value = tot + 1
-                        insertBook()
-                        requireActivity().onBackPressed()
-                    }, 1000)
+            .doOnError {}
+            .subscribe(
+                {
+                    if (idx++ < len) {
+                        binding.measureWebView.loadUrl(FileUtils.getFileUri(filelist[idx] as String))
+                        viewModel.pages4ChapterByRendering.add(Pair(idx, tot))
+                    } else {
+                        viewModel.pages4ChapterByRendering.add(Pair(idx, tot))
+                        Handler().postDelayed(
+                            {
+                                viewModel.pageCountByRendering.value = tot + 1
+                                insertBook()
+                                requireActivity().onBackPressed()
+                            },
+                            1000
+                        )
+                    }
+                },
+                {
+                    viewModel.onBackPressed()
                 }
-            }, {
-                viewModel.onBackPressed()
-            })
+            )
     }
 
     private fun insertBook() {

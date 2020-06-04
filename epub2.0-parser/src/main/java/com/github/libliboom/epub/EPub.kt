@@ -44,14 +44,14 @@ class EPub(filePath: String, decompressedPath: String) {
             initOpenContainerFormat()
             decompress()
             initOpenPackageFormat()
-            //initPagination()
+            // initPagination()
         } catch (e: Exception) {
             e.printStackTrace()
         }
         return this
     }
 
-    fun pagination(filelist: List<String>, a: Int,  b: MutableList<Pair<Int, Int>>) {
+    fun pagination(filelist: List<String>, a: Int, b: MutableList<Pair<Int, Int>>) {
         pagination = PageRoBinary(filelist, a, b)
     }
 

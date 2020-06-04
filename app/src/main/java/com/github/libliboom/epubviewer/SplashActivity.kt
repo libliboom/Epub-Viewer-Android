@@ -16,9 +16,12 @@ class SplashActivity : AppCompatActivity() {
 
         val delayMillis: Long = if (BuildConfig.DEBUG) 0 else 2000
 
-        Handler().postDelayed({
-            startActivity(BookshelfActivity.newIntent(applicationContext))
-            finish()
-        }, delayMillis)
+        Handler().postDelayed(
+            {
+                startActivity(BookshelfActivity.newIntent(applicationContext))
+                finish()
+            },
+            delayMillis
+        )
     }
 }

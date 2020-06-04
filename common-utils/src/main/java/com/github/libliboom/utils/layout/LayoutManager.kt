@@ -22,14 +22,14 @@ object LayoutManager {
             if (parser.isShorterThanCharSize(filename, idx, PAGE_LINE_SIZE, PAGE_CHAR_SIZE)) {
                 val cur = parser.parseSegmentByRange(filename, idx, PAGE_LINE_SIZE).first
                 val c = parser.parseSegmentByRange(filename, idx, PAGE_LINE_SIZE).second
-                if (cur == before) break;
+                if (cur == before) break
                 chunks.add(c)
                 idx = cur
                 before = idx
             } else {
                 val cur = parser.parseTextBySize(filename, idx, PAGE_CHAR_SIZE).first
                 val c = parser.parseTextBySize(filename, idx, PAGE_CHAR_SIZE).second
-                if (cur == before) break;
+                if (cur == before) break
                 chunks.add(c)
                 idx = cur
             }

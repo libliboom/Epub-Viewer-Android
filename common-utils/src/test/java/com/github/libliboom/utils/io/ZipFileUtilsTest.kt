@@ -42,7 +42,7 @@ internal class ZipFileUtilsTest {
     }
 
     companion object {
-        private val filename = CONTENT_OPF_FILE_PATH
+        private const val filename = CONTENT_OPF_FILE_PATH
         private lateinit var ePubFile: String
         private lateinit var destFilePath: String
 

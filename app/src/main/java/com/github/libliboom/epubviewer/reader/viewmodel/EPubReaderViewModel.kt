@@ -96,7 +96,7 @@ class EPubReaderViewModel : ViewModel, LifecycleObserver {
         repository = BookRepository(bookDao)
         insert(Book("", "", "")) // workaround
         allBooks = repository.allBooks
-        allBooks.observe(activity, Observer{})
+        allBooks.observe(activity, Observer {})
     }
 
     fun insert(book: Book) = viewModelScope.launch {
@@ -138,7 +138,7 @@ class EPubReaderViewModel : ViewModel, LifecycleObserver {
 
     // FIXME: 2020/05/31 on loading contents
     fun onBackPressed() {
-        //hostActivity.onBackPressed()
+        // hostActivity.onBackPressed()
     }
 
     fun getPageCount(): MutableLiveData<Int> {

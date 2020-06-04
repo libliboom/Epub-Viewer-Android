@@ -127,23 +127,24 @@ internal class HtmlParserTest {
         if (sourceUrlString.indexOf(':') == -1) sourceUrlString = "file:$sourceUrlString"
         MicrosoftConditionalCommentTagTypes.register()
         PHPTagTypes.register()
-        PHPTagTypes.PHP_SHORT.deregister() // remove PHP short tags for this example otherwise they override processing instructions
+        // remove PHP short tags for this example otherwise they override processing instructions
+        PHPTagTypes.PHP_SHORT.deregister()
 
         MasonTagTypes.register()
         val source = Source(URL(sourceUrlString))
-        val elementList: List<Element> = source.getAllElements()
+        val elementList: List<Element> = source.allElements
         for (element in elementList) {
             println("-------------------------------------------------------------------------------")
-            System.out.println(element.getDebugInfo())
-            if (element.getAttributes() != null) System.out.println(
+            println(element.debugInfo)
+            if (element.attributes != null) println(
                 """
-                    XHTML StartTag:
-                    ${element.getStartTag().tidy(true)}
-                    """.trimIndent()
+                XHTML StartTag:
+                ${element.startTag.tidy(true)}
+                """.trimIndent()
             )
             println("Source text with content:\n$element")
         }
-        System.out.println(source.getCacheDebugInfo())
+        println(source.cacheDebugInfo)
     }
 
     private fun findSpecificTags(filename: String) {
@@ -161,12 +162,16 @@ internal class HtmlParserTest {
         println("XML Processing instructions:")
         displaySegments(source.getAllTags(StartTagType.XML_PROCESSING_INSTRUCTION))
 
-        PHPTagTypes.register() // register PHPTagTypes after searching for XML processing instructions, otherwise PHP short tags override them.
+        // register PHPTagTypes after searching for XML processing instructions,
+        // otherwise PHP short tags override them.
+        PHPTagTypes.register()
 
-        StartTagType.XML_DECLARATION.deregister() // deregister XML declarations so they are recognised as PHP short tags, consistent with the real PHP parser.
+        // deregister XML declarations so they are recognised as PHP short tags,
+        // consistent with the real PHP parser.
+        StartTagType.XML_DECLARATION.deregister()
 
-        source =
-            Source(source) // have to create a new Source object after changing tag type registrations otherwise cache might contain tags found with previous configuration.
+        // have to create a new Source object after changing tag type registrations otherwise cache might contain tags found with previous configuration.
+        source = Source(source)
 
         println("##################### PHP tag types now added to register #####################\n")
 
@@ -175,7 +180,6 @@ internal class HtmlParserTest {
 
         println("Document Type Declarations:")
         displaySegments(source.getAllTags(StartTagType.DOCTYPE_DECLARATION))
-
 
         println("CDATA sections:")
         displaySegments(source.getAllTags(StartTagType.CDATA_SECTION))
@@ -232,7 +236,8 @@ internal class HtmlParserTest {
         if (sourceUrlString.indexOf(':') == -1) sourceUrlString = "file:$sourceUrlString"
         MicrosoftConditionalCommentTagTypes.register()
         PHPTagTypes.register()
-        PHPTagTypes.PHP_SHORT.deregister() // remove PHP short tags for this example otherwise they override processing instructions
+        // remove PHP short tags for this example otherwise they override processing instructions
+        PHPTagTypes.PHP_SHORT.deregister()
 
         MasonTagTypes.register()
         val source =
@@ -268,13 +273,17 @@ internal class HtmlParserTest {
         println("\nAll text from file (exluding content inside SCRIPT and STYLE elements):\n")
         println(source.textExtractor.setIncludeAttributes(true).toString())
 
-        println("\nSame again but this time extend the TextExtractor class to also exclude text from P elements and any elements with class=\"control\":\n")
+        println(
+            "\nSame again but this time extend the TextExtractor class to also exclude text " +
+                "from P elements and any elements with class=\"control\":\n"
+        )
         val textExtractor: TextExtractor = object : TextExtractor(source) {
             override fun excludeElement(startTag: StartTag): Boolean {
                 return startTag.name === HTMLElementName.P || "control".equals(
                     startTag.getAttributeValue(
                         "class"
-                    ), ignoreCase = true
+                    ),
+                    ignoreCase = true
                 )
             }
         }
@@ -296,7 +305,8 @@ internal class HtmlParserTest {
         while (pos < source.length) {
             val startTag =
                 source.getNextStartTag(pos, "name", key, false) ?: return null
-            if (startTag.name === HTMLElementName.META) return startTag.getAttributeValue("content") // Attribute values are automatically decoded
+            // Attribute values are automatically decoded
+            if (startTag.name === HTMLElementName.META) return startTag.getAttributeValue("content")
             pos = startTag.end
         }
         return null
@@ -315,7 +325,7 @@ internal class HtmlParserTest {
         var sourceUrlString = filename
         if (sourceUrlString.indexOf(':') === -1) sourceUrlString = "file:$sourceUrlString"
         println("\nSource URL:")
-        System.out.println(sourceUrlString)
+        println(sourceUrlString)
         val url = URL(sourceUrlString)
         val source = Source(url)
         println("\nDocument Title:")
@@ -333,8 +343,8 @@ internal class HtmlParserTest {
     private fun displaySegments(segments: List<Segment?>) {
         for (segment in segments) {
             println("-------------------------------------------------------------------------------")
-            System.out.println(segment?.getDebugInfo())
-            System.out.println(segment)
+            println(segment?.debugInfo)
+            println(segment)
         }
         println("\n*******************************************************************************\n")
     }

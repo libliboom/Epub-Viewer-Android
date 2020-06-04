@@ -2,7 +2,6 @@ package com.github.libliboom.epub
 
 import com.github.libliboom.utils.const.Resource
 import com.github.libliboom.utils.io.FileUtils
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -21,7 +20,5 @@ internal class EPubTest {
 
     @Test
     fun givenEPubFile_whenOpenRequest_thenInitializeIt() {
-
     }
-
 }

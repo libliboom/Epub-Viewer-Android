@@ -45,6 +45,5 @@ internal class XmlParserTest {
             instance = XmlParser()
             filename = FileUtils.getOutputDir() + CONTAINER_FILE_PATH
         }
-
     }
 }

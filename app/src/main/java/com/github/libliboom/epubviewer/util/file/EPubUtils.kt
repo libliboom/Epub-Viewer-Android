@@ -32,7 +32,7 @@ object EPubUtils {
     }
 
     fun getCustomHead(): String {
-        return "<head>\n"+
+        return "<head>\n" +
             "<style type=\"text/css\">\n" +
             "@font-face {\n" +
             "    font-family: MyFont;\n" +

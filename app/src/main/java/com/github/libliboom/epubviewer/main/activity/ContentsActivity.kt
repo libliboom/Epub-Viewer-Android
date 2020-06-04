@@ -29,10 +29,12 @@ class ContentsActivity : ReaderActivity() {
         private const val EXTRA_SRCS = "extra_srcs"
         private const val EXTRA_TITLE_DEFAULT = "No title"
 
-        fun newIntent(context: Context,
-                      cover: String,
-                      chapters: ArrayList<String>,
-                      srcs: ArrayList<String>): Intent {
+        fun newIntent(
+            context: Context,
+            cover: String,
+            chapters: ArrayList<String>,
+            srcs: ArrayList<String>
+        ): Intent {
             val intent = Intent(context, ContentsActivity::class.java)
             intent.putExtra(EXTRA_COVER, cover)
             intent.putStringArrayListExtra(EXTRA_CHAPTERS, chapters)

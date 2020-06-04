@@ -80,9 +80,11 @@ class ContentsFragment : BaseFragment() {
         const val ARGS_SRC_LIST = "contents_src_list"
         const val EXTRA_INDEX_OF_CHAPTER = "com.github.libliboom.epubviewer.main.fragment.index_of_chapter"
 
-        fun newInstance(cover: String,
-                        chapters: ArrayList<String>,
-                        srcs: ArrayList<String>): ContentsFragment {
+        fun newInstance(
+            cover: String,
+            chapters: ArrayList<String>,
+            srcs: ArrayList<String>
+        ): ContentsFragment {
             val args = Bundle()
             args.putString(ARGS_COVER, cover)
             args.putStringArrayList(ARGS_CHAPTERS_LIST, chapters)

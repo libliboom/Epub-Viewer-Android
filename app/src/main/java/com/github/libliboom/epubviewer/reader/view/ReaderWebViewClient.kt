@@ -68,7 +68,7 @@ class ReaderWebViewClient(private val viewModel: EPubReaderViewModel) : WebViewC
             } else {
                 evaluateJavascript(callColumns()) {
                     view?.evaluateJavascript(callNth()) { n ->
-                        val nth = n.toInt() - 1  // workaround
+                        val nth = n.toInt() - 1 // workaround
                         viewModel.updatePageIndex(view.context, url, nth)
                     }
                 }
@@ -103,7 +103,7 @@ class ReaderWebViewClient(private val viewModel: EPubReaderViewModel) : WebViewC
     }
 
     private fun loadChapter(view: WebView, url: String) {
-        viewModel.run{
+        viewModel.run {
             updateChapterIndex(url)
             loadChapterByUrl(view.context, view, url)
         }

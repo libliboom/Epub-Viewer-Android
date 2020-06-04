@@ -32,12 +32,12 @@ class PageAdapter(
             val pageMode = SettingsPreference.getViewMode(context)
             if (pageMode) {
                 isScrollContainer = false
-                setOnTouchListener { _, event ->  event.action == MotionEvent.ACTION_MOVE }
+                setOnTouchListener { _, event -> event.action == MotionEvent.ACTION_MOVE }
                 // based on page
                 viewModel.loadPageByIndex(context, holder.itemView.web_view, position)
             } else {
                 isScrollContainer = true
-                setOnTouchListener { _, _ ->  false }
+                setOnTouchListener { _, _ -> false }
                 setOnScrollChangedCallback(object : ReaderWebView.OnScrollChangedCallback {
                     override fun onScrolledToTop() {
                         viewModel.loadPreviousSpine(context, holder.itemView.web_view)
@@ -60,7 +60,7 @@ class PageAdapter(
                     }
                 })
 
-                //base on spine
+                // base on spine
                 viewModel.loadSpineByIndex(context, holder.itemView.web_view, position)
             }
         }

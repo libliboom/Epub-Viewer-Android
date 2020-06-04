@@ -11,8 +11,8 @@ import com.github.libliboom.epubviewer.base.di.reader.ReaderViewModelModule
 import com.github.libliboom.epubviewer.main.activity.BookshelfActivity
 import com.github.libliboom.epubviewer.main.activity.ContentsActivity
 import com.github.libliboom.epubviewer.main.activity.SettingsActivity
-import com.github.libliboom.epubviewer.reader.activity.ReaderActivity
 import com.github.libliboom.epubviewer.reader.activity.EPubReaderActivity
+import com.github.libliboom.epubviewer.reader.activity.ReaderActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
@@ -20,8 +20,11 @@ import dagger.android.ContributesAndroidInjector
 abstract class ActivityBuilderModule {
 
     @BookshelfScope
-    @ContributesAndroidInjector(modules = [
-        BookshelfModule::class, BookshelfViewModelModule::class, BookshelfFragmentBuilderModule::class])
+    @ContributesAndroidInjector(
+        modules = [
+            BookshelfModule::class, BookshelfViewModelModule::class, BookshelfFragmentBuilderModule::class
+        ]
+    )
     abstract fun contributeBookshelfActivity(): BookshelfActivity
 
     @ReaderScope
@@ -29,17 +32,26 @@ abstract class ActivityBuilderModule {
     abstract fun contributeReaderActivity(): ReaderActivity
 
     @ReaderScope
-    @ContributesAndroidInjector(modules = [
-        ReaderModule::class, ReaderViewModelModule::class, ReaderFragmentBuilderModule::class])
+    @ContributesAndroidInjector(
+        modules = [
+            ReaderModule::class, ReaderViewModelModule::class, ReaderFragmentBuilderModule::class
+        ]
+    )
     abstract fun contributeEPubReaderActivity(): EPubReaderActivity
 
     @ReaderScope
-    @ContributesAndroidInjector(modules = [
-        ReaderModule::class, ReaderViewModelModule::class, ReaderFragmentBuilderModule::class])
+    @ContributesAndroidInjector(
+        modules = [
+            ReaderModule::class, ReaderViewModelModule::class, ReaderFragmentBuilderModule::class
+        ]
+    )
     abstract fun contributeContentsActivity(): ContentsActivity
 
     @ReaderScope
-    @ContributesAndroidInjector(modules = [
-        ReaderModule::class, ReaderViewModelModule::class, ReaderFragmentBuilderModule::class])
+    @ContributesAndroidInjector(
+        modules = [
+            ReaderModule::class, ReaderViewModelModule::class, ReaderFragmentBuilderModule::class
+        ]
+    )
     abstract fun contributeSettingsActivity(): SettingsActivity
 }

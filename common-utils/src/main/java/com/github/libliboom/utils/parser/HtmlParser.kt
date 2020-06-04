@@ -22,7 +22,8 @@ class HtmlParser {
             if (!e.name.startsWith("dc:")) continue
             contents.add(
                 StringBuilder().append(e.name.substring(3))
-                    .append(":").append(e.content.toString()).toString())
+                    .append(":").append(e.content.toString()).toString()
+            )
         }
 
         return contents

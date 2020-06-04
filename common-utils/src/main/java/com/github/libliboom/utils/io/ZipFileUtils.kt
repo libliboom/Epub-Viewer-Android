@@ -11,7 +11,7 @@ import java.util.Enumeration
 object ZipFileUtils {
 
     fun findFiles(zipFilePath: String, condition: (String) -> (Boolean)): List<String> {
-        var filelist = mutableListOf<String>()
+        val filelist = mutableListOf<String>()
         ZipFile(zipFilePath).entries.run {
             while (hasMoreElements()) {
                 val entry = nextElement()

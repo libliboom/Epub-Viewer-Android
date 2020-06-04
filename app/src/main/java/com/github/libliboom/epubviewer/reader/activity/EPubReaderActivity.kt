@@ -53,9 +53,9 @@ class EPubReaderActivity : ReaderActivity() {
                 path?.let { ePubReaderFragment.loadSpecificSpine(path) }
             }
             REQUEST_CODE_VIEW_MODE -> {
-                val changed = data?.getBooleanExtra(EXTRA_SETTINGS_VIEW_MODE,false)
+                val changed = data?.getBooleanExtra(EXTRA_SETTINGS_VIEW_MODE, false)
                 if (changed == true) ePubReaderFragment.reloadCurrentPage()
-                val effected = data?.getBooleanExtra(EXTRA_SETTINGS_ANIMATION_MODE,false)
+                val effected = data?.getBooleanExtra(EXTRA_SETTINGS_ANIMATION_MODE, false)
                 if (effected == true) ePubReaderFragment.applyAnimation()
             }
         }
