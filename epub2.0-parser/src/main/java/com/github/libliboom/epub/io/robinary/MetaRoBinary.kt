@@ -16,9 +16,7 @@ import java.io.RandomAccessFile
  * - register meta information with key-value
  * - without unregister meta information
  */
-class MetaRoBinary(filePath: String) : RoBinary() {
-
-    private val path: String = filePath
+class MetaRoBinary(private val filePath: String) : RoBinary() {
 
     private val file: RandomAccessFile = RandomAccessFile(filePath, "r")
 
@@ -32,9 +30,7 @@ class MetaRoBinary(filePath: String) : RoBinary() {
         registerOpf()
     }
 
-    fun getBytes(key: String): ByteArray {
-        return attributes.get(key) ?: ByteArray(0)
-    }
+    fun getBytes(key: String) = attributes[key] ?: ByteArray(0)
 
     private fun registerMagicNumber() {
         registerByteArray(MAGIC_NUMBER, 0, 2)
@@ -52,17 +48,18 @@ class MetaRoBinary(filePath: String) : RoBinary() {
     }
 
     private fun registerContainer() {
-        val filelist = ZipFileUtils.findFiles(path) { it.contains(FILE_OF_CONTAINER) }
+        val filelist = ZipFileUtils.findFiles(filePath) { it.contains(FILE_OF_CONTAINER) }
         registerByteArray(META_INF_CONTAINER, filelist[0].toByteArray())
         takeIf { getBytes(META_INF_CONTAINER) == null }?.let { throw Exception("ERROR: INVALID META_INF_CONTAINER") }
     }
 
     private fun registerOpf() {
-        val filelist = ZipFileUtils.findFiles(path) { it.contains(".$OPF") }
+        val filelist = ZipFileUtils.findFiles(filePath) { it.contains(".$OPF") }
         registerByteArray(OPF, filelist[0].toByteArray())
         takeIf { getBytes(OPF) == null }?.let { throw Exception("ERROR: INVALID OPF") }
     }
 
+    // REVIEW: 2020/06/05 Exception
     private fun registerByteArray(key: String, from: Int, to: Int) {
         val len = to - from
         var bytes = ByteArray(len)

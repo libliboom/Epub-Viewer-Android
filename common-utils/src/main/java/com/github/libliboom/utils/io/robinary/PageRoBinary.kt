@@ -1,10 +1,5 @@
 package com.github.libliboom.utils.io.robinary
 
-import com.github.libliboom.utils.layout.LayoutManager
-import com.github.libliboom.utils.parser.HtmlParser
-
-// TODO: 2020/05/23  change it to be based on memory
-// LATER: 2020/05/19 based on file or else
 class PageRoBinary(private val filelist: List<String>) : BlobRoBinary() {
 
     var pageCount = 0
@@ -12,38 +7,9 @@ class PageRoBinary(private val filelist: List<String>) : BlobRoBinary() {
 
     private val pages4Contents = mutableMapOf<Int, String>()
 
-    init {
-        // calculatePage()
-    }
-
     constructor(filelist: List<String>, a: Int, b: MutableList<Pair<Int, Int>>) : this(filelist) {
         pageCount = a
         pages4Chapter = b
-    }
-
-    private fun calculatePage() {
-        var sum = 0
-
-        val parser = HtmlParser()
-        for ((idx, f) in filelist.withIndex()) {
-            pages4Chapter.add(Pair(idx, sum))
-
-            if (idx == 0) {
-                for (chunk in LayoutManager.chunked(f)) {
-                    pages4Contents[sum++] = chunk
-                }
-            } else {
-                val s = parser.parseText(f)
-                for (chunk in s.chunked(PAGE_CHAR_SIZE)) {
-                    pages4Contents[sum++] = chunk
-                }
-            }
-        }
-        pageCount = sum
-    }
-
-    fun getContentsOfPage(pageNumber: Int): String {
-        return pages4Contents[pageNumber]!!
     }
 
     fun getPageOfChapter(filename: String): Pair<Int, Int> {
@@ -87,10 +53,5 @@ class PageRoBinary(private val filelist: List<String>) : BlobRoBinary() {
         }
 
         return l
-    }
-
-    companion object {
-        const val PAGE_CHAR_SIZE = 850
-        const val PAGE_LINE_SIZE = 15
     }
 }

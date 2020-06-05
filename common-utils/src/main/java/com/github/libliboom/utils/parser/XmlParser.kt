@@ -11,10 +11,6 @@ class XmlParser {
         parser.parse(path, handler)
     }
 
-    /**
-     * read all element and attribute
-     * @TODO implement it for validation
-     */
     fun read(path: String) {
         val reader = SAXReader()
         val doc = reader.read(path)

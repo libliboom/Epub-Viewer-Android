@@ -17,8 +17,8 @@ class NavigationControlXml(ncxPath: String) {
     }
 
     private fun registerNavigationMap(ncxPath: String) {
-        val map = HtmlParser().parseNavMap(ncxPath, TAG_NAV_POINT)
         val gson = Gson()
+        val map = HtmlParser().parseNavMap(ncxPath, TAG_NAV_POINT)
         for (point in map) {
             val navPoint = gson.fromJson(point.value, NavPoint::class.java)
             navMap[navPoint.playOrder] = navPoint

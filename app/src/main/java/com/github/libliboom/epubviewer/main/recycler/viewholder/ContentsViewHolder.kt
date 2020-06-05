@@ -21,9 +21,9 @@ class ContentsViewHolder(private val view: View) : BaseViewHolder(view) {
     }
 
     private fun getClickObservable(): Observable<String> {
-        return Observable.create { e ->
+        return Observable.create { event ->
             view.tv_contents_item.setOnClickListener {
-                e.onNext(view.tv_srcs_item.text.toString())
+                event.onNext(view.tv_srcs_item.text.toString())
             }
         }
     }

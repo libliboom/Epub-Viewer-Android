@@ -2,6 +2,7 @@ package com.github.libliboom.epubviewer.reader.viewmodel
 
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import android.view.View
 import android.webkit.WebView
 import androidx.fragment.app.FragmentActivity
@@ -26,11 +27,11 @@ import com.github.libliboom.epubviewer.util.file.EPubUtils
 import com.github.libliboom.epubviewer.util.file.StorageManager
 import com.github.libliboom.epubviewer.util.ui.TranslationUtils
 import com.github.libliboom.utils.io.FileUtils
-import com.github.libliboom.utils.io.robinary.PageRoBinary.Companion.PAGE_CHAR_SIZE
 import com.github.libliboom.utils.parser.HtmlParser
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 class EPubReaderViewModel : ViewModel, LifecycleObserver {
@@ -38,7 +39,7 @@ class EPubReaderViewModel : ViewModel, LifecycleObserver {
     var currentPageIdx = MutableLiveData(0)
     // TODO: 2020/05/27 Wrap it up as class later
     var pageCountByRendering = MutableLiveData(0)
-    var pageLock = true
+    var pageLock = false
     var pages4ChapterByRendering = mutableListOf<Pair<Int, Int>>()
 
     lateinit var ePub: EPub
@@ -46,9 +47,9 @@ class EPubReaderViewModel : ViewModel, LifecycleObserver {
     lateinit var hostActivity: FragmentActivity
 
     private val chapters = mutableListOf<String>()
-    private var spines = mutableListOf<String>()
     private val decompressedRootPath = EXTRACTED_EPUB_FILE_PATH
 
+    private var spines = mutableListOf<String>()
     private var currentChapterIdx = 0
     private var currentSpineIdx = 0
     private var chapterSize = 0
@@ -78,7 +79,7 @@ class EPubReaderViewModel : ViewModel, LifecycleObserver {
         allBooks.value?.let {
             for (book in allBooks.value!!.iterator()) {
                 val m = EPubUtils.getMode(SettingsPreference.getViewMode(context))
-                if (book.config == "${getFileName()}-$m") {
+                if (book.config == "${FileUtils.getFileName(ePubFilePath)}-$m") {
                     val gson = Gson()
                     val mapType = object : TypeToken<Map<Int, Int>>() {}.type
                     var tutorialMap: Map<Int, Int> = gson.fromJson(book.chapters, mapType)
@@ -107,15 +108,11 @@ class EPubReaderViewModel : ViewModel, LifecycleObserver {
         repository.delete(book)
     }
 
-    private fun getFileName(): String {
-        return ePubFilePath.split(".")[0]
-    }
-
     fun initEpub(context: Context) {
         val booksPath = StorageManager.getBooksPath(context)
         val ePath = booksPath + ePubFilePath
         val extractedPath = StorageManager.getExtractedPath(context)
-        val dPath = extractedPath + FileUtils.getFileName(ePubFilePath)
+        val dPath = extractedPath + FileUtils.getFileNameFromUri(ePubFilePath) + File.separator
 
         ePub = EPub(ePath, dPath).load()
         initChapter(ePub)
@@ -131,7 +128,8 @@ class EPubReaderViewModel : ViewModel, LifecycleObserver {
         }
 
         activity.supportFragmentManager.beginTransaction()
-            .add(R.id.reader_frame_layout, ReaderMeasureFragment.newInstance(filelist, getFileName()))
+            .add(R.id.reader_frame_layout, ReaderMeasureFragment.newInstance(
+                filelist, FileUtils.getFileName(ePubFilePath)))
             .addToBackStack(null)
             .commit()
     }
@@ -141,9 +139,7 @@ class EPubReaderViewModel : ViewModel, LifecycleObserver {
         // hostActivity.onBackPressed()
     }
 
-    fun getPageCount(): MutableLiveData<Int> {
-        return pageCountByRendering
-    }
+    fun getPageCount() = pageCountByRendering
 
     fun updateChapterIndex(url: String) {
         val navMap = EPubUtils.getNavMap(ePub)
@@ -163,13 +159,15 @@ class EPubReaderViewModel : ViewModel, LifecycleObserver {
     }
 
     fun getEffect(n: Int): (page: View, position: Float) -> Unit {
-        return when (n) {
-            1 -> TranslationUtils.effectNone()
-            2 -> TranslationUtils.effectCubeOutDepth()
-            3 -> TranslationUtils.effectZoomOutPageEffect()
-            4 -> TranslationUtils.effectGeo()
-            5 -> TranslationUtils.effectFadeOut()
-            else -> TranslationUtils.effectNone()
+        return TranslationUtils.run {
+            when (n) {
+                EFFECT_NONE -> effectNone()
+                EFFECT_CUBE_OUT_DEPTH -> effectCubeOutDepth()
+                EFFECT_ZOOM_OUT_PAGE -> effectZoomOutPageEffect()
+                EFFECT_GEO -> effectGeo()
+                EFFECT_FADE_OUT -> effectFadeOut()
+                else -> effectNone()
+            }
         }
     }
 
@@ -181,7 +179,7 @@ class EPubReaderViewModel : ViewModel, LifecycleObserver {
 
     fun loadChapterByUrl(context: Context, webView: WebView, url: String) {
         val path = FileUtils.removeFileUri(url)
-        val p = ePub.pagination.getPageOfChapter(FileUtils.getFileName(path))
+        val p = ePub.pagination.getPageOfChapter(FileUtils.getFileNameFromUri(path))
         currentPageIdx.value = p.second
         loadPageByIndex(context, webView, p.second)
     }
@@ -203,6 +201,7 @@ class EPubReaderViewModel : ViewModel, LifecycleObserver {
     }
 
     fun loadCurrentSpine(context: Context, webView: WebView) {
+        Log.d("DEV", "current: $currentSpineIdx")
         val path = getSpinePath(context, currentSpineIdx)
         loadPage(webView, path, 0)
     }
@@ -212,10 +211,10 @@ class EPubReaderViewModel : ViewModel, LifecycleObserver {
     }
 
     fun updatePageIndex(context: Context, url: String, nth: Int) {
-        val spine = FileUtils.getFileName(FileUtils.removeFileUri(url)).split("/OEBPS/")[1]
+        val spine = FileUtils.getFileNameFromUri(FileUtils.removeFileUri(url)).split("/OEBPS/")[1]
         val idx = getSpineIndex(spine)
         val path = getSpinePath(context, idx)
-        val p = ePub.pagination.getPageOfChapter(FileUtils.getFileName(path))
+        val p = ePub.pagination.getPageOfChapter(FileUtils.getFileNameFromUri(path))
         currentSpineIdx = idx
         currentPageIdx.value = p.second + nth
     }
@@ -252,19 +251,6 @@ class EPubReaderViewModel : ViewModel, LifecycleObserver {
         }
 
         return 0
-    }
-
-    private fun getPoints(nth: Int, body: String): Pair<Int, Int> {
-        var start = nth * PAGE_CHAR_SIZE
-        var end = (nth + 1) * PAGE_CHAR_SIZE
-
-        // FIXME: 2020/05/20 this is workaround for boundary condition
-        if (end > body.length) {
-            start = (nth - 1) * PAGE_CHAR_SIZE
-            end = body.length
-        }
-
-        return Pair(start, end)
     }
 
     private fun fetchChapters(ncx: NavigationControlXml): ArrayList<String> {
@@ -318,7 +304,7 @@ class EPubReaderViewModel : ViewModel, LifecycleObserver {
     private fun initSpines() {
         val list = mutableListOf<String>()
         for (f in chapters) {
-            list.add(FileUtils.getFileName(f))
+            list.add(FileUtils.getFileNameFromUri(f))
         }
         spines = list.distinct().toMutableList()
     }

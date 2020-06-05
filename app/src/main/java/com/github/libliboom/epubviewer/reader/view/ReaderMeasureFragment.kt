@@ -50,7 +50,7 @@ class ReaderMeasureFragment : BaseFragment() {
 
         val f = arguments?.getStringArrayList(ARGS_FILE_LIST)!!
         val filelist = StreamSupport.stream(f)
-            .map { f -> FileUtils.getFileName(f) }
+            .map { file -> FileUtils.getFileNameFromUri(file) }
             .distinct()
             .toArray()
 
@@ -61,6 +61,7 @@ class ReaderMeasureFragment : BaseFragment() {
 
         var idx = 0
         val len = filelist.size - 1
+        // REVIEW: 2020/06/05 Hot observable
         binding.measureWebView.loadUrl(FileUtils.getFileUri(filelist[0] as String))
         Observable.create(RxWebViewWrapper(binding.measureWebView))
             .doOnError {}

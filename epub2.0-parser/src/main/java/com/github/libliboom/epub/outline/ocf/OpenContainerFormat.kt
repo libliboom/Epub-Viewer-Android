@@ -10,33 +10,17 @@ import com.github.libliboom.epub.io.robinary.MetaRoBinary
 /**
  * OCF stand for Open Container Format.
  */
-class OpenContainerFormat(meta: MetaRoBinary) {
+class OpenContainerFormat(private val meta: MetaRoBinary) {
 
-    private val meta = meta
+    fun validateFormat() = validateMIME() && validateContainer() && validateOpf()
 
-    /**
-     * Check if those exist the following list.
-     * - mimetype
-     * - META_INF/container.xml
-     * - OEBPS/Expectations.opf
-     */
-    fun validateFormat(): Boolean {
-        return validateMIME() && validateContainer() && validateOpf()
-    }
+    private fun validateMIME() = VALUE_OF_MIME == meta.getBytes(MIME).toString(Charsets.UTF_8)
 
-    private fun validateMIME(): Boolean {
-        return VALUE_OF_MIME == meta.getBytes(MIME).toString(Charsets.UTF_8)
-    }
-
-    private fun validateContainer(): Boolean {
-        return meta.getBytes(META_INF_CONTAINER)
+    private fun validateContainer() = meta.getBytes(META_INF_CONTAINER)
             .toString(Charsets.UTF_8)
             .contains(FILE_OF_CONTAINER)
-    }
 
-    private fun validateOpf(): Boolean {
-        return meta.getBytes(OPF)
+    private fun validateOpf() = meta.getBytes(OPF)
             .toString(Charsets.UTF_8)
             .contains(OPF)
-    }
 }

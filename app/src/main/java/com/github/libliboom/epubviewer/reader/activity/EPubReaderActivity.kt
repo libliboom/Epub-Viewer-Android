@@ -15,18 +15,6 @@ import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel.Comp
 import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel.Companion.REQUEST_CODE_VIEW_MODE
 import javax.inject.Inject
 
-/**
- * Option for reading book vertically
- * - scroll event
- *      [x] go to next, previous page
- *      [x] load new page from top
- *      [ ] progress bar
- *      [ ] cache
- *      [ ] effect
- *      [x] how to handle javascript event
- *      [x] page movement
- *      [ ] find way for internal link
- */
 class EPubReaderActivity : ReaderActivity() {
 
     @Inject

@@ -42,7 +42,6 @@ class EPubReaderFragment : BaseFragment() {
 
     private fun load() {
         viewModel.run {
-            viewModel.pageLock = true
             initDatabase(requireContext(), requireActivity())
             initEpub(requireContext())
             calcPageIfNotCached()
@@ -124,8 +123,7 @@ class EPubReaderFragment : BaseFragment() {
 
         binding.readerViewPager.pageSelections()
             .subscribeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
-            .subscribe { e ->
-                val curPage = e
+            .subscribe { curPage ->
                 binding.readerBottomNvSeekBar.progress = curPage
                 updatePageInfo(curPage)
             }
@@ -194,6 +192,7 @@ class EPubReaderFragment : BaseFragment() {
     private fun setPageMode() {
         binding.readerViewPager.apply {
             val pageMode = SettingsPreference.getViewMode(context)
+            if (!pageMode) viewModel.pageLock = true
             isUserInputEnabled = pageMode
             adapter?.notifyDataSetChanged()
         }

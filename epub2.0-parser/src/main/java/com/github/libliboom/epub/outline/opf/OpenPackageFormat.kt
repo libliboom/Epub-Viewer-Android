@@ -12,19 +12,18 @@ class OpenPackageFormat(meta: MetaRoBinary, decompressedPath: String) {
 
     val oebpsPath = decompressedPath + Resource.OEBPS_FOLDER_NAME + File.separator
 
+    lateinit var ncx: NavigationControlXml
+    lateinit var guide: Guide
+    lateinit var cover: Cover
+
     private val opfPath = decompressedPath + meta.getBytes(OPF).toString(Charsets.UTF_8)
     private val tocNcxPath = decompressedPath + Resource.OEBPS_FOLDER_NAME + File.separator + TOC_NCX_FILE_NAME
-
     private val htmlParser = HtmlParser()
     private val gson = Gson()
 
     private var metadata = listOf<String>()
     private var items = mutableListOf<Item>()
     private var itemRefs = mutableListOf<ItemRef>()
-
-    lateinit var ncx: NavigationControlXml
-    lateinit var guide: Guide
-    lateinit var cover: Cover
 
     init {
         initOpf()

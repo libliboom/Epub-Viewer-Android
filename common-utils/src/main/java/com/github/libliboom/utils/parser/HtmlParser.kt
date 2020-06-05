@@ -8,9 +8,6 @@ import net.htmlparser.jericho.PHPTagTypes
 import net.htmlparser.jericho.Source
 import java.net.URL
 
-/**
- * @TODO Refactoring those functions as generalization.
- */
 class HtmlParser {
 
     fun parseMetadata(filename: String, tag: String = "metadata"): List<String> {
@@ -235,9 +232,11 @@ class HtmlParser {
         return Source(URL(sourceUrlString))
     }
 
+    // REVIEW: 2020/06/05 Extension
     private fun StringBuilder.addJsonElement(key: String, value: String) =
         this.append("\"").append(key).append("\":\"").append(value).append("\"").append(",")
 
+    // REVIEW: 2020/06/05 Extension
     private fun StringBuilder.encloseJson() =
         "{" + this.substring(0, this.length - 1) + "}"
 }

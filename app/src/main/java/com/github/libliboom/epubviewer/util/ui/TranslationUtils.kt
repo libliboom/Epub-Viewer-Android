@@ -5,6 +5,12 @@ import kotlin.math.abs
 
 object TranslationUtils {
 
+    const val EFFECT_NONE = 1
+    const val EFFECT_CUBE_OUT_DEPTH = 2
+    const val EFFECT_ZOOM_OUT_PAGE = 3
+    const val EFFECT_GEO = 4
+    const val EFFECT_FADE_OUT = 5
+
     fun effectNone(): (page: View, position: Float) -> Unit {
         return { _, _ -> null }
     }

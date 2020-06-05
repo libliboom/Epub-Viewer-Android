@@ -25,9 +25,9 @@ class BookListViewHolder(private val view: View) : BaseViewHolder(view) {
     }
 
     private fun getClickObservable(): Observable<Int> {
-        return Observable.create { e ->
+        return Observable.create { event ->
             view.image_view_book.setOnClickListener {
-                e.onNext(adapterPosition)
+                event.onNext(adapterPosition)
             }
         }
     }

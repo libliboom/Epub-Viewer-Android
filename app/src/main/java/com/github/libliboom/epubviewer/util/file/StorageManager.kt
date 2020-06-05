@@ -9,17 +9,11 @@ import java.io.File
  */
 object StorageManager {
 
-    fun getBooksPath(context: Context): String {
-        return getRootDirPath(context) + EPubFileStub.BOOKS_PATH
-    }
+    fun getBooksPath(context: Context) = getRootDirPath(context) + EPubFileStub.BOOKS_PATH
 
-    fun getExtractedPath(context: Context): String {
-        return getRootDirPath(context) + EPubFileStub.EXTRACTED_EPUB_FILE_PATH
-    }
+    fun getExtractedPath(context: Context) = getRootDirPath(context) + EPubFileStub.EXTRACTED_EPUB_FILE_PATH
 
-    fun getCachedPath(context: Context): String {
-        return getRootDirPath(context) + EPubFileStub.EXTRACTED_EPUB_FILE_PATH
-    }
+    fun getCachedPath(context: Context) = getRootDirPath(context) + EPubFileStub.EXTRACTED_EPUB_FILE_PATH
 
     private fun getRootDirPath(context: Context): String {
         val dir = context.externalCacheDir?.path

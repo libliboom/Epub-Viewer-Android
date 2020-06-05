@@ -29,8 +29,8 @@ class ReaderWebViewClient(private val viewModel: EPubReaderViewModel) : WebViewC
         if (isWebProtocol(url)) {
             launchBrowser(url, view)
         } else {
-            val uri = parseUri(url!!)
-            if (url.split("#").size == 2) {
+            val uri = parseUri(url)
+            if (isInternalLink(url)) {
                 view.loadUrl(uri)
             } else {
                 loadChapter(view, uri)
@@ -41,10 +41,12 @@ class ReaderWebViewClient(private val viewModel: EPubReaderViewModel) : WebViewC
 
     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
         super.onPageStarted(view, parseUri(url!!), favicon)
-        view?.loadUrl(setStyle())
-        view?.loadUrl(loadJs())
-        view?.loadUrl(getNthJs())
-        view?.loadUrl(getHNthJs())
+        view?.run {
+            loadUrl(setStyle())
+            loadUrl(loadJs())
+            loadUrl(getNthJs())
+            loadUrl(getHNthJs())
+        }
     }
 
     override fun onPageFinished(view: WebView?, url: String?) {
@@ -63,11 +65,11 @@ class ReaderWebViewClient(private val viewModel: EPubReaderViewModel) : WebViewC
             loadUrl(columns4HorizontalJs())
             if (isTurningPage(url)) {
                 evaluateJavascript(callColumns()) {
-                    scrollTo((parseNth(url!!).toInt()) * getWidth(view), 0)
+                    scrollTo((parseNth(url).toInt()) * getWidth(view), 0)
                 }
             } else {
                 evaluateJavascript(callColumns()) {
-                    view?.evaluateJavascript(callNth()) { n ->
+                    view.evaluateJavascript(callNth()) { n ->
                         val nth = n.toInt() - 1 // workaround
                         viewModel.updatePageIndex(view.context, url, nth)
                     }
@@ -92,9 +94,11 @@ class ReaderWebViewClient(private val viewModel: EPubReaderViewModel) : WebViewC
     private fun isWebProtocol(url: String) = StreamSupport.stream(webProtocols)
         .anyMatch { p -> url.startsWith(p) }
 
-    private fun parseUri(url: String): String = url.split(EPubUtils.DELIMITER_NTH)[0]
+    private fun isInternalLink(url: String) = url.split("#").size == 2
 
-    private fun parseNth(url: String): String = url.split(EPubUtils.DELIMITER_NTH)[1]
+    private fun parseUri(url: String): String = url.split(DELIMITER_NTH)[0]
+
+    private fun parseNth(url: String): String = url.split(DELIMITER_NTH)[1]
 
     private fun launchBrowser(url: String?, view: WebView) {
         val i = Intent(Intent.ACTION_VIEW)

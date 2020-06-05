@@ -17,37 +17,24 @@ import java.io.OutputStream
  */
 object FileUtils {
 
-    fun exist(path: String): Boolean {
-        val f = File(path)
-        return f.exists()
-    }
+    fun exist(path: String) = File(path).exists()
 
-    fun getResourceDir(): String {
-        return getCommonUtilsDir() + RES_FOLDER_NAME + File.separator
-    }
+    fun getResourceDir() = getCommonUtilsDir() + RES_FOLDER_NAME + File.separator
 
-    fun getOutputDir(): String {
-        return getCommonUtilsDir() +
+    fun getOutputDir() = getCommonUtilsDir() +
             OUTPUT_SOURCE_FOLDER_NAME + File.separator +
             OUTPUT_TEST_FOLDER_NAME + File.separator +
             OUTPUT_FOLDER_NAME + File.separator
-    }
 
-    fun getOEBPSDir(): String {
-        return getOutputDir() + OEBPS_FOLDER_NAME + File.separator
-    }
+    fun getOEBPSDir() = getOutputDir() + OEBPS_FOLDER_NAME + File.separator
 
-    fun getFileUri(path: String): String {
-        return "file://$path"
-    }
+    fun getFileUri(path: String) = "file://$path"
 
-    fun removeFileUri(uri: String): String {
-        return uri.split("file://")[1]
-    }
+    fun removeFileUri(uri: String) = uri.split("file://")[1]
 
-    fun getFileName(file: String): String {
-        return file.split("#")[0]
-    }
+    fun getFileNameFromUri(uri: String) = uri.split("#")[0]
+
+    fun getFileName(path: String) = path.split(".")[0]
 
     fun copy(istream: InputStream, ostream: OutputStream) {
         try {
@@ -62,7 +49,7 @@ object FileUtils {
     }
 
     fun getExtractedOebpsPath(extractedPath: String, ePubFilePath: String): String {
-        val filename = getFileName(ePubFilePath)
+        val filename = getFileNameFromUri(ePubFilePath)
         return extractedPath + convertToPath(filename) + OEBPS_PATH
     }
 
@@ -71,12 +58,5 @@ object FileUtils {
         return dir.parent + File.separator + COMMON_UTILS_FOLDER_NAME + File.separator
     }
 
-    private fun convertToPath(file: String): String {
-        return if (file.last() == '/') file else "$file/"
-    }
-
-    fun getLinkUri(uri: String): String {
-        return uri
-        // return uri.replace("pgepubid","link2HCH")
-    }
+    private fun convertToPath(file: String) = if (file.last() == '/') file else "$file/"
 }

@@ -64,9 +64,9 @@ internal class ZipFileUtilsTest {
             }
 
             val arr = filePaths.stream()
-                .filter { p ->
+                .filter { path ->
                     keepFileList.stream()
-                        .noneMatch { f -> p.contains(f) }
+                        .noneMatch { file -> path.contains(file) }
                 }
                 .toArray { size -> arrayOfNulls<String>(size) }
 

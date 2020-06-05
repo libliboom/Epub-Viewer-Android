@@ -24,8 +24,8 @@ internal class PageRoBinaryTest {
     @Test
     fun getPageOfChapter() {
         contentsPaths.stream()
-            .map { s -> pagination.getPageOfChapter(s) }
-            .forEach { p -> println(p) }
+            .map { src -> pagination.getPageOfChapter(src) }
+            .forEach { path -> println(path) }
     }
 
     @Test
@@ -49,9 +49,9 @@ internal class PageRoBinaryTest {
             destFilePath = FileUtils.getOutputDir()
             ZipFileUtils.extract(ePubFile, destFilePath)
 
-            val oepbsPath = FileUtils.getOEBPSDir()
+            val oebpsPath = FileUtils.getOEBPSDir()
             val contentsPaths = mutableListOf<String>()
-            File(oepbsPath).walk().forEach {
+            File(oebpsPath).walk().forEach {
                 if (it.path.contains(".htm.html")) {
                     contentsPaths.add(it.path)
                 }
@@ -71,9 +71,9 @@ internal class PageRoBinaryTest {
             }
 
             val arr = filePaths.stream()
-                .filter { p ->
+                .filter { path ->
                     keepFileList.stream()
-                        .noneMatch { f -> p.contains(f) }
+                        .noneMatch { file -> path.contains(file) }
                 }
                 .toArray { size -> arrayOfNulls<String>(size) }
 

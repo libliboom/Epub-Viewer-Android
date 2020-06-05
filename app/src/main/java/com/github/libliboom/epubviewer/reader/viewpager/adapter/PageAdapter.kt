@@ -1,6 +1,7 @@
 package com.github.libliboom.epubviewer.reader.viewpager.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.MotionEvent
 import android.view.ViewGroup
 import android.webkit.WebView
@@ -19,6 +20,7 @@ class PageAdapter(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        // TODO: 2020/06/05 move it to application level to enable only on debug mode
         WebView.setWebContentsDebuggingEnabled(true)
         val holder = PageViewHolder(parent)
         holder.setIsRecyclable(false)
@@ -51,12 +53,12 @@ class PageAdapter(
                     override fun onUpdatePage(nth: String) {
                         if (nth == "null") return
                         if (pNth == nth.toInt()) return
+                        pNth = nth.toInt()
                         val newNth = ceil(nth.toDouble()).toInt()
                         viewModel.run {
                             unlockPaging()
                             updatePageIndex(context, url, newNth)
                         }
-                        pNth = nth.toInt()
                     }
                 })
 
@@ -66,11 +68,7 @@ class PageAdapter(
         }
     }
 
-    override fun getItemId(position: Int): Long {
-        return position * 10L
-    }
+    override fun getItemId(position: Int) = position * 10L
 
-    override fun getItemCount(): Int {
-        return viewModel.getPageCount().value!!
-    }
+    override fun getItemCount() = viewModel.getPageCount().value!!
 }
