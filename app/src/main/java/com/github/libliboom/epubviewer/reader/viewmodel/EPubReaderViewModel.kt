@@ -128,8 +128,12 @@ class EPubReaderViewModel : ViewModel, LifecycleObserver {
         }
 
         activity.supportFragmentManager.beginTransaction()
-            .add(R.id.reader_frame_layout, ReaderMeasureFragment.newInstance(
-                filelist, FileUtils.getFileName(ePubFilePath)))
+            .add(
+                R.id.reader_frame_layout,
+                ReaderMeasureFragment.newInstance(
+                    filelist, FileUtils.getFileName(ePubFilePath)
+                )
+            )
             .addToBackStack(null)
             .commit()
     }

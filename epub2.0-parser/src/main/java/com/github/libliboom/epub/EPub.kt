@@ -20,7 +20,7 @@ import com.github.libliboom.utils.io.robinary.PageRoBinary
 
 // TODO: 2020/05/27 Tidy up legacy code for layoutManager
 class EPub(private val filePath: String, private val decompressedPath: String) {
-    
+
     lateinit var pagination: PageRoBinary
     lateinit var ocf: OpenContainerFormat
     lateinit var opf: OpenPackageFormat

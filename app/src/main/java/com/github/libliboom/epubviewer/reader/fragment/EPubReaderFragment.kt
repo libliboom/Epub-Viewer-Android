@@ -142,7 +142,7 @@ class EPubReaderFragment : BaseFragment() {
     }
 
     private fun updateCurrentPageInfo() {
-        binding.readerViewPager.setCurrentItem(binding.readerBottomNvSeekBar.progress!!, false)
+        binding.readerViewPager.setCurrentItem(binding.readerBottomNvSeekBar.progress, false)
     }
 
     private fun setupViewPager() {

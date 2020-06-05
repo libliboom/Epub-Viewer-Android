@@ -22,9 +22,9 @@ object FileUtils {
     fun getResourceDir() = getCommonUtilsDir() + RES_FOLDER_NAME + File.separator
 
     fun getOutputDir() = getCommonUtilsDir() +
-            OUTPUT_SOURCE_FOLDER_NAME + File.separator +
-            OUTPUT_TEST_FOLDER_NAME + File.separator +
-            OUTPUT_FOLDER_NAME + File.separator
+        OUTPUT_SOURCE_FOLDER_NAME + File.separator +
+        OUTPUT_TEST_FOLDER_NAME + File.separator +
+        OUTPUT_FOLDER_NAME + File.separator
 
     fun getOEBPSDir() = getOutputDir() + OEBPS_FOLDER_NAME + File.separator
 

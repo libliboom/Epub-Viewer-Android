@@ -1,7 +1,6 @@
 package com.github.libliboom.epubviewer.reader.viewpager.adapter
 
 import android.content.Context
-import android.util.Log
 import android.view.MotionEvent
 import android.view.ViewGroup
 import android.webkit.WebView

@@ -17,10 +17,10 @@ class OpenContainerFormat(private val meta: MetaRoBinary) {
     private fun validateMIME() = VALUE_OF_MIME == meta.getBytes(MIME).toString(Charsets.UTF_8)
 
     private fun validateContainer() = meta.getBytes(META_INF_CONTAINER)
-            .toString(Charsets.UTF_8)
-            .contains(FILE_OF_CONTAINER)
+        .toString(Charsets.UTF_8)
+        .contains(FILE_OF_CONTAINER)
 
     private fun validateOpf() = meta.getBytes(OPF)
-            .toString(Charsets.UTF_8)
-            .contains(OPF)
+        .toString(Charsets.UTF_8)
+        .contains(OPF)
 }
