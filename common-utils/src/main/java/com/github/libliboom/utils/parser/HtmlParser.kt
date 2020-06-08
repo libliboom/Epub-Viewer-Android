@@ -16,7 +16,7 @@ class HtmlParser {
 
         val contents = mutableListOf<String>()
         for (e in meta[0].childElements[0].childElements) {
-            if (!e.name.startsWith("dc:")) continue
+            if (e.name.startsWith("dc:").not()) continue
             contents.add(
                 StringBuilder().append(e.name.substring(3))
                     .append(":").append(e.content.toString()).toString()

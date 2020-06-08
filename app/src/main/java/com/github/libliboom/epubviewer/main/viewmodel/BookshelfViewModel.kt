@@ -53,7 +53,7 @@ class BookshelfViewModel : ViewModel {
     private fun createBooksDirIfNotExist(context: Context): String {
         val cachedBooksPath = StorageManager.getBooksPath(context)
         val dir = File(cachedBooksPath)
-        if (!dir.exists()) dir.mkdirs()
+        if (dir.exists().not()) dir.mkdirs()
         return cachedBooksPath
     }
 }

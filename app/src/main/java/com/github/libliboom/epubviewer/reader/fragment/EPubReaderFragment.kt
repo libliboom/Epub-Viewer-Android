@@ -60,7 +60,7 @@ class EPubReaderFragment : BaseFragment() {
     private fun EPubReaderViewModel.calcPageIfNotCached() {
         Handler().postDelayed(
             {
-                if (!cached(requireContext())) {
+                if (cached(requireContext()).not()) {
                     calcPageCount(requireActivity())
                 }
             },
@@ -180,7 +180,7 @@ class EPubReaderFragment : BaseFragment() {
 
     fun reloadCurrentPage() {
         setPageMode()
-        if (!viewModel.cached(requireContext())) {
+        if (viewModel.cached(requireContext()).not()) {
             load()
         }
     }
@@ -192,7 +192,7 @@ class EPubReaderFragment : BaseFragment() {
     private fun setPageMode() {
         binding.readerViewPager.apply {
             val pageMode = SettingsPreference.getViewMode(context)
-            if (!pageMode) viewModel.pageLock = true
+            if (pageMode.not()) viewModel.pageLock = true
             isUserInputEnabled = pageMode
             adapter?.notifyDataSetChanged()
         }

@@ -68,7 +68,7 @@ class EPub(private val filePath: String, private val decompressedPath: String) {
 
     private fun initOpenContainerFormat() {
         ocf = OpenContainerFormat(meta)
-        if (!ocf.validateFormat()) {
+        if (ocf.validateFormat().not()) {
             throw Exception("ERROR: INVALID OCF")
         }
     }
