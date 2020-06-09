@@ -12,7 +12,7 @@ import java.io.OutputStream
 import javax.inject.Inject
 
 // TODO: 2020/05/13 Fetch data form local database
-class BookshelfViewModel : ViewModel {
+class BookshelfViewModel @Inject constructor() : ViewModel() {
 
     var ePubFiles = listOf<String>()
 
@@ -22,9 +22,6 @@ class BookshelfViewModel : ViewModel {
         EPubFileStub.ASSET_EXTRACTED_COVER_FILE_PATH_03,
         EPubFileStub.ASSET_EXTRACTED_COVER_FILE_PATH_04
     )
-
-    @Inject
-    constructor()
 
     fun initResources(context: Context) {
         ePubFiles = context.assets.list("books")?.toList() as List<String>

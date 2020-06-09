@@ -13,11 +13,11 @@ class ContentsAdapter : RecyclerView.Adapter<ContentsViewHolder>() {
 
     private lateinit var cover: String
 
-    private lateinit var contentsList: ArrayList<String>
-    private lateinit var srcs: ArrayList<String>
+    private lateinit var contentsList: List<String>
+    private lateinit var srcs: List<String>
 
     // REFACTORING: 2020/05/18 with dagger
-    fun init(cover: String, contentsList: ArrayList<String>, srcs: ArrayList<String>) {
+    fun init(cover: String, contentsList: List<String>, srcs: List<String>) {
         this.cover = cover
         this.contentsList = contentsList
         this.srcs = srcs

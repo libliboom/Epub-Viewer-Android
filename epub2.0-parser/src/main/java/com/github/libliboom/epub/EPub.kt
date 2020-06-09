@@ -22,9 +22,9 @@ import com.github.libliboom.utils.io.robinary.PageRoBinary
 class EPub(private val filePath: String, private val decompressedPath: String) {
 
     lateinit var pagination: PageRoBinary
-    lateinit var ocf: OpenContainerFormat
     lateinit var opf: OpenPackageFormat
 
+    private lateinit var ocf: OpenContainerFormat
     private lateinit var meta: MetaRoBinary
 
     // REVIEW: 2020/06/05 Exception
@@ -52,7 +52,7 @@ class EPub(private val filePath: String, private val decompressedPath: String) {
         pagination = PageRoBinary(filelist, a, b)
     }
 
-    fun getSpineList(): ArrayList<String> {
+    fun getSpineList(): List<String> {
         val filelist = ArrayList<String>()
         for (src in opf.ncx.navMap.values) {
             filelist += (opf.oebpsPath + src.contentSrc)
@@ -63,7 +63,7 @@ class EPub(private val filePath: String, private val decompressedPath: String) {
             list.add(FileUtils.getFileNameFromUri(f))
         }
 
-        return list.distinct() as ArrayList<String>
+        return list.distinct()
     }
 
     private fun initOpenContainerFormat() {

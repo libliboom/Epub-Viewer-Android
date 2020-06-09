@@ -5,14 +5,10 @@ import androidx.lifecycle.ViewModelProvider
 import javax.inject.Inject
 import javax.inject.Provider
 
-class ViewModelProviderFactory : ViewModelProvider.NewInstanceFactory {
-
+class ViewModelProviderFactory @Inject constructor(
     private var viewModels: MutableMap<Class<out ViewModel>, Provider<ViewModel>>
-
-    @Inject
-    constructor(viewModels: MutableMap<Class<out ViewModel>, Provider<ViewModel>>) {
-        this.viewModels = viewModels
-    }
+) :
+    ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel?> create(kclass: Class<T>): T {
         var viewModel = viewModels[kclass]

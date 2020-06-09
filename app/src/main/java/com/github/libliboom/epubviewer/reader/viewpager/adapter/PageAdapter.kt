@@ -10,6 +10,8 @@ import com.github.libliboom.epubviewer.reader.view.ReaderWebView
 import com.github.libliboom.epubviewer.reader.view.ReaderWebViewClient
 import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel
 import com.github.libliboom.epubviewer.reader.viewpager.viewholder.PageViewHolder
+import com.github.libliboom.epubviewer.util.file.EPubUtils
+import com.github.libliboom.epubviewer.util.file.StorageManager
 import kotlinx.android.synthetic.main.item_web_view.view.web_view
 import kotlin.math.ceil
 
@@ -35,17 +37,27 @@ class PageAdapter(
                 isScrollContainer = false
                 setOnTouchListener { _, event -> event.action == MotionEvent.ACTION_MOVE }
                 // based on page
-                viewModel.loadPageByIndex(context, holder.itemView.web_view, position)
+                val pageInfo = viewModel.loadPageByIndex(
+                    StorageManager.getExtractedPath(context),
+                    position
+                )
+                holder.itemView.web_view.loadUrl(EPubUtils.getUri(pageInfo))
             } else {
                 isScrollContainer = true
                 setOnTouchListener { _, _ -> false }
                 setOnScrollChangedCallback(object : ReaderWebView.OnScrollChangedCallback {
                     override fun onScrolledToTop() {
-                        viewModel.loadPreviousSpine(context, holder.itemView.web_view)
+                        val pageInfo = viewModel.loadPreviousSpine(
+                            StorageManager.getExtractedPath(context)
+                        )
+                        holder.itemView.web_view.loadUrl(EPubUtils.getUri(pageInfo))
                     }
 
                     override fun onScrolledToBottom() {
-                        viewModel.loadNextSpine(context, holder.itemView.web_view)
+                        val pageInfo = viewModel.loadNextSpine(
+                            StorageManager.getExtractedPath(context)
+                        )
+                        holder.itemView.web_view.loadUrl(EPubUtils.getUri(pageInfo))
                     }
 
                     private var pNth = -1
@@ -56,13 +68,20 @@ class PageAdapter(
                         val newNth = ceil(nth.toDouble()).toInt()
                         viewModel.run {
                             unlockPaging()
-                            updatePageIndex(context, url, newNth)
+                            updatePageIndex(
+                                StorageManager.getExtractedPath(context),
+                                url,
+                                newNth
+                            )
                         }
                     }
                 })
 
                 // base on spine
-                viewModel.loadSpineByIndex(context, holder.itemView.web_view, position)
+                val pageInfo = viewModel.loadSpineByIndex(
+                    StorageManager.getExtractedPath(context), position
+                )
+                holder.itemView.web_view.loadUrl(EPubUtils.getUri(pageInfo))
             }
         }
     }

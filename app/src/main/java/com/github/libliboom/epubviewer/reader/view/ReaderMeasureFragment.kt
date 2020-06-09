@@ -48,7 +48,7 @@ class ReaderMeasureFragment : BaseFragment() {
 
         binding.measureSpinner.visibility = View.VISIBLE
 
-        val f = arguments?.getStringArrayList(ARGS_FILE_LIST)!!
+        val f = arguments?.getStringArray(ARGS_FILE_LIST)?.toList() as List<String>
         val filelist = StreamSupport.stream(f)
             .map { file -> FileUtils.getFileNameFromUri(file) }
             .distinct()
@@ -108,9 +108,9 @@ class ReaderMeasureFragment : BaseFragment() {
         const val ARGS_FILE_LIST = "contents_file_list"
         const val ARGS_FILE_NAME = "file_name"
 
-        fun newInstance(files: ArrayList<String>, filename: String): ReaderMeasureFragment {
+        fun newInstance(files: List<String>, filename: String): ReaderMeasureFragment {
             val args = Bundle()
-            args.putStringArrayList(ARGS_FILE_LIST, files)
+            args.putStringArray(ARGS_FILE_LIST, files.toTypedArray())
             args.putString(ARGS_FILE_NAME, filename)
 
             val fragment = ReaderMeasureFragment()

@@ -9,6 +9,3 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation project(path: ':common-utils')
 }
-
-sourceCompatibility = "8"
-targetCompatibility = "8"

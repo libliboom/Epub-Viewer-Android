@@ -7,7 +7,9 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.github.libliboom.epubviewer.db.preference.SettingsPreference
 import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel
+import com.github.libliboom.epubviewer.util.file.EPubUtils
 import com.github.libliboom.epubviewer.util.file.EPubUtils.DELIMITER_NTH
+import com.github.libliboom.epubviewer.util.file.StorageManager
 import com.github.libliboom.epubviewer.util.js.Js.callColumns
 import com.github.libliboom.epubviewer.util.js.Js.callLoad
 import com.github.libliboom.epubviewer.util.js.Js.callNth
@@ -70,7 +72,11 @@ class ReaderWebViewClient(private val viewModel: EPubReaderViewModel) : WebViewC
                 evaluateJavascript(callColumns()) {
                     view.evaluateJavascript(callNth()) { n ->
                         val nth = n.toInt() - 1 // workaround
-                        viewModel.updatePageIndex(view.context, url, nth)
+                        viewModel.updatePageIndex(
+                            StorageManager.getExtractedPath(view.context),
+                            url,
+                            nth
+                        )
                     }
                 }
             }
@@ -81,11 +87,21 @@ class ReaderWebViewClient(private val viewModel: EPubReaderViewModel) : WebViewC
         if (isTurningPage(url)) { // turningSpine
             val nth = parseNth(url)
             view?.evaluateJavascript(callLoad(nth)) {
-                viewModel.updatePageIndex(view.context, url, nth.toInt())
+                viewModel.run {
+                    updatePageIndex(
+                        StorageManager.getExtractedPath(view.context),
+                        url,
+                        nth.toInt()
+                    )
+                }
             }
         } else {
             view?.evaluateJavascript(callNth()) { n ->
-                viewModel.updatePageIndex(view.context, url, n.toInt())
+                viewModel.updatePageIndex(
+                    StorageManager.getExtractedPath(view.context),
+                    url,
+                    n.toInt()
+                )
             }
         }
     }
@@ -108,7 +124,8 @@ class ReaderWebViewClient(private val viewModel: EPubReaderViewModel) : WebViewC
     private fun loadChapter(view: WebView, url: String) {
         viewModel.run {
             updateChapterIndex(url)
-            loadChapterByUrl(view.context, view, url)
+            val pageInfo = loadChapterByUrl(StorageManager.getExtractedPath(view.context), url)
+            view.loadUrl(EPubUtils.getUri(pageInfo))
         }
     }
 
