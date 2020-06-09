@@ -27,7 +27,7 @@ class BookshelfViewModel : ViewModel {
     constructor()
 
     fun initResources(context: Context) {
-        ePubFiles = context.assets.list("books/")?.toList() as List<String>
+        ePubFiles = context.assets.list("books")?.toList() as List<String>
         forceInitialization(context)
     }
 
