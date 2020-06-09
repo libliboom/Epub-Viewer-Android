@@ -34,35 +34,30 @@ class MetaRoBinary(private val filePath: String) : RoBinary() {
 
     private fun registerMagicNumber() {
         registerByteArray(MAGIC_NUMBER, 0, 2)
-        takeIf { getBytes(MAGIC_NUMBER) == null }?.let { throw Exception("ERROR: INVALID MAGIC_NUMBER") }
     }
 
     private fun registerMimeType() {
         registerByteArray(MIME_TYPE, 30, 38)
-        takeIf { getBytes(MIME_TYPE) == null }?.let { throw Exception("ERROR: INVALID MIME_TYPE") }
     }
 
     private fun registerMime() {
         registerByteArray(MIME, 38, 58)
-        takeIf { getBytes(MIME) == null }?.let { throw Exception("ERROR: INVALID MIME") }
     }
 
     private fun registerContainer() {
         val filelist = ZipFileUtils.findFiles(filePath) { it.contains(FILE_OF_CONTAINER) }
         registerByteArray(META_INF_CONTAINER, filelist[0].toByteArray())
-        takeIf { getBytes(META_INF_CONTAINER) == null }?.let { throw Exception("ERROR: INVALID META_INF_CONTAINER") }
     }
 
     private fun registerOpf() {
         val filelist = ZipFileUtils.findFiles(filePath) { it.contains(".$OPF") }
         registerByteArray(OPF, filelist[0].toByteArray())
-        takeIf { getBytes(OPF) == null }?.let { throw Exception("ERROR: INVALID OPF") }
     }
 
     // REVIEW: 2020/06/05 Exception
     private fun registerByteArray(key: String, from: Int, to: Int) {
         val len = to - from
-        var bytes = ByteArray(len)
+        val bytes = ByteArray(len)
         file.seek(from.toLong())
         file.read(bytes, 0, len)
         registerByteArray(key, bytes)

@@ -6,6 +6,7 @@ import android.os.Bundle
 import com.github.libliboom.epubviewer.R
 import com.github.libliboom.epubviewer.main.fragment.ContentsFragment
 import com.github.libliboom.epubviewer.reader.activity.ReaderActivity
+import java.util.ArrayList
 
 class ContentsActivity : ReaderActivity() {
 
@@ -32,13 +33,13 @@ class ContentsActivity : ReaderActivity() {
         fun newIntent(
             context: Context,
             cover: String,
-            chapters: ArrayList<String>,
-            srcs: ArrayList<String>
+            chapters: List<String>,
+            srcs: List<String>
         ): Intent {
             val intent = Intent(context, ContentsActivity::class.java)
             intent.putExtra(EXTRA_COVER, cover)
-            intent.putStringArrayListExtra(EXTRA_CHAPTERS, chapters)
-            intent.putStringArrayListExtra(EXTRA_SRCS, srcs)
+            intent.putStringArrayListExtra(EXTRA_CHAPTERS, chapters as ArrayList<String>?)
+            intent.putStringArrayListExtra(EXTRA_SRCS, srcs as ArrayList<String>?)
             return intent
         }
     }

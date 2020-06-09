@@ -11,12 +11,12 @@ import java.net.URL
 class HtmlParser {
 
     fun parseMetadata(filename: String, tag: String = "metadata"): List<String> {
-        var source = createSource(filename)
+        val source = createSource(filename)
         val meta = source.getAllStartTags(tag)
 
         val contents = mutableListOf<String>()
         for (e in meta[0].childElements[0].childElements) {
-            if (!e.name.startsWith("dc:")) continue
+            if (e.name.startsWith("dc:").not()) continue
             contents.add(
                 StringBuilder().append(e.name.substring(3))
                     .append(":").append(e.content.toString()).toString()
@@ -27,7 +27,7 @@ class HtmlParser {
     }
 
     fun parseManifest(filename: String, tag: String = "manifest"): Map<Int, String> {
-        var source = createSource(filename)
+        val source = createSource(filename)
         val manifest = source.getAllStartTags(tag)
 
         val jsonMap = mutableMapOf<Int, String>()
@@ -45,7 +45,7 @@ class HtmlParser {
     }
 
     fun parseSpine(filename: String, tag: String = "spine"): Map<Int, String> {
-        var source = createSource(filename)
+        val source = createSource(filename)
         val spine = source.getAllStartTags(tag)
 
         val jsonMap = mutableMapOf<Int, String>()
@@ -63,7 +63,7 @@ class HtmlParser {
     }
 
     fun parseNavMap(filename: String, tag: String = "navPoint"): Map<Int, String> {
-        var source = createSource(filename)
+        val source = createSource(filename)
         val jsonMap = mutableMapOf<Int, String>()
         val navPoints = source.getAllStartTags(tag)
         for ((idx, navPoint) in navPoints.withIndex()) {
@@ -90,11 +90,11 @@ class HtmlParser {
     }
 
     fun parseGuide(filename: String, tag: String = "guide"): String {
-        var source = createSource(filename)
+        val source = createSource(filename)
         val guide = source.getAllStartTags(tag)
 
         val sb = StringBuilder()
-        for ((idx, item) in guide[0].childElements[0].childElements.withIndex()) {
+        for (item in guide[0].childElements[0].childElements) {
             if (item.name == "!--") continue
             for (attr in item.attributes) {
                 sb.addJsonElement(attr.name, attr.value)
@@ -105,7 +105,7 @@ class HtmlParser {
     }
 
     fun parseCover(filename: String, tag: String = "img"): String {
-        var source = createSource(filename)
+        val source = createSource(filename)
         val img = source.getAllStartTags(tag)
 
         val sb = StringBuilder()

@@ -10,6 +10,7 @@ import com.github.libliboom.epubviewer.R
 import com.github.libliboom.epubviewer.base.BaseFragment
 import com.github.libliboom.epubviewer.databinding.FragmentContentsBinding
 import com.github.libliboom.epubviewer.main.recycler.adapter.ContentsAdapter
+import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 
 class ContentsFragment : BaseFragment() {
@@ -24,8 +25,9 @@ class ContentsFragment : BaseFragment() {
         getBinding() as FragmentContentsBinding
     }
 
-    private lateinit var contentsList: ArrayList<String>
-    private lateinit var srcs: ArrayList<String>
+    private lateinit var contentsList: List<String>
+    private lateinit var srcs: List<String>
+    private lateinit var disposableSubject: Disposable
 
     override fun getLayoutId() = R.layout.fragment_contents
 
@@ -35,6 +37,13 @@ class ContentsFragment : BaseFragment() {
         initCover()
         initAdapter()
         initRecyclerView()
+    }
+
+    override fun onDestroyView() {
+        if (disposableSubject.isDisposed.not()) {
+            disposableSubject.dispose()
+        }
+        super.onDestroyView()
     }
 
     private fun initCover() {
@@ -48,12 +57,12 @@ class ContentsFragment : BaseFragment() {
     private fun initAdapter() {
         arguments?.run {
             val cover = getString(ARGS_COVER) ?: ""
-            contentsList = getStringArrayList(ARGS_CHAPTERS_LIST) ?: ArrayList()
-            srcs = getStringArrayList(ARGS_SRC_LIST) ?: ArrayList()
+            contentsList = getStringArray(ARGS_CHAPTERS_LIST)?.toList() as List<String>
+            srcs = getStringArray(ARGS_SRC_LIST)?.toList() as List<String>
             contentsAdapter.init(cover, contentsList, srcs)
         }
 
-        contentsAdapter.getPublishSubject().subscribe {
+        disposableSubject = contentsAdapter.getPublishSubject().subscribe {
             val intent = Intent()
             intent.putExtra(EXTRA_INDEX_OF_CHAPTER, it)
             sendResult(intent)
@@ -82,13 +91,13 @@ class ContentsFragment : BaseFragment() {
 
         fun newInstance(
             cover: String,
-            chapters: ArrayList<String>,
-            srcs: ArrayList<String>
+            chapters: List<String>,
+            srcs: List<String>
         ): ContentsFragment {
             val args = Bundle()
             args.putString(ARGS_COVER, cover)
-            args.putStringArrayList(ARGS_CHAPTERS_LIST, chapters)
-            args.putStringArrayList(ARGS_SRC_LIST, srcs)
+            args.putStringArray(ARGS_CHAPTERS_LIST, chapters.toTypedArray())
+            args.putStringArray(ARGS_SRC_LIST, srcs.toTypedArray())
 
             val fragment = ContentsFragment()
             fragment.arguments = args

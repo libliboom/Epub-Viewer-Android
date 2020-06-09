@@ -1,6 +1,7 @@
 package com.github.libliboom.epubviewer.util.file
 
 import com.github.libliboom.epub.EPub
+import com.github.libliboom.utils.io.FileUtils
 
 object EPubUtils {
 
@@ -17,4 +18,7 @@ object EPubUtils {
     fun getOebpsPath(ePub: EPub) = ePub.opf.oebpsPath
 
     fun getMode(mode: Boolean) = if (mode) "horizontal" else "vertical"
+
+    fun getUri(pageInfo: Pair<String, Int>) =
+        FileUtils.getFileUri(pageInfo.first) + "${DELIMITER_NTH}${pageInfo.second}"
 }

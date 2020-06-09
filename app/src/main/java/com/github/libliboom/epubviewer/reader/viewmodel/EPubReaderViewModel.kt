@@ -1,10 +1,5 @@
 package com.github.libliboom.epubviewer.reader.viewmodel
 
-import android.app.Activity
-import android.content.Context
-import android.util.Log
-import android.view.View
-import android.webkit.WebView
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LiveData
@@ -15,17 +10,12 @@ import androidx.lifecycle.viewModelScope
 import com.github.libliboom.epub.EPub
 import com.github.libliboom.epub.outline.opf.NavigationControlXml
 import com.github.libliboom.epubviewer.R
-import com.github.libliboom.epubviewer.db.preference.SettingsPreference
 import com.github.libliboom.epubviewer.db.room.Book
+import com.github.libliboom.epubviewer.db.room.BookDao
 import com.github.libliboom.epubviewer.db.room.BookRepository
-import com.github.libliboom.epubviewer.db.room.BookRoomDatabase
 import com.github.libliboom.epubviewer.dev.EPubFileStub.EXTRACTED_EPUB_FILE_PATH
-import com.github.libliboom.epubviewer.main.activity.ContentsActivity
-import com.github.libliboom.epubviewer.main.activity.SettingsActivity
 import com.github.libliboom.epubviewer.reader.view.ReaderMeasureFragment
 import com.github.libliboom.epubviewer.util.file.EPubUtils
-import com.github.libliboom.epubviewer.util.file.StorageManager
-import com.github.libliboom.epubviewer.util.ui.TranslationUtils
 import com.github.libliboom.utils.io.FileUtils
 import com.github.libliboom.utils.parser.HtmlParser
 import com.google.gson.Gson
@@ -34,7 +24,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
-class EPubReaderViewModel : ViewModel, LifecycleObserver {
+class EPubReaderViewModel @Inject constructor() : ViewModel(), LifecycleObserver {
 
     var currentPageIdx = MutableLiveData(0)
     // TODO: 2020/05/27 Wrap it up as class later
@@ -44,7 +34,6 @@ class EPubReaderViewModel : ViewModel, LifecycleObserver {
 
     lateinit var ePub: EPub
     lateinit var ePubFilePath: String
-    lateinit var hostActivity: FragmentActivity
 
     private val chapters = mutableListOf<String>()
     private val decompressedRootPath = EXTRACTED_EPUB_FILE_PATH
@@ -54,35 +43,17 @@ class EPubReaderViewModel : ViewModel, LifecycleObserver {
     private var currentSpineIdx = 0
     private var chapterSize = 0
 
+    private lateinit var hostActivity: FragmentActivity
     private lateinit var repository: BookRepository
     private lateinit var allBooks: LiveData<List<Book>>
 
-    @Inject
-    constructor()
-
-    fun startContentsActivity(activity: Activity) {
-        val cover = EPubUtils.getCover(ePub)
-        val chapters = fetchChapters(EPubUtils.getNcx(ePub))
-        val srcs = fetchSrc(EPubUtils.getNcx(ePub))
-        activity.startActivityForResult(
-            ContentsActivity.newIntent(activity, cover, chapters, srcs), REQUEST_CODE_CHAPTER
-        )
-    }
-
-    fun startSettingActivity(activity: Activity) {
-        activity.startActivityForResult(
-            SettingsActivity.newIntent(activity), REQUEST_CODE_VIEW_MODE
-        )
-    }
-
-    fun cached(context: Context): Boolean {
+    fun cached(pageMode: Boolean): Boolean {
         allBooks.value?.let {
             for (book in allBooks.value!!.iterator()) {
-                val m = EPubUtils.getMode(SettingsPreference.getViewMode(context))
+                val m = EPubUtils.getMode(pageMode)
                 if (book.config == "${FileUtils.getFileName(ePubFilePath)}-$m") {
-                    val gson = Gson()
                     val mapType = object : TypeToken<Map<Int, Int>>() {}.type
-                    var tutorialMap: Map<Int, Int> = gson.fromJson(book.chapters, mapType)
+                    val tutorialMap: Map<Int, Int> = Gson().fromJson(book.chapters, mapType)
                     pages4ChapterByRendering = tutorialMap.toList().toMutableList()
                     pageCountByRendering.value = book.page.toInt()
                     return true
@@ -92,8 +63,7 @@ class EPubReaderViewModel : ViewModel, LifecycleObserver {
         return false
     }
 
-    fun initDatabase(context: Context, activity: FragmentActivity) {
-        val bookDao = BookRoomDatabase.getDatabase(context, viewModelScope).bookDao()
+    fun initDatabase(bookDao: BookDao, activity: FragmentActivity) {
         repository = BookRepository(bookDao)
         insert(Book("", "", "")) // workaround
         allBooks = repository.allBooks
@@ -108,10 +78,8 @@ class EPubReaderViewModel : ViewModel, LifecycleObserver {
         repository.delete(book)
     }
 
-    fun initEpub(context: Context) {
-        val booksPath = StorageManager.getBooksPath(context)
+    fun initEpub(booksPath: String, extractedPath: String) {
         val ePath = booksPath + ePubFilePath
-        val extractedPath = StorageManager.getExtractedPath(context)
         val dPath = extractedPath + FileUtils.getFileNameFromUri(ePubFilePath) + File.separator
 
         ePub = EPub(ePath, dPath).load()
@@ -162,89 +130,61 @@ class EPubReaderViewModel : ViewModel, LifecycleObserver {
         currentChapterIdx = adjustmentChapter(p.first)
     }
 
-    fun getEffect(n: Int): (page: View, position: Float) -> Unit {
-        return TranslationUtils.run {
-            when (n) {
-                EFFECT_NONE -> effectNone()
-                EFFECT_CUBE_OUT_DEPTH -> effectCubeOutDepth()
-                EFFECT_ZOOM_OUT_PAGE -> effectZoomOutPageEffect()
-                EFFECT_GEO -> effectGeo()
-                EFFECT_FADE_OUT -> effectFadeOut()
-                else -> effectNone()
-            }
-        }
+    fun loadChapterByAbsolutePath(decompressPath: String, url: String): String {
+        val path = getSpinePath(decompressPath, url)
+        return FileUtils.getFileUri(path)
     }
 
-    fun loadChapterByAbsolutePath(context: Context, webView: WebView, url: String) {
-        val path = getSpinePath(context, url)
-        val uri = FileUtils.getFileUri(path)
-        webView.loadUrl(uri)
-    }
-
-    fun loadChapterByUrl(context: Context, webView: WebView, url: String) {
+    fun loadChapterByUrl(decompressPath: String, url: String): Pair<String, Int> {
         val path = FileUtils.removeFileUri(url)
         val p = ePub.pagination.getPageOfChapter(FileUtils.getFileNameFromUri(path))
         currentPageIdx.value = p.second
-        loadPageByIndex(context, webView, p.second)
+        return loadPageByIndex(decompressPath, p.second)
     }
 
-    fun loadPreviousSpine(context: Context, webView: WebView) {
+    fun loadPreviousSpine(decompressPath: String): Pair<String, Int> {
         val prev = adjustmentSpine(--currentSpineIdx)
-        loadSpineByIndex(context, webView, prev)
+        return loadSpineByIndex(decompressPath, prev)
     }
 
-    fun loadNextSpine(context: Context, webView: WebView) {
+    fun loadNextSpine(decompressPath: String): Pair<String, Int> {
         val next = adjustmentSpine(++currentSpineIdx)
-        loadSpineByIndex(context, webView, next)
+        return loadSpineByIndex(decompressPath, next)
     }
 
-    fun loadSpineByIndex(context: Context, webView: WebView, idx: Int) {
+    fun loadSpineByIndex(decompressPath: String, idx: Int): Pair<String, Int> {
         currentSpineIdx = adjustmentSpine(idx)
-        val path = getSpinePath(context, currentSpineIdx)
-        loadPage(webView, path, 0)
-    }
-
-    fun loadCurrentSpine(context: Context, webView: WebView) {
-        Log.d("DEV", "current: $currentSpineIdx")
-        val path = getSpinePath(context, currentSpineIdx)
-        loadPage(webView, path, 0)
+        val path = getSpinePath(decompressPath, currentSpineIdx)
+        return Pair(path, 0)
     }
 
     fun unlockPaging() {
         pageLock = false
     }
 
-    fun updatePageIndex(context: Context, url: String, nth: Int) {
+    fun updatePageIndex(decompressPath: String, url: String, nth: Int) {
         val spine = FileUtils.getFileNameFromUri(FileUtils.removeFileUri(url)).split("/OEBPS/")[1]
         val idx = getSpineIndex(spine)
-        val path = getSpinePath(context, idx)
+        val path = getSpinePath(decompressPath, idx)
         val p = ePub.pagination.getPageOfChapter(FileUtils.getFileNameFromUri(path))
         currentSpineIdx = idx
         currentPageIdx.value = p.second + nth
     }
 
-    fun loadPageByIndex(context: Context, webView: WebView, page: Int) {
+    fun loadPageByIndex(decompressPath: String, page: Int): Pair<String, Int> {
         val p = ePub.pagination.getSpineWithNth(page)
         currentSpineIdx = p.first
-        val path = getSpinePath(context, p.first)
-        loadPage(webView, path, p.second)
+        val path = getSpinePath(decompressPath, p.first)
+        return Pair(path, p.second)
     }
 
-    private fun loadPage(webView: WebView, path: String, nth: Int) {
-        webView.loadUrl(FileUtils.getFileUri(path) + "${EPubUtils.DELIMITER_NTH}$nth")
-    }
-
-    // TODO: 2020/05/18 insert absolute path at initialization
-    private fun getSpinePath(context: Context, next: Int): String {
-        val decompressPath = StorageManager.getExtractedPath(context)
+    private fun getSpinePath(decompressPath: String, next: Int): String {
         val oebpsDir = FileUtils.getExtractedOebpsPath(decompressPath, ePubFilePath)
         val srcPath = spines[next]
         return oebpsDir + srcPath
     }
 
-    // TODO: 2020/05/18 insert absolute path at initialization
-    private fun getSpinePath(context: Context, srcPath: String): String {
-        val decompressPath = StorageManager.getExtractedPath(context)
+    private fun getSpinePath(decompressPath: String, srcPath: String): String {
         val oebpsDir = FileUtils.getExtractedOebpsPath(decompressPath, ePubFilePath)
         return oebpsDir + srcPath
     }
@@ -257,29 +197,11 @@ class EPubReaderViewModel : ViewModel, LifecycleObserver {
         return 0
     }
 
-    private fun fetchChapters(ncx: NavigationControlXml): ArrayList<String> {
-        return ArrayList<String>().also {
-            for (point in ncx.navMap.iterator()) {
-                it += point.value.navlabelText
-            }
-        }
-    }
+    fun fetchChapters(ncx: NavigationControlXml) = ncx.navMap.map { it.value.navlabelText }
 
-    private fun fetchSrc(ncx: NavigationControlXml): ArrayList<String> {
-        return ArrayList<String>().also {
-            for (point in ncx.navMap.iterator()) {
-                it += point.value.contentSrc
-            }
-        }
-    }
+    fun fetchSrc(ncx: NavigationControlXml) = ncx.navMap.map { it.value.contentSrc }
 
-    private fun fetchSpines(ncx: NavigationControlXml): List<String> {
-        return ArrayList<String>().also {
-            for (point in ncx.navMap.iterator()) {
-                it += point.value.navlabelText
-            }
-        }.distinct()
-    }
+    private fun fetchSpines(ncx: NavigationControlXml) = ncx.navMap.map { it.value.navlabelText }
 
     private fun adjustmentSpine(next: Int): Int {
         val lastSpine = spines.size - 1

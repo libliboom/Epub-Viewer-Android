@@ -7,19 +7,28 @@ import android.widget.Toast
 import androidx.core.view.get
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.github.libliboom.epubviewer.R
 import com.github.libliboom.epubviewer.base.BaseFragment
 import com.github.libliboom.epubviewer.databinding.FragmentEpubReaderBinding
 import com.github.libliboom.epubviewer.db.preference.SettingsPreference
+import com.github.libliboom.epubviewer.db.room.BookRoomDatabase
+import com.github.libliboom.epubviewer.main.activity.ContentsActivity
+import com.github.libliboom.epubviewer.main.activity.SettingsActivity
 import com.github.libliboom.epubviewer.reader.view.ReaderWebView
 import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel
+import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel.Companion.REQUEST_CODE_CHAPTER
 import com.github.libliboom.epubviewer.reader.viewpager.adapter.PageAdapter
+import com.github.libliboom.epubviewer.util.file.EPubUtils
+import com.github.libliboom.epubviewer.util.file.StorageManager
+import com.github.libliboom.epubviewer.util.ui.TranslationUtils
 import com.jakewharton.rxbinding2.widget.RxSeekBar
 import com.jakewharton.rxbinding2.widget.SeekBarStopChangeEvent
 import com.jakewharton.rxbinding4.viewpager2.pageSelections
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.item_web_view.view.web_view
 
 class EPubReaderFragment : BaseFragment() {
@@ -32,6 +41,8 @@ class EPubReaderFragment : BaseFragment() {
         getBinding() as FragmentEpubReaderBinding
     }
 
+    private lateinit var disposableSeekBar: Disposable
+
     override fun getLayoutId() = R.layout.fragment_epub_reader
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -40,10 +51,21 @@ class EPubReaderFragment : BaseFragment() {
         load()
     }
 
+    override fun onDestroyView() {
+        if (disposableSeekBar.isDisposed.not()) {
+            disposableSeekBar.dispose()
+        }
+
+        super.onDestroyView()
+    }
+
     private fun load() {
         viewModel.run {
-            initDatabase(requireContext(), requireActivity())
-            initEpub(requireContext())
+            val bookDao = BookRoomDatabase.getDatabase(requireContext(), viewModelScope).bookDao()
+            initDatabase(bookDao, requireActivity())
+            val booksPath = StorageManager.getBooksPath(requireContext())
+            val extractedPath = StorageManager.getExtractedPath(requireContext())
+            initEpub(booksPath, extractedPath)
             calcPageIfNotCached()
             pageCountByRendering.observe(
                 requireActivity(),
@@ -60,7 +82,7 @@ class EPubReaderFragment : BaseFragment() {
     private fun EPubReaderViewModel.calcPageIfNotCached() {
         Handler().postDelayed(
             {
-                if (!cached(requireContext())) {
+                if (cached(SettingsPreference.getViewMode(context)).not()) {
                     calcPageCount(requireActivity())
                 }
             },
@@ -71,13 +93,30 @@ class EPubReaderFragment : BaseFragment() {
     private fun setupBottomNavigation() {
         binding.readerBottomNv.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_contents -> viewModel.startContentsActivity(requireActivity())
-                R.id.nav_settings -> viewModel.startSettingActivity(requireActivity())
+                R.id.nav_contents -> startContentsActivity()
+                R.id.nav_settings -> startSettingActivity()
                 else -> Toast.makeText(requireActivity(), "Do nothing", Toast.LENGTH_SHORT).show()
             }
 
             true
         }
+    }
+
+    private fun startContentsActivity() {
+        viewModel.apply {
+            val cover = EPubUtils.getCover(ePub)
+            val chapters = fetchChapters(EPubUtils.getNcx(ePub))
+            val srcs = fetchSrc(EPubUtils.getNcx(ePub))
+            requireActivity().startActivityForResult(
+                ContentsActivity.newIntent(requireActivity(), cover, chapters, srcs), REQUEST_CODE_CHAPTER
+            )
+        }
+    }
+
+    private fun startSettingActivity() {
+        requireActivity().startActivityForResult(
+            SettingsActivity.newIntent(requireActivity()), EPubReaderViewModel.REQUEST_CODE_VIEW_MODE
+        )
     }
 
     private fun setupSeekBar() {
@@ -90,10 +129,9 @@ class EPubReaderFragment : BaseFragment() {
 
         viewModel.currentPageIdx.observe(
             requireActivity(),
-            Observer { idx ->
-                if (lockedPaging(idx)) return@Observer
+            Observer { curPage ->
+                if (lockedPaging(curPage)) return@Observer
 
-                val curPage = idx
                 updatePageInfo(curPage)
 
                 if (SettingsPreference.getViewMode(context)) {
@@ -104,7 +142,7 @@ class EPubReaderFragment : BaseFragment() {
             }
         )
 
-        RxSeekBar.changeEvents(binding.readerBottomNvSeekBar)
+        disposableSeekBar = RxSeekBar.changeEvents(binding.readerBottomNvSeekBar)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { seekBarChangeEvent ->
                 when (seekBarChangeEvent) {
@@ -115,7 +153,11 @@ class EPubReaderFragment : BaseFragment() {
                             binding.readerViewPager.setCurrentItem(curPage, false)
                         } else {
                             val webView = getCurrentWebView()
-                            webView?.let { viewModel.loadPageByIndex(requireContext(), it, curPage) }
+                            val decompressedPath = StorageManager.getExtractedPath(requireContext())
+                            webView?.run {
+                                val pageInfo = viewModel.loadPageByIndex(decompressedPath, curPage)
+                                loadUrl(EPubUtils.getUri(pageInfo))
+                            }
                         }
                     }
                 }
@@ -138,7 +180,8 @@ class EPubReaderFragment : BaseFragment() {
     private fun lockedPaging(idx: Int?) = idx != 0 && viewModel.pageLock
 
     private fun updatePageInfo(curPage: Int) {
-        binding.readerTvPageInfo.text = "${curPage + 1}/${binding.readerBottomNvSeekBar.max}"
+        val pageInfo = "${curPage + 1}/${binding.readerBottomNvSeekBar.max}"
+        binding.readerTvPageInfo.text = pageInfo
     }
 
     private fun updateCurrentPageInfo() {
@@ -167,20 +210,26 @@ class EPubReaderFragment : BaseFragment() {
     fun loadSpecificSpine(idx: Int) {
         val webView = getCurrentWebView()
         if (webView != null) {
-            viewModel.loadSpineByIndex(requireContext(), webView, idx)
+            val pageInfo = viewModel.loadSpineByIndex(
+                StorageManager.getExtractedPath(requireContext()),
+                idx
+            )
+            webView.loadUrl(EPubUtils.getUri(pageInfo))
         }
     }
 
     fun loadSpecificSpine(path: String) {
         val webView = getCurrentWebView()
         if (webView != null) {
-            viewModel.loadChapterByAbsolutePath(requireContext(), webView, path)
+            val decompressedPath = StorageManager.getExtractedPath(requireContext())
+            val uri = viewModel.loadChapterByAbsolutePath(decompressedPath, path)
+            webView.loadUrl(uri)
         }
     }
 
     fun reloadCurrentPage() {
         setPageMode()
-        if (!viewModel.cached(requireContext())) {
+        if (viewModel.cached(SettingsPreference.getViewMode(context)).not()) {
             load()
         }
     }
@@ -192,7 +241,7 @@ class EPubReaderFragment : BaseFragment() {
     private fun setPageMode() {
         binding.readerViewPager.apply {
             val pageMode = SettingsPreference.getViewMode(context)
-            if (!pageMode) viewModel.pageLock = true
+            if (pageMode.not()) viewModel.pageLock = true
             isUserInputEnabled = pageMode
             adapter?.notifyDataSetChanged()
         }
@@ -200,9 +249,22 @@ class EPubReaderFragment : BaseFragment() {
 
     private fun setAnimationMode() {
         val effectNumber = SettingsPreference.getAnimationMode(requireContext())
-        val effect = viewModel.getEffect(effectNumber)
+        val effect = getEffect(effectNumber)
         val transformer = ViewPager2.PageTransformer(effect)
         binding.readerViewPager.setPageTransformer(transformer)
+    }
+
+    private fun getEffect(n: Int): (page: View, position: Float) -> Unit {
+        return TranslationUtils.run {
+            when (n) {
+                EFFECT_NONE -> effectNone()
+                EFFECT_CUBE_OUT_DEPTH -> effectCubeOutDepth()
+                EFFECT_ZOOM_OUT_PAGE -> effectZoomOutPageEffect()
+                EFFECT_GEO -> effectGeo()
+                EFFECT_FADE_OUT -> effectFadeOut()
+                else -> effectNone()
+            }
+        }
     }
 
     companion object {
