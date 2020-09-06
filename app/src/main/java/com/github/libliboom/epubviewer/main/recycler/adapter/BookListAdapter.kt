@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
-import com.github.libliboom.epubviewer.R
+import com.github.libliboom.epubviewer.databinding.ItemBookBinding
 import com.github.libliboom.epubviewer.main.recycler.viewholder.BookListViewHolder
 import com.github.libliboom.epubviewer.main.viewmodel.BookshelfViewModel
 import io.reactivex.subjects.PublishSubject
@@ -17,13 +17,12 @@ class BookListAdapter : RecyclerView.Adapter<BookListViewHolder>() {
     private val publishSubject: PublishSubject<Int> = PublishSubject.create()
 
     private lateinit var requestManager: RequestManager
+    private lateinit var binding: ItemBookBinding
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookListViewHolder {
-        val view = LayoutInflater.from(parent.context).run {
-            inflate(R.layout.item_book, parent, false)
-        }
-
-        return BookListViewHolder(view)
+        val inflater = LayoutInflater.from(parent.context)
+        binding = ItemBookBinding.inflate(inflater, parent, false)
+        return BookListViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: BookListViewHolder, position: Int) {
