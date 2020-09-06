@@ -1,0 +1,13 @@
+#!/bin/sh
+# From gist at https://gist.github.com/chadmaughan/5889802
+
+echo '[git hook] executing ktlint before commit'
+
+# run ktlint with the gradle wrapper
+./gradlew ktlint --daemon
+
+RESULT=$?
+
+# return 1 exit code if running checks fails
+[ $RESULT -ne 0 ] && exit 1
+exit 0
