@@ -1,22 +1,29 @@
-package com.github.libliboom.epubviewer.base.di
+package com.github.libliboom.epubviewer.di.module
 
 import android.app.Application
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.RequestOptions
+import com.github.libliboom.epubviewer.di.scope.ApplicationScope
 import dagger.Module
 import dagger.Provides
-import javax.inject.Singleton
+import dagger.android.support.AndroidSupportInjectionModule
 
-@Module
-class AppModule {
+@Module(
+    includes = [
+        ActivityModule::class,
+        AndroidSupportInjectionModule::class
+    ]
+)
+object ApplicationModule {
 
-    @Singleton
+    @ApplicationScope
     @Provides
     fun provideRequestOptions(): RequestOptions {
         return RequestOptions()
     }
-    @Singleton
+
+    @ApplicationScope
     @Provides
     fun provideGlideInstance(application: Application, requestOptions: RequestOptions): RequestManager {
         return Glide.with(application).setDefaultRequestOptions(requestOptions)

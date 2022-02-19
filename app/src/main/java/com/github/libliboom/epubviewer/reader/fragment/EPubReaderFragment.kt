@@ -5,8 +5,8 @@ import android.os.Handler
 import android.view.View
 import android.widget.Toast
 import androidx.core.view.get
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -33,9 +33,7 @@ import kotlinx.android.synthetic.main.item_web_view.view.web_view
 
 class EPubReaderFragment : BaseFragment() {
 
-    private val viewModel: EPubReaderViewModel by lazy {
-        ViewModelProvider(requireActivity(), factory).get(EPubReaderViewModel::class.java)
-    }
+    private val viewModel: EPubReaderViewModel by activityViewModels()
 
     private val binding: FragmentEpubReaderBinding by lazy {
         getBinding() as FragmentEpubReaderBinding

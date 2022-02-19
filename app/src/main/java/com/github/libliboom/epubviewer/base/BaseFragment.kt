@@ -5,15 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
 import dagger.android.support.DaggerFragment
-import javax.inject.Inject
 
 abstract class BaseFragment : DaggerFragment(), BaseView {
-
-    @Inject
-    lateinit var factory: ViewModelProvider.Factory
 
     private lateinit var binding: ViewBinding
 

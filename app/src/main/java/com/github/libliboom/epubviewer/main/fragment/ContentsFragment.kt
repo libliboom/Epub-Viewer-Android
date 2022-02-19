@@ -16,10 +16,9 @@ import javax.inject.Inject
 class ContentsFragment : BaseFragment() {
 
     @Inject
-    lateinit var contentsAdapter: ContentsAdapter
-
-    @Inject
     lateinit var requestManager: RequestManager
+
+    private val contentsAdapter by lazy { ContentsAdapter() }
 
     private val binding: FragmentContentsBinding by lazy {
         getBinding() as FragmentContentsBinding

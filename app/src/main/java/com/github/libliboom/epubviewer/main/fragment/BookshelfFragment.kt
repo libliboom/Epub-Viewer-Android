@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
@@ -19,10 +19,11 @@ import javax.inject.Inject
 class BookshelfFragment : BaseFragment() {
 
     @Inject
-    lateinit var bookListAdapter: BookListAdapter
-
-    @Inject
     lateinit var requestManager: RequestManager
+
+    private val viewModel: BookshelfViewModel by activityViewModels()
+
+    private val bookListAdapter by lazy { BookListAdapter() }
 
     private val binding: FragmentBookshelfBinding by lazy {
         getBinding() as FragmentBookshelfBinding
@@ -46,8 +47,6 @@ class BookshelfFragment : BaseFragment() {
 
     private fun initAdapter() {
         bookListAdapter.run {
-            val viewModel = ViewModelProvider(requireActivity(), factory)
-                .get(BookshelfViewModel::class.java)
             updateViewModel(viewModel, requestManager)
             getPublishSubject().subscribe {
                 requireContext().startActivity(

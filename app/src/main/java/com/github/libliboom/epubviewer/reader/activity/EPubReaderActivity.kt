@@ -4,8 +4,9 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.lifecycle.ViewModelProvider
+import androidx.activity.viewModels
 import com.github.libliboom.epubviewer.R
+import com.github.libliboom.epubviewer.base.BaseActivity
 import com.github.libliboom.epubviewer.main.fragment.ContentsFragment.Companion.EXTRA_INDEX_OF_CHAPTER
 import com.github.libliboom.epubviewer.main.fragment.SettingsFragment.Companion.EXTRA_SETTINGS_ANIMATION_MODE
 import com.github.libliboom.epubviewer.main.fragment.SettingsFragment.Companion.EXTRA_SETTINGS_VIEW_MODE
@@ -13,12 +14,12 @@ import com.github.libliboom.epubviewer.reader.fragment.EPubReaderFragment
 import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel
 import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel.Companion.REQUEST_CODE_CHAPTER
 import com.github.libliboom.epubviewer.reader.viewmodel.EPubReaderViewModel.Companion.REQUEST_CODE_VIEW_MODE
-import javax.inject.Inject
 
-class EPubReaderActivity : ReaderActivity() {
+class EPubReaderActivity : BaseActivity() {
 
-    @Inject
-    lateinit var ePubReaderFragment: EPubReaderFragment
+    private val viewModel: EPubReaderViewModel by viewModels()
+
+    private val ePubReaderFragment by lazy { EPubReaderFragment.newInstance() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +51,6 @@ class EPubReaderActivity : ReaderActivity() {
     }
 
     private fun updateViewModel() {
-        val viewModel = ViewModelProvider(this, factory).get(EPubReaderViewModel::class.java)
         viewModel.ePubFilePath = intent.getStringExtra(EXTRA_EPUB_FILE)
     }
 

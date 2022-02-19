@@ -4,16 +4,16 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.github.libliboom.epubviewer.R
+import com.github.libliboom.epubviewer.base.BaseActivity
 import com.github.libliboom.epubviewer.main.fragment.ContentsFragment
-import com.github.libliboom.epubviewer.reader.activity.ReaderActivity
 import java.util.ArrayList
 
-class ContentsActivity : ReaderActivity() {
+class ContentsActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_contents)
-        updateTitle(getString(R.string.er_toolbar_title_contents))
+        //updateTitle(getString(R.string.er_toolbar_title_contents))
 
         val cover = intent.getStringExtra(EXTRA_COVER) ?: EXTRA_TITLE_DEFAULT
         val chapters = intent.getStringArrayListExtra(EXTRA_CHAPTERS)

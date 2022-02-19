@@ -6,7 +6,7 @@ import android.view.View
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import com.github.libliboom.epubviewer.R
 import com.github.libliboom.epubviewer.base.BaseFragment
 import com.github.libliboom.epubviewer.databinding.FragmentReaderMeaureBinding
@@ -30,9 +30,7 @@ import org.json.JSONObject
 
 class ReaderMeasureFragment : BaseFragment() {
 
-    private val viewModel: EPubReaderViewModel by lazy {
-        ViewModelProvider(requireActivity(), factory).get(EPubReaderViewModel::class.java)
-    }
+    private val viewModel: EPubReaderViewModel by activityViewModels()
 
     private val binding: FragmentReaderMeaureBinding by lazy {
         getBinding() as FragmentReaderMeaureBinding
