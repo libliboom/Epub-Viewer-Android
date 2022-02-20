@@ -10,17 +10,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SplashActivity">
+        <activity android:name=".ui.splash.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".main.activity.BookshelfActivity" />
-        <activity android:name=".reader.activity.EPubReaderActivity" />
-        <activity android:name=".main.activity.ContentsActivity" />
-        <activity android:name=".main.activity.SettingsActivity" />
+        <activity android:name=".ui.bookshelf.BookshelfActivity" />
+        <activity android:name=".ui.viewer.EPubReaderActivity" />
+        <activity android:name=".ui.contents.ContentsActivity" />
+        <activity android:name=".ui.settings.SettingsActivity" />
     </application>
 
 </manifest>

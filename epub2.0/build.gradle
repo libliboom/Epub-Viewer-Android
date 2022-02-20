@@ -1,0 +1,12 @@
+apply plugin: 'java-library'
+apply plugin: 'kotlin'
+apply from: "../ktlint.gradle"
+apply from: rootProject.file('install-git-hooks.gradle')
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'org.junit.jupiter:junit-jupiter:5.6.0'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation project(path: ':common')
+}

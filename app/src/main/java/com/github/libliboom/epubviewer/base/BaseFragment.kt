@@ -10,18 +10,18 @@ import dagger.android.support.DaggerFragment
 
 abstract class BaseFragment : DaggerFragment(), BaseView {
 
-    private lateinit var binding: ViewBinding
+  private lateinit var binding: ViewBinding
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = DataBindingUtil.inflate(inflater, getLayoutId(), container, false)
-        return binding.root
-    }
+  override fun onCreateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View? {
+    binding = DataBindingUtil.inflate(inflater, getLayoutId(), container, false)
+    return binding.root
+  }
 
-    protected fun getBinding(): ViewBinding {
-        return binding
-    }
+  protected fun getBinding(): ViewBinding {
+    return binding
+  }
 }

@@ -4,7 +4,7 @@ import androidx.appcompat.app.ActionBar
 
 object AppBarUtils {
 
-    fun setFullScreen(actionbar: ActionBar) {
-        actionbar.hide()
-    }
+  fun setFullScreen(actionbar: ActionBar) {
+    actionbar.hide()
+  }
 }

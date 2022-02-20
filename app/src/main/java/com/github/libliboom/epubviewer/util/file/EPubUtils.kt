@@ -1,24 +1,24 @@
 package com.github.libliboom.epubviewer.util.file
 
 import com.github.libliboom.epub.EPub
-import com.github.libliboom.utils.io.FileUtils
+import com.github.libliboom.common.io.FileUtils
 
 object EPubUtils {
 
-    const val DELIMITER_NTH = "#!"
+  const val DELIMITER_NTH = "#!"
 
-    fun getNavMap(ePub: EPub) = ePub.opf.ncx.navMap.toMap()
+  fun getNavMap(ePub: EPub) = ePub.opf.ncx.navMap.toMap()
 
-    fun getNcx(ePub: EPub) = ePub.opf.ncx
+  fun getNcx(ePub: EPub) = ePub.opf.ncx
 
-    fun getHref(ePub: EPub) = ePub.opf.guide.href
+  fun getHref(ePub: EPub) = ePub.opf.guide.href
 
-    fun getCover(ePub: EPub) = ePub.opf.cover.src
+  fun getCover(ePub: EPub) = ePub.opf.cover.src
 
-    fun getOebpsPath(ePub: EPub) = ePub.opf.oebpsPath
+  fun getOebpsPath(ePub: EPub) = ePub.opf.oebpsPath
 
-    fun getMode(mode: Boolean) = if (mode) "horizontal" else "vertical"
+  fun getMode(mode: Boolean) = if (mode) "horizontal" else "vertical"
 
-    fun getUri(pageInfo: Pair<String, Int>) =
-        FileUtils.getFileUri(pageInfo.first) + "${DELIMITER_NTH}${pageInfo.second}"
+  fun getUri(pageInfo: Pair<String, Int>) =
+    FileUtils.getFileUri(pageInfo.first) + "${DELIMITER_NTH}${pageInfo.second}"
 }

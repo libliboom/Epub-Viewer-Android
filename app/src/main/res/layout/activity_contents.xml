@@ -6,7 +6,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".main.activity.ContentsActivity">
+        tools:context=".ui.contents.ContentsActivity">
 
         <FrameLayout
             android:id="@+id/reader_frame_layout"

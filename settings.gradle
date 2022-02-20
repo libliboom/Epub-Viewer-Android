@@ -1,4 +1,5 @@
 rootProject.name='Epub-Viewer-Android'
+include ':common'
+include ':epub2.0'
+include ':base'
 include ':app'
-include ':epub2.0-parser'
-include ':common-utils'
