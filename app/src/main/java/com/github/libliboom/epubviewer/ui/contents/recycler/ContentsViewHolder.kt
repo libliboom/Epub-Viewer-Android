@@ -1,30 +1,28 @@
 package com.github.libliboom.epubviewer.ui.contents.recycler
 
 import android.content.Context
-import android.view.View
-import com.github.libliboom.epubviewer.base.BaseViewHolder
-import io.reactivex.Observable
-import io.reactivex.subjects.PublishSubject
-import kotlinx.android.synthetic.main.item_contents.view.tv_contents_item
-import kotlinx.android.synthetic.main.item_contents.view.tv_srcs_item
+import com.github.libliboom.epubviewer.app.ui.BaseViewHolder
+import com.github.libliboom.epubviewer.databinding.ItemContentsBinding
+import com.github.libliboom.epubviewer.presentation.contents.ContentsStore.Action.Ui
+import com.github.libliboom.epubviewer.ui.contents.recycler.ContentsViewHolder.Contents
 
-class ContentsViewHolder(private val view: View) : BaseViewHolder(view) {
+class ContentsViewHolder(
+  private val binding: ItemContentsBinding,
+  private val eventListener: EventListener
+) : BaseViewHolder<ItemContentsBinding, Contents>(binding) {
 
-  fun onBindSubject(publishSubject: PublishSubject<String>) {
-    getClickObservable().subscribe(publishSubject)
+  override fun init() {
+    binding.contentsItemTv.setOnClickListener {
+      val text = binding.contentsItemTv.text.toString()
+      eventListener.invoke(Ui.ClickContents(text))
+    }
   }
 
-  override fun onBindItem(context: Context, item: BaseItem) {
-    item as Contents
-    view.tv_contents_item.text = item.contents
-    view.tv_srcs_item.text = item.src
-  }
-
-  private fun getClickObservable(): Observable<String> {
-    return Observable.create { event ->
-      view.tv_contents_item.setOnClickListener {
-        event.onNext(view.tv_srcs_item.text.toString())
-      }
+  override fun onBindItem(context: Context, item: Contents) {
+    super.onBindItem(context, item)
+    with(binding) {
+      contentsItemTv.text = item.contents
+      srcsItemTv.text = item.src
     }
   }
 

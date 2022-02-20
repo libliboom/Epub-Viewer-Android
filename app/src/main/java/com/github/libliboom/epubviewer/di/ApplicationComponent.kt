@@ -1,8 +1,8 @@
 package com.github.libliboom.epubviewer.di
 
 import android.app.Application
-import com.github.libliboom.epubviewer.base.BaseApplication
-import com.github.libliboom.epubviewer.base.di.scope.ApplicationScope
+import com.github.libliboom.epubviewer.app.BaseApplication
+import com.github.libliboom.epubviewer.app.di.scope.ApplicationScope
 import com.github.libliboom.epubviewer.di.module.ApplicationModule
 import dagger.BindsInstance
 import dagger.Component

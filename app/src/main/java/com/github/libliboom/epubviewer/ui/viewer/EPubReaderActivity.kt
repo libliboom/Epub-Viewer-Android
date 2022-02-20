@@ -3,26 +3,26 @@ package com.github.libliboom.epubviewer.ui.viewer
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import androidx.activity.viewModels
 import com.github.libliboom.epubviewer.R
-import com.github.libliboom.epubviewer.base.BaseActivity
+import com.github.libliboom.epubviewer.app.ui.BaseActivity
+import com.github.libliboom.epubviewer.databinding.ActivityEpubReaderBinding
 import com.github.libliboom.epubviewer.ui.contents.ContentsFragment.Companion.EXTRA_INDEX_OF_CHAPTER
 import com.github.libliboom.epubviewer.ui.settings.SettingsFragment.Companion.EXTRA_SETTINGS_ANIMATION_MODE
 import com.github.libliboom.epubviewer.ui.settings.SettingsFragment.Companion.EXTRA_SETTINGS_VIEW_MODE
 import com.github.libliboom.epubviewer.ui.viewer.EPubReaderViewModel.Companion.REQUEST_CODE_CHAPTER
 import com.github.libliboom.epubviewer.ui.viewer.EPubReaderViewModel.Companion.REQUEST_CODE_VIEW_MODE
 
-class EPubReaderActivity : BaseActivity() {
+class EPubReaderActivity : BaseActivity<ActivityEpubReaderBinding>() {
 
   private val viewModel: EPubReaderViewModel by viewModels()
 
   private val ePubReaderFragment by lazy { EPubReaderFragment.newInstance() }
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_epub_reader)
+  override fun inflateBinding() = ActivityEpubReaderBinding.inflate(layoutInflater)
 
+  override fun initView(binding: ActivityEpubReaderBinding) {
+    super.initView(binding)
     updateViewModel()
 
     supportFragmentManager.beginTransaction()

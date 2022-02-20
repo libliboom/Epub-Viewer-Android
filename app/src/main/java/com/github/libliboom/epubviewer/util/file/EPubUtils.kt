@@ -1,7 +1,7 @@
 package com.github.libliboom.epubviewer.util.file
 
-import com.github.libliboom.epub.EPub
 import com.github.libliboom.common.io.FileUtils
+import com.github.libliboom.epub.EPub
 
 object EPubUtils {
 

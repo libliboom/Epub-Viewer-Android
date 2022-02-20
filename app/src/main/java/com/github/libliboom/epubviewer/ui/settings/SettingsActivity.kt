@@ -2,16 +2,17 @@ package com.github.libliboom.epubviewer.ui.settings
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import com.github.libliboom.epubviewer.R
-import com.github.libliboom.epubviewer.base.BaseActivity
+import com.github.libliboom.epubviewer.databinding.ActivitySettingsBinding
+import com.github.libliboom.epubviewer.ui.viewer.ReaderActivity
 
-class SettingsActivity : BaseActivity() {
+class SettingsActivity : ReaderActivity<ActivitySettingsBinding>() {
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_settings)
-    // updateTitle(getString(R.string.er_toolbar_title_settings))
+  override fun inflateBinding() = ActivitySettingsBinding.inflate(layoutInflater)
+
+  override fun initView(binding: ActivitySettingsBinding) {
+    super.initView(binding)
+    updateTitle(getString(R.string.er_toolbar_title_settings))
 
     supportFragmentManager.beginTransaction()
       .add(R.id.reader_frame_layout, SettingsFragment.newInstance())

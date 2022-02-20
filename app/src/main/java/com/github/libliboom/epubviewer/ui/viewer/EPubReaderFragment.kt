@@ -1,8 +1,8 @@
 package com.github.libliboom.epubviewer.ui.viewer
 
-import android.os.Bundle
 import android.os.Handler
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.get
 import androidx.fragment.app.activityViewModels
@@ -11,11 +11,12 @@ import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.github.libliboom.epubviewer.R
-import com.github.libliboom.epubviewer.base.BaseFragment
+import com.github.libliboom.epubviewer.app.ui.BaseFragment
 import com.github.libliboom.epubviewer.databinding.FragmentEpubReaderBinding
 import com.github.libliboom.epubviewer.db.preference.SettingsPreference
 import com.github.libliboom.epubviewer.db.room.BookRoomDatabase
 import com.github.libliboom.epubviewer.ui.contents.ContentsActivity
+import com.github.libliboom.epubviewer.ui.contents.ContentsParameter
 import com.github.libliboom.epubviewer.ui.settings.SettingsActivity
 import com.github.libliboom.epubviewer.ui.viewer.EPubReaderViewModel.Companion.REQUEST_CODE_CHAPTER
 import com.github.libliboom.epubviewer.ui.viewer.viewpager.adapter.PageAdapter
@@ -29,20 +30,17 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.item_web_view.view.web_view
 
-class EPubReaderFragment : BaseFragment() {
+class EPubReaderFragment : BaseFragment<FragmentEpubReaderBinding>() {
 
   private val viewModel: EPubReaderViewModel by activityViewModels()
 
-  private val binding: FragmentEpubReaderBinding by lazy {
-    getBinding() as FragmentEpubReaderBinding
-  }
-
   private lateinit var disposableSeekBar: Disposable
 
-  override fun getLayoutId() = R.layout.fragment_epub_reader
+  override fun inflateBinding(container: ViewGroup?) =
+    FragmentEpubReaderBinding.inflate(layoutInflater, container, false)
 
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
+  override fun afterInitView(binding: FragmentEpubReaderBinding) {
+    super.afterInitView(binding)
     setupBottomNavigation()
     load()
   }
@@ -104,7 +102,11 @@ class EPubReaderFragment : BaseFragment() {
       val chapters = fetchChapters(EPubUtils.getNcx(ePub))
       val srcs = fetchSrc(EPubUtils.getNcx(ePub))
       requireActivity().startActivityForResult(
-        ContentsActivity.newIntent(requireActivity(), cover, chapters, srcs), REQUEST_CODE_CHAPTER
+        ContentsActivity.newIntent(
+          requireActivity(),
+          ContentsParameter(cover, chapters, srcs)
+        ),
+        REQUEST_CODE_CHAPTER
       )
     }
   }

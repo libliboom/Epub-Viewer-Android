@@ -1,9 +1,10 @@
 package com.github.libliboom.epubviewer.ui.viewer
 
 import android.os.Bundle
-import com.github.libliboom.epubviewer.base.BaseActivity
+import androidx.viewbinding.ViewBinding
+import com.github.libliboom.epubviewer.app.ui.BaseActivity
 
-abstract class ReaderActivity : BaseActivity() {
+abstract class ReaderActivity<Binding : ViewBinding> : BaseActivity<Binding>() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)

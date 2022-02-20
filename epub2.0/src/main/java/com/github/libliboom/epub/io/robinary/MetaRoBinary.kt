@@ -1,13 +1,13 @@
 package com.github.libliboom.epub.io.robinary
 
+import com.github.libliboom.common.io.ZipFileUtils
+import com.github.libliboom.common.io.robinary.RoBinary
 import com.github.libliboom.epub.common.Constant.FILE_OF_CONTAINER
 import com.github.libliboom.epub.common.Constant.MAGIC_NUMBER
 import com.github.libliboom.epub.common.Constant.META_INF_CONTAINER
 import com.github.libliboom.epub.common.Constant.MIME
 import com.github.libliboom.epub.common.Constant.MIME_TYPE
 import com.github.libliboom.epub.common.Constant.OPF
-import com.github.libliboom.common.io.ZipFileUtils
-import com.github.libliboom.common.io.robinary.RoBinary
 import java.io.RandomAccessFile
 
 /**

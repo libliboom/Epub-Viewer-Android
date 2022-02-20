@@ -2,29 +2,31 @@ package com.github.libliboom.epubviewer.ui.bookshelf
 
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import androidx.activity.viewModels
 import com.github.libliboom.epubviewer.R
-import com.github.libliboom.epubviewer.base.BaseActivity
+import com.github.libliboom.epubviewer.app.ui.BaseActivity
+import com.github.libliboom.epubviewer.databinding.ActivityBookshelfBinding
+import com.github.libliboom.epubviewer.presentation.bookshelf.BookshelfStore.State
 
-class BookshelfActivity : BaseActivity() {
+interface BookshelfViewBinder {
+  fun represent(state: State)
+}
+
+class BookshelfActivity : BaseActivity<ActivityBookshelfBinding>() {
 
   private val viewModel: BookshelfViewModel by viewModels()
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_bookshelf)
+  override fun inflateBinding() = ActivityBookshelfBinding.inflate(layoutInflater)
 
+  override fun initView(binding: ActivityBookshelfBinding) {
+    super.initView(binding)
     viewModel.initResources(applicationContext)
-
     supportFragmentManager.beginTransaction()
       .add(R.id.reader_frame_layout, BookshelfFragment.newInstance())
       .commit()
   }
 
   companion object {
-    fun newIntent(context: Context): Intent {
-      return Intent(context, BookshelfActivity::class.java)
-    }
+    fun newIntent(context: Context) = Intent(context, BookshelfActivity::class.java)
   }
 }

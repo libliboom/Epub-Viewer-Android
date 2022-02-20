@@ -1,0 +1,45 @@
+plugins {
+  id 'com.android.library'
+  id 'org.jetbrains.kotlin.android'
+}
+apply from: rootProject.file('ktlint.gradle')
+apply from: rootProject.file('dependencies.gradle')
+
+android {
+  compileSdkVersion versions.compile_sdk
+
+  defaultConfig {
+    minSdkVersion versions.min_sdk
+    targetSdkVersion versions.compile_sdk
+
+    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    consumerProguardFiles "consumer-rules.pro"
+  }
+
+  buildTypes {
+    release {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+    }
+  }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+  kotlinOptions {
+    jvmTarget = '1.8'
+  }
+}
+
+dependencies {
+  implementation project(path: ':base')
+  implementation project(path: ':domain')
+  implementation "androidx.core:core-ktx:$versions.core_ktx"
+  implementation "androidx.appcompat:appcompat:$versions.appcompat"
+  implementation "com.google.android.material:material:$versions.material"
+  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0'
+  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0'
+  testImplementation "junit:junit:$versions.junit"
+  androidTestImplementation "androidx.test.ext:junit:$versions.ext_junit"
+  androidTestImplementation "androidx.test.espresso:espresso-core:$versions.espresso_core"
+}

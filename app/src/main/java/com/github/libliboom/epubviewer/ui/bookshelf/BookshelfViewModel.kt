@@ -2,17 +2,22 @@ package com.github.libliboom.epubviewer.ui.bookshelf
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.github.libliboom.common.io.FileUtils
+import com.github.libliboom.epubviewer.presentation.bookshelf.BookshelfPresenter
+import com.github.libliboom.epubviewer.presentation.bookshelf.BookshelfStore.Action
 import com.github.libliboom.epubviewer.util.dev.EPubFileStub
 import com.github.libliboom.epubviewer.util.file.StorageManager
-import com.github.libliboom.common.io.FileUtils
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.io.OutputStream
-import javax.inject.Inject
 
 // TODO: 2020/05/13 Fetch data form local database
-class BookshelfViewModel @Inject constructor() : ViewModel() {
+class BookshelfViewModel : ViewModel() {
+
+  private val presenter by lazy { BookshelfPresenter() }
 
   var ePubFiles = listOf<String>()
 
@@ -22,6 +27,16 @@ class BookshelfViewModel @Inject constructor() : ViewModel() {
     EPubFileStub.ASSET_EXTRACTED_COVER_FILE_PATH_03,
     EPubFileStub.ASSET_EXTRACTED_COVER_FILE_PATH_04
   )
+
+  fun bind(binder: BookshelfViewBinder) {
+    viewModelScope.launch {
+      presenter.state.collect { binder.represent(it) }
+    }
+  }
+
+  fun dispatch(action: Action) {
+    presenter.dispatch(action)
+  }
 
   fun initResources(context: Context) {
     ePubFiles = context.assets.list("books")?.toList() as List<String>

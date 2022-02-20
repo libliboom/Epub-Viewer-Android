@@ -1,29 +1,25 @@
 package com.github.libliboom.epubviewer.ui.splash
 
-import android.os.Bundle
-import android.os.Handler
-import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.github.libliboom.epubviewer.BuildConfig
-import com.github.libliboom.epubviewer.R
+import com.github.libliboom.epubviewer.app.ui.BaseActivity
+import com.github.libliboom.epubviewer.databinding.ActivitySplashBinding
 import com.github.libliboom.epubviewer.ui.bookshelf.BookshelfActivity
 import com.github.libliboom.epubviewer.util.ui.AppBarUtils
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-class SplashActivity : AppCompatActivity() {
+class SplashActivity : BaseActivity<ActivitySplashBinding>() {
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_splash)
+  override fun inflateBinding() = ActivitySplashBinding.inflate(layoutInflater)
 
+  override fun initView(binding: ActivitySplashBinding) {
+    super.initView(binding)
     supportActionBar?.let { AppBarUtils.setFullScreen(it) }
-
-    val delayMillis: Long = if (BuildConfig.DEBUG) 0 else 2000
-
-    Handler().postDelayed(
-      {
-        startActivity(BookshelfActivity.newIntent(applicationContext))
-        finish()
-      },
-      delayMillis
-    )
+    lifecycleScope.launch {
+      delay(if (BuildConfig.DEBUG) 0 else 2000)
+      startActivity(BookshelfActivity.newIntent(applicationContext))
+      finish()
+    }
   }
 }

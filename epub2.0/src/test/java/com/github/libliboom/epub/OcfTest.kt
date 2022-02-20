@@ -1,9 +1,9 @@
 package com.github.libliboom.epub
 
-import com.github.libliboom.epub.io.robinary.MetaRoBinary
-import com.github.libliboom.epub.outline.ocf.OpenContainerFormat
 import com.github.libliboom.common.const.Resource
 import com.github.libliboom.common.io.FileUtils
+import com.github.libliboom.epub.io.robinary.MetaRoBinary
+import com.github.libliboom.epub.outline.ocf.OpenContainerFormat
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

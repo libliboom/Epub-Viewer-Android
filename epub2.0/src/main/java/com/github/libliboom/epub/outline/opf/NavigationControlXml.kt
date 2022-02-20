@@ -1,7 +1,7 @@
 package com.github.libliboom.epub.outline.opf
 
-import com.github.libliboom.epub.common.Constant.TAG_NAV_POINT
 import com.github.libliboom.common.parser.HtmlParser
+import com.github.libliboom.epub.common.Constant.TAG_NAV_POINT
 import com.google.gson.Gson
 
 /**

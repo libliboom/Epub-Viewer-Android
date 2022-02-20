@@ -3,12 +3,13 @@ package com.github.libliboom.epubviewer.ui.viewer
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
+import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.fragment.app.activityViewModels
-import com.github.libliboom.epubviewer.R
-import com.github.libliboom.epubviewer.base.BaseFragment
+import com.github.libliboom.common.io.FileUtils
+import com.github.libliboom.epubviewer.app.ui.BaseFragment
 import com.github.libliboom.epubviewer.databinding.FragmentReaderMeaureBinding
 import com.github.libliboom.epubviewer.db.preference.SettingsPreference
 import com.github.libliboom.epubviewer.db.room.Book
@@ -20,29 +21,24 @@ import com.github.libliboom.epubviewer.util.js.Js.callPageCount
 import com.github.libliboom.epubviewer.util.js.Js.columns4HorizontalJs
 import com.github.libliboom.epubviewer.util.js.Js.setStyle
 import com.github.libliboom.epubviewer.util.js.Js.sumPageCount
-import com.github.libliboom.common.io.FileUtils
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.ObservableEmitter
 import io.reactivex.rxjava3.core.ObservableOnSubscribe
 import java8.util.stream.StreamSupport
 import org.json.JSONObject
 
-class ReaderMeasureFragment : BaseFragment() {
+class ReaderMeasureFragment : BaseFragment<FragmentReaderMeaureBinding>() {
 
   private val viewModel: EPubReaderViewModel by activityViewModels()
 
-  private val binding: FragmentReaderMeaureBinding by lazy {
-    getBinding() as FragmentReaderMeaureBinding
-  }
-
-  override fun getLayoutId() = R.layout.fragment_reader_meaure
+  override fun inflateBinding(container: ViewGroup?) =
+    FragmentReaderMeaureBinding.inflate(layoutInflater, container, false)
 
   // TODO: 2020/05/27 Bad smell...
   private var tot = 0
 
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
-
+  override fun afterInitView(binding: FragmentReaderMeaureBinding) {
+    super.afterInitView(binding)
     binding.measureSpinner.visibility = View.VISIBLE
 
     val f = arguments?.getStringArray(ARGS_FILE_LIST)?.toList() as List<String>

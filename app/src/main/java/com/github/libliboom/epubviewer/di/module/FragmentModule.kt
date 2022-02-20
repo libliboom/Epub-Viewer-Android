@@ -1,6 +1,6 @@
 package com.github.libliboom.epubviewer.di.module
 
-import com.github.libliboom.epubviewer.base.di.scope.FragmentScope
+import com.github.libliboom.epubviewer.app.di.scope.FragmentScope
 import com.github.libliboom.epubviewer.ui.bookshelf.BookshelfFragment
 import com.github.libliboom.epubviewer.ui.contents.ContentsFragment
 import com.github.libliboom.epubviewer.ui.settings.SettingsFragment

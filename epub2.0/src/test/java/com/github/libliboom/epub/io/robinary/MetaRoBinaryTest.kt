@@ -1,5 +1,7 @@
 package com.github.libliboom.epub.io.robinary
 
+import com.github.libliboom.common.const.Resource
+import com.github.libliboom.common.io.FileUtils
 import com.github.libliboom.epub.common.Constant.MAGIC_NUMBER
 import com.github.libliboom.epub.common.Constant.META_INF_CONTAINER
 import com.github.libliboom.epub.common.Constant.MIME
@@ -8,8 +10,6 @@ import com.github.libliboom.epub.common.Constant.OPF
 import com.github.libliboom.epub.common.Constant.VALUE_OF_MAGIC_NUMBER
 import com.github.libliboom.epub.common.Constant.VALUE_OF_MIME
 import com.github.libliboom.epub.common.Constant.VALUE_OF_MIME_TYPE
-import com.github.libliboom.common.const.Resource
-import com.github.libliboom.common.io.FileUtils
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

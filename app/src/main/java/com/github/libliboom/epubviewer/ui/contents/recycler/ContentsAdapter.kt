@@ -3,15 +3,15 @@ package com.github.libliboom.epubviewer.ui.contents.recycler
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.github.libliboom.epubviewer.R
-import io.reactivex.subjects.PublishSubject
+import com.github.libliboom.epubviewer.databinding.ItemContentsBinding
+import com.github.libliboom.epubviewer.presentation.contents.ContentsStore
 
-class ContentsAdapter : RecyclerView.Adapter<ContentsViewHolder>() {
+typealias EventListener = (ContentsStore.Action) -> Unit
 
-  private val publishSubject: PublishSubject<String> = PublishSubject.create()
+class ContentsAdapter(private val eventListener: EventListener) :
+  RecyclerView.Adapter<ContentsViewHolder>() {
 
   private lateinit var cover: String
-
   private lateinit var contentsList: List<String>
   private lateinit var srcs: List<String>
 
@@ -23,22 +23,14 @@ class ContentsAdapter : RecyclerView.Adapter<ContentsViewHolder>() {
   }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContentsViewHolder {
-    val view = LayoutInflater.from(parent.context).run {
-      inflate(R.layout.item_contents, parent, false)
-    }
-
-    return ContentsViewHolder(view)
+    val binding = ItemContentsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+    return ContentsViewHolder(binding, eventListener).also { it.init() }
   }
 
   override fun onBindViewHolder(holder: ContentsViewHolder, position: Int) {
     val contents = ContentsViewHolder.Contents(contentsList[position], srcs[position])
-    holder.onBindSubject(publishSubject)
     holder.onBindItem(holder.itemView.context, contents)
   }
 
   override fun getItemCount() = contentsList.size
-
-  fun getPublishSubject(): PublishSubject<String> {
-    return publishSubject
-  }
 }

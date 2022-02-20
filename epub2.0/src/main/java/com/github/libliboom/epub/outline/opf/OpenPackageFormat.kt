@@ -1,10 +1,10 @@
 package com.github.libliboom.epub.outline.opf
 
-import com.github.libliboom.epub.common.Constant.OPF
-import com.github.libliboom.epub.io.robinary.MetaRoBinary
 import com.github.libliboom.common.const.Resource
 import com.github.libliboom.common.const.Resource.Companion.TOC_NCX_FILE_NAME
 import com.github.libliboom.common.parser.HtmlParser
+import com.github.libliboom.epub.common.Constant.OPF
+import com.github.libliboom.epub.io.robinary.MetaRoBinary
 import com.google.gson.Gson
 import java.io.File
 

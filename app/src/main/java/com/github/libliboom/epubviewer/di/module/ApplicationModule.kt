@@ -4,7 +4,7 @@ import android.app.Application
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.RequestOptions
-import com.github.libliboom.epubviewer.base.di.scope.ApplicationScope
+import com.github.libliboom.epubviewer.app.di.scope.ApplicationScope
 import dagger.Module
 import dagger.Provides
 import dagger.android.support.AndroidSupportInjectionModule

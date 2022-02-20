@@ -1,41 +1,33 @@
 package com.github.libliboom.epubviewer.ui.bookshelf.recycler
 
 import android.content.Context
-import android.view.View
 import com.bumptech.glide.RequestManager
-import com.github.libliboom.epubviewer.base.BaseViewHolder
-import io.reactivex.Observable
-import io.reactivex.subjects.PublishSubject
-import kotlinx.android.synthetic.main.item_book.view.image_view_book
-import java.util.concurrent.TimeUnit
+import com.github.libliboom.epubviewer.app.ui.BaseViewHolder
+import com.github.libliboom.epubviewer.databinding.ItemBookBinding
+import com.github.libliboom.epubviewer.presentation.bookshelf.BookshelfStore
 
-class BookListViewHolder(private val view: View) : BaseViewHolder(view) {
+class BookListViewHolder(
+  private val binding: ItemBookBinding,
+  private val eventListener: EventListener
+) : BaseViewHolder<ItemBookBinding, BookListViewHolder.Book>(binding) {
 
-  fun onBindSubject(publishSubject: PublishSubject<Int>) {
-    getClickObservable()
-      .throttleFirst(2000, TimeUnit.MILLISECONDS)
-      .subscribe(publishSubject)
-  }
-
-  override fun onBindItem(context: Context, item: BaseItem) {
-    item as Book
-    view.image_view_book.apply {
-      bindCover(item.requestManager, item.url)
+  override fun init() {
+    binding.imageViewBook.setOnClickListener {
+      eventListener.invoke(BookshelfStore.Action.Ui.ClickBook(adapterPosition))
     }
   }
 
-  private fun getClickObservable(): Observable<Int> {
-    return Observable.create { event ->
-      view.image_view_book.setOnClickListener {
-        event.onNext(adapterPosition)
-      }
+  override fun onBindItem(context: Context, item: Book) {
+    super.onBindItem(context, item)
+    binding.imageViewBook.apply {
+      bindCover(item.requestManager, item.url)
     }
   }
 
   private fun bindCover(requestManager: RequestManager, url: String) {
     requestManager
       .load(url)
-      .into(view.image_view_book)
+      .into(binding.imageViewBook)
   }
 
   data class Book(val requestManager: RequestManager, val url: String) : BaseItem()

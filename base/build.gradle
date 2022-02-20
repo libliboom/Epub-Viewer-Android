@@ -3,7 +3,7 @@ plugins {
   id 'org.jetbrains.kotlin.android'
   id 'kotlin-kapt'
 }
-apply from: rootProject.file('ktlint.gradle')
+//apply from: rootProject.file('ktlint.gradle')
 apply from: rootProject.file('dependencies.gradle')
 
 android {
@@ -27,6 +27,9 @@ android {
     sourceCompatibility JavaVersion.VERSION_1_8
     targetCompatibility JavaVersion.VERSION_1_8
   }
+  dataBinding {
+    enabled = true
+  }
   kotlinOptions {
     jvmTarget = '1.8'
   }
@@ -41,6 +44,10 @@ dependencies {
   implementation "com.google.dagger:dagger:$versions.dagger"
   kapt "com.google.dagger:dagger-android-processor:$versions.dagger"
   kapt "com.google.dagger:dagger-compiler:$versions.dagger"
+  implementation "io.reactivex.rxjava2:rxandroid:$versions.rxandroid"
+  implementation "io.reactivex.rxjava2:rxjava:$versions.rxjava"
+  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0'
+  implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0'
   testImplementation "junit:junit:$versions.junit"
   androidTestImplementation "androidx.test.ext:junit:$versions.ext_junit"
   androidTestImplementation "androidx.test.espresso:espresso-core:$versions.espresso_core"

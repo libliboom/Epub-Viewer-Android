@@ -7,6 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.libliboom.common.io.FileUtils
+import com.github.libliboom.common.parser.HtmlParser
 import com.github.libliboom.epub.EPub
 import com.github.libliboom.epub.outline.opf.NavigationControlXml
 import com.github.libliboom.epubviewer.R
@@ -15,8 +17,6 @@ import com.github.libliboom.epubviewer.db.room.BookDao
 import com.github.libliboom.epubviewer.db.room.BookRepository
 import com.github.libliboom.epubviewer.util.dev.EPubFileStub.EXTRACTED_EPUB_FILE_PATH
 import com.github.libliboom.epubviewer.util.file.EPubUtils
-import com.github.libliboom.common.io.FileUtils
-import com.github.libliboom.common.parser.HtmlParser
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch

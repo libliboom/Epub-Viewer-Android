@@ -1,11 +1,11 @@
 package com.github.libliboom.epub
 
-import com.github.libliboom.epub.io.robinary.MetaRoBinary
-import com.github.libliboom.epub.outline.ocf.OpenContainerFormat
-import com.github.libliboom.epub.outline.opf.OpenPackageFormat
 import com.github.libliboom.common.io.FileUtils
 import com.github.libliboom.common.io.ZipFileUtils
 import com.github.libliboom.common.io.robinary.PageRoBinary
+import com.github.libliboom.epub.io.robinary.MetaRoBinary
+import com.github.libliboom.epub.outline.ocf.OpenContainerFormat
+import com.github.libliboom.epub.outline.opf.OpenPackageFormat
 
 /**
  * EPUB stands for Electronic publication
