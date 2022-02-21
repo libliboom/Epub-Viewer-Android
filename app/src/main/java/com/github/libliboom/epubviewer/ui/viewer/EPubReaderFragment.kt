@@ -85,7 +85,7 @@ class EPubReaderFragment : BaseFragment<FragmentEpubReaderBinding>() {
   }
 
   private fun setupBottomNavigation() {
-    binding.readerBottomNv.setOnNavigationItemSelectedListener { item ->
+    binding.epubReaderNav.setOnNavigationItemSelectedListener { item ->
       when (item.itemId) {
         R.id.nav_contents -> startContentsActivity()
         R.id.nav_settings -> startSettingActivity()
@@ -118,7 +118,7 @@ class EPubReaderFragment : BaseFragment<FragmentEpubReaderBinding>() {
   }
 
   private fun setupSeekBar() {
-    binding.readerBottomNvSeekBar.apply {
+    binding.epubReaderSeekBar.apply {
       progress = 1 // based on 1 page
       max = viewModel.getPageCount().value!!
     }
@@ -133,22 +133,22 @@ class EPubReaderFragment : BaseFragment<FragmentEpubReaderBinding>() {
         updatePageInfo(curPage)
 
         if (SettingsPreference.getViewMode(context)) {
-          binding.readerViewPager.setCurrentItem(curPage, false)
+          binding.epubReaderViewPager.setCurrentItem(curPage, false)
         } else {
-          binding.readerBottomNvSeekBar.progress = curPage
+          binding.epubReaderSeekBar.progress = curPage
         }
       }
     )
 
-    disposableSeekBar = RxSeekBar.changeEvents(binding.readerBottomNvSeekBar)
+    disposableSeekBar = RxSeekBar.changeEvents(binding.epubReaderSeekBar)
       .observeOn(AndroidSchedulers.mainThread())
       .subscribe { seekBarChangeEvent ->
         when (seekBarChangeEvent) {
           is SeekBarStopChangeEvent -> {
-            val curPage = binding.readerBottomNvSeekBar.progress
+            val curPage = binding.epubReaderSeekBar.progress
             updatePageInfo(curPage)
             if (SettingsPreference.getViewMode(context)) {
-              binding.readerViewPager.setCurrentItem(curPage, false)
+              binding.epubReaderViewPager.setCurrentItem(curPage, false)
             } else {
               val webView = getCurrentWebView()
               val decompressedPath = StorageManager.getExtractedPath(requireContext())
@@ -161,33 +161,33 @@ class EPubReaderFragment : BaseFragment<FragmentEpubReaderBinding>() {
         }
       }
 
-    binding.readerViewPager.pageSelections()
+    binding.epubReaderViewPager.pageSelections()
       .subscribeOn(io.reactivex.rxjava3.android.schedulers.AndroidSchedulers.mainThread())
       .subscribe { curPage ->
-        binding.readerBottomNvSeekBar.progress = curPage
+        binding.epubReaderSeekBar.progress = curPage
         updatePageInfo(curPage)
       }
   }
 
   private fun getCurrentWebView(): ReaderWebView? {
-    return (binding.readerViewPager[0] as RecyclerView).findViewHolderForAdapterPosition(
-      binding.readerViewPager.currentItem
+    return (binding.epubReaderViewPager[0] as RecyclerView).findViewHolderForAdapterPosition(
+      binding.epubReaderViewPager.currentItem
     )?.itemView?.web_view
   }
 
   private fun lockedPaging(idx: Int?) = idx != 0 && viewModel.pageLock
 
   private fun updatePageInfo(curPage: Int) {
-    val pageInfo = "${curPage + 1}/${binding.readerBottomNvSeekBar.max}"
-    binding.readerTvPageInfo.text = pageInfo
+    val pageInfo = "${curPage + 1}/${binding.epubReaderSeekBar.max}"
+    binding.epubReaderPageInfo.text = pageInfo
   }
 
   private fun updateCurrentPageInfo() {
-    binding.readerViewPager.setCurrentItem(binding.readerBottomNvSeekBar.progress, false)
+    binding.epubReaderViewPager.setCurrentItem(binding.epubReaderSeekBar.progress, false)
   }
 
   private fun setupViewPager() {
-    binding.readerViewPager.apply {
+    binding.epubReaderViewPager.apply {
       offscreenPageLimit = 3
       val pageAdapter = PageAdapter(requireContext(), viewModel)
       pageAdapter.setHasStableIds(true)
@@ -237,7 +237,7 @@ class EPubReaderFragment : BaseFragment<FragmentEpubReaderBinding>() {
   }
 
   private fun setPageMode() {
-    binding.readerViewPager.apply {
+    binding.epubReaderViewPager.apply {
       val pageMode = SettingsPreference.getViewMode(context)
       if (pageMode.not()) viewModel.pageLock = true
       isUserInputEnabled = pageMode
@@ -249,7 +249,7 @@ class EPubReaderFragment : BaseFragment<FragmentEpubReaderBinding>() {
     val effectNumber = SettingsPreference.getAnimationMode(requireContext())
     val effect = getEffect(effectNumber)
     val transformer = ViewPager2.PageTransformer(effect)
-    binding.readerViewPager.setPageTransformer(transformer)
+    binding.epubReaderViewPager.setPageTransformer(transformer)
   }
 
   private fun getEffect(n: Int): (page: View, position: Float) -> Unit {

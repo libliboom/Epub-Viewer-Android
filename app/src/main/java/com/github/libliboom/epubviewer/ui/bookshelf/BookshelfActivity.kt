@@ -22,7 +22,7 @@ class BookshelfActivity : BaseActivity<ActivityBookshelfBinding>() {
     super.initView(binding)
     viewModel.initResources(applicationContext)
     supportFragmentManager.beginTransaction()
-      .add(R.id.reader_frame_layout, BookshelfFragment.newInstance())
+      .add(R.id.bookshelf_container, BookshelfFragment.newInstance())
       .commit()
   }
 

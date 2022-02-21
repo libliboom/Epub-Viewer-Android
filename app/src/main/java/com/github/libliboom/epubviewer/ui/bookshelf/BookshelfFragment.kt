@@ -50,7 +50,7 @@ class BookshelfFragment : BaseFragment<FragmentBookshelfBinding>(), BookshelfVie
       bookListAdapter.updateViewModel(viewModel, requestManager)
     }
     fun initRecyclerView() {
-      binding.bookshlefRv.apply {
+      binding.bookshelfRecyclerView.apply {
         layoutManager = GridLayoutManager(requireContext(), SPAN_COUNT)
         adapter = bookListAdapter
       }

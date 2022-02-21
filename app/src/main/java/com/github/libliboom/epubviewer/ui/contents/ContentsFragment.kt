@@ -46,13 +46,13 @@ class ContentsFragment : BaseFragment<FragmentContentsBinding>(), ContentsViewBi
     fun initCover() {
       requestManager
         .load(parameter.cover)
-        .into(binding.contentsIvCover)
+        .into(binding.contentsCover)
     }
     fun initAdapter() {
       contentsAdapter.init(parameter.cover, parameter.chapters, parameter.srcs)
     }
     fun initRecyclerView() {
-      binding.contentsRvChapters.apply {
+      binding.contentsChaptersRecyclerView.apply {
         layoutManager = LinearLayoutManager(requireContext())
         adapter = contentsAdapter
       }

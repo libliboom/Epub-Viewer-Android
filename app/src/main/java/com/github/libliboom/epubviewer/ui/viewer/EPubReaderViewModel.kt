@@ -96,7 +96,7 @@ class EPubReaderViewModel @Inject constructor() : ViewModel(), LifecycleObserver
 
     activity.supportFragmentManager.beginTransaction()
       .add(
-        R.id.reader_frame_layout,
+        R.id.bookshelf_container,
         ReaderMeasureFragment.newInstance(
           filelist, FileUtils.getFileName(ePubFilePath)
         )

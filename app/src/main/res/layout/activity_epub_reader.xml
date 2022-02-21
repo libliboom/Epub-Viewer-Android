@@ -2,15 +2,15 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      tools:context=".ui.viewer.EPubReaderActivity">
+
+    <FrameLayout
+        android:id="@+id/epub_reader_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.viewer.EPubReaderActivity">
+        android:layout_height="match_parent" />
 
-        <FrameLayout
-            android:id="@+id/reader_frame_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+  </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -12,8 +12,8 @@ class ContentsViewHolder(
 ) : BaseViewHolder<ItemContentsBinding, Contents>(binding) {
 
   override fun init() {
-    binding.contentsItemTv.setOnClickListener {
-      val text = binding.contentsItemTv.text.toString()
+    binding.contentsItemName.setOnClickListener {
+      val text = binding.contentsItemName.text.toString()
       eventListener.invoke(Ui.ClickContents(text))
     }
   }
@@ -21,8 +21,8 @@ class ContentsViewHolder(
   override fun onBindItem(context: Context, item: Contents) {
     super.onBindItem(context, item)
     with(binding) {
-      contentsItemTv.text = item.contents
-      srcsItemTv.text = item.src
+      contentsItemName.text = item.contents
+      contentsSourceName.text = item.src
     }
   }
 

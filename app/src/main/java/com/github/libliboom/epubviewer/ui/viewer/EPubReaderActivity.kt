@@ -26,7 +26,7 @@ class EPubReaderActivity : BaseActivity<ActivityEpubReaderBinding>() {
     updateViewModel()
 
     supportFragmentManager.beginTransaction()
-      .add(R.id.reader_frame_layout, ePubReaderFragment)
+      .add(R.id.epub_reader_container, ePubReaderFragment)
       .commit()
   }
 

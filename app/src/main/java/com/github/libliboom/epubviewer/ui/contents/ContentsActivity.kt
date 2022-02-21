@@ -37,7 +37,7 @@ class ContentsActivity : ReaderActivity<ActivityContentsBinding>() {
     updateTitle(getString(R.string.er_toolbar_title_contents))
     supportFragmentManager.beginTransaction()
       .add(
-        R.id.reader_frame_layout,
+        R.id.contents_container,
         ContentsFragment.newInstance(parameter)
       ).commit()
   }

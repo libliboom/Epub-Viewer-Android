@@ -15,7 +15,7 @@ class SettingsActivity : ReaderActivity<ActivitySettingsBinding>() {
     updateTitle(getString(R.string.er_toolbar_title_settings))
 
     supportFragmentManager.beginTransaction()
-      .add(R.id.reader_frame_layout, SettingsFragment.newInstance())
+      .add(R.id.settings_container, SettingsFragment.newInstance())
       .commit()
   }
 
