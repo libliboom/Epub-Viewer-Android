@@ -11,7 +11,7 @@ import androidx.fragment.app.activityViewModels
 import com.github.libliboom.common.io.FileUtils
 import com.github.libliboom.epubviewer.app.ui.BaseFragment
 import com.github.libliboom.epubviewer.databinding.FragmentReaderMeaureBinding
-import com.github.libliboom.epubviewer.db.preference.SettingsPreference
+import com.github.libliboom.epubviewer.datasource.settings.SettingsPreference
 import com.github.libliboom.epubviewer.db.room.Book
 import com.github.libliboom.epubviewer.util.file.EPubUtils
 import com.github.libliboom.epubviewer.util.js.Js.calcPage4HorizontalJs
@@ -82,7 +82,7 @@ class ReaderMeasureFragment : BaseFragment<FragmentReaderMeaureBinding>() {
   }
 
   private fun insertBook() {
-    val m = EPubUtils.getMode(SettingsPreference.getViewMode(context))
+    val m = EPubUtils.getMode(SettingsPreference.getViewMode())
     val map = viewModel.pages4ChapterByRendering
       .map { it.first.toString() to it.second.toString() }.toMap()
     val jsonMap = JSONObject(map).toString()
@@ -119,7 +119,7 @@ class RxWebViewWrapper(private val webView: WebView) : ObservableOnSubscribe<Web
       override fun onPageFinished(view: WebView?, url: String?) {
         super.onPageFinished(view, url)
         view?.loadUrl(setStyle())
-        val pageMode = SettingsPreference.getViewMode(webView.context)
+        val pageMode = SettingsPreference.getViewMode()
         if (pageMode) {
           view?.run {
             loadUrl(columns4HorizontalJs())

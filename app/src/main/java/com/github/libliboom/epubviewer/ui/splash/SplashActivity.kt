@@ -14,8 +14,8 @@ class SplashActivity : BaseActivity<ActivitySplashBinding>() {
   override fun inflateBinding() = ActivitySplashBinding.inflate(layoutInflater)
 
   override fun initView(binding: ActivitySplashBinding) {
-    super.initView(binding)
     supportActionBar?.let { AppBarUtils.setFullScreen(it) }
+    super.initView(binding)
     lifecycleScope.launch {
       delay(if (BuildConfig.DEBUG) 0 else 2000)
       startActivity(BookshelfActivity.newIntent(applicationContext))

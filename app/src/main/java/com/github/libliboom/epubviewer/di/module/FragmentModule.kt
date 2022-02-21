@@ -9,7 +9,7 @@ import com.github.libliboom.epubviewer.ui.viewer.ReaderMeasureFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
 
-@Module
+@Module(includes = [UsecaseModule::class])
 interface FragmentModule {
 
   @FragmentScope

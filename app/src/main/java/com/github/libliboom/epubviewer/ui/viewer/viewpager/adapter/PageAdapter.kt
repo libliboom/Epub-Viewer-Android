@@ -1,22 +1,20 @@
 package com.github.libliboom.epubviewer.ui.viewer.viewpager.adapter
 
-import android.content.Context
 import android.view.MotionEvent
 import android.view.ViewGroup
 import android.webkit.WebView
 import androidx.recyclerview.widget.RecyclerView
-import com.github.libliboom.epubviewer.db.preference.SettingsPreference
+import com.github.libliboom.epubviewer.datasource.settings.SettingsPreference
 import com.github.libliboom.epubviewer.ui.viewer.EPubReaderViewModel
 import com.github.libliboom.epubviewer.ui.viewer.ReaderWebView
 import com.github.libliboom.epubviewer.ui.viewer.ReaderWebViewClient
 import com.github.libliboom.epubviewer.ui.viewer.viewpager.viewholder.PageViewHolder
 import com.github.libliboom.epubviewer.util.file.EPubUtils
 import com.github.libliboom.epubviewer.util.file.StorageManager
-import kotlinx.android.synthetic.main.item_web_view.view.web_view
 import kotlin.math.ceil
+import kotlinx.android.synthetic.main.item_web_view.view.web_view
 
 class PageAdapter(
-  private val context: Context,
   private val viewModel: EPubReaderViewModel
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -32,7 +30,7 @@ class PageAdapter(
     holder.itemView.web_view.apply {
       settings.javaScriptEnabled = true
       webViewClient = ReaderWebViewClient(viewModel)
-      val pageMode = SettingsPreference.getViewMode(context)
+      val pageMode = SettingsPreference.getViewMode()
       if (pageMode) {
         isScrollContainer = false
         setOnTouchListener { _, event -> event.action == MotionEvent.ACTION_MOVE }

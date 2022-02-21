@@ -3,7 +3,7 @@ package com.github.libliboom.epubviewer.ui.viewer
 import android.content.Context
 import android.util.AttributeSet
 import android.webkit.WebView
-import com.github.libliboom.epubviewer.db.preference.SettingsPreference
+import com.github.libliboom.epubviewer.datasource.settings.SettingsPreference
 import com.github.libliboom.epubviewer.util.event.ClickUtils
 import com.github.libliboom.epubviewer.util.js.Js.callNth
 
@@ -24,7 +24,7 @@ class ReaderWebView @JvmOverloads constructor(
   override fun onScrollChanged(l: Int, t: Int, oldl: Int, oldt: Int) {
     super.onScrollChanged(l, t, oldl, oldt)
 
-    if (SettingsPreference.getViewMode(context)) return
+    if (SettingsPreference.getViewMode()) return
 
     evaluateJavascript(callNth()) { nth ->
       nth?.let { listener.onUpdatePage(nth) }

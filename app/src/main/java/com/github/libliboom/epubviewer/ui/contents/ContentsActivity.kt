@@ -6,6 +6,7 @@ import com.github.libliboom.epubviewer.R
 import com.github.libliboom.epubviewer.databinding.ActivityContentsBinding
 import com.github.libliboom.epubviewer.presentation.contents.ContentsStore.State
 import com.github.libliboom.epubviewer.ui.viewer.ReaderActivity
+import com.github.libliboom.epubviewer.util.resource.StringUtils
 
 interface ContentsViewBinder {
   fun represent(state: State)
@@ -34,7 +35,7 @@ class ContentsActivity : ReaderActivity<ActivityContentsBinding>() {
   override fun initView(binding: ActivityContentsBinding) {
     if (::parameter.isInitialized.not()) finish()
     super.initView(binding)
-    updateTitle(getString(R.string.er_toolbar_title_contents))
+    updateTitle(StringUtils.getString(R.string.er_toolbar_title_contents))
     supportFragmentManager.beginTransaction()
       .add(
         R.id.contents_container,

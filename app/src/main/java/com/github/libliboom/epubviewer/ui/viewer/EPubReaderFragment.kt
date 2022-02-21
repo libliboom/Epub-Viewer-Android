@@ -13,7 +13,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.github.libliboom.epubviewer.R
 import com.github.libliboom.epubviewer.app.ui.BaseFragment
 import com.github.libliboom.epubviewer.databinding.FragmentEpubReaderBinding
-import com.github.libliboom.epubviewer.db.preference.SettingsPreference
+import com.github.libliboom.epubviewer.datasource.settings.SettingsPreference
 import com.github.libliboom.epubviewer.db.room.BookRoomDatabase
 import com.github.libliboom.epubviewer.ui.contents.ContentsActivity
 import com.github.libliboom.epubviewer.ui.contents.ContentsParameter
@@ -76,7 +76,7 @@ class EPubReaderFragment : BaseFragment<FragmentEpubReaderBinding>() {
   private fun EPubReaderViewModel.calcPageIfNotCached() {
     Handler().postDelayed(
       {
-        if (cached(SettingsPreference.getViewMode(context)).not()) {
+        if (cached(SettingsPreference.getViewMode()).not()) {
           calcPageCount(requireActivity())
         }
       },
@@ -132,7 +132,7 @@ class EPubReaderFragment : BaseFragment<FragmentEpubReaderBinding>() {
 
         updatePageInfo(curPage)
 
-        if (SettingsPreference.getViewMode(context)) {
+        if (SettingsPreference.getViewMode()) {
           binding.epubReaderViewPager.setCurrentItem(curPage, false)
         } else {
           binding.epubReaderSeekBar.progress = curPage
@@ -147,7 +147,7 @@ class EPubReaderFragment : BaseFragment<FragmentEpubReaderBinding>() {
           is SeekBarStopChangeEvent -> {
             val curPage = binding.epubReaderSeekBar.progress
             updatePageInfo(curPage)
-            if (SettingsPreference.getViewMode(context)) {
+            if (SettingsPreference.getViewMode()) {
               binding.epubReaderViewPager.setCurrentItem(curPage, false)
             } else {
               val webView = getCurrentWebView()
@@ -189,7 +189,7 @@ class EPubReaderFragment : BaseFragment<FragmentEpubReaderBinding>() {
   private fun setupViewPager() {
     binding.epubReaderViewPager.apply {
       offscreenPageLimit = 3
-      val pageAdapter = PageAdapter(requireContext(), viewModel)
+      val pageAdapter = PageAdapter(viewModel)
       pageAdapter.setHasStableIds(true)
       adapter = pageAdapter
     }
@@ -227,7 +227,7 @@ class EPubReaderFragment : BaseFragment<FragmentEpubReaderBinding>() {
 
   fun reloadCurrentPage() {
     setPageMode()
-    if (viewModel.cached(SettingsPreference.getViewMode(context)).not()) {
+    if (viewModel.cached(SettingsPreference.getViewMode()).not()) {
       load()
     }
   }
@@ -238,7 +238,7 @@ class EPubReaderFragment : BaseFragment<FragmentEpubReaderBinding>() {
 
   private fun setPageMode() {
     binding.epubReaderViewPager.apply {
-      val pageMode = SettingsPreference.getViewMode(context)
+      val pageMode = SettingsPreference.getViewMode()
       if (pageMode.not()) viewModel.pageLock = true
       isUserInputEnabled = pageMode
       adapter?.notifyDataSetChanged()
@@ -246,7 +246,7 @@ class EPubReaderFragment : BaseFragment<FragmentEpubReaderBinding>() {
   }
 
   private fun setAnimationMode() {
-    val effectNumber = SettingsPreference.getAnimationMode(requireContext())
+    val effectNumber = SettingsPreference.getAnimationMode()
     val effect = getEffect(effectNumber)
     val transformer = ViewPager2.PageTransformer(effect)
     binding.epubReaderViewPager.setPageTransformer(transformer)

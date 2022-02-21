@@ -5,7 +5,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import com.github.libliboom.epubviewer.db.preference.SettingsPreference
+import com.github.libliboom.epubviewer.datasource.settings.SettingsPreference
 import com.github.libliboom.epubviewer.util.file.EPubUtils
 import com.github.libliboom.epubviewer.util.file.EPubUtils.DELIMITER_NTH
 import com.github.libliboom.epubviewer.util.file.StorageManager
@@ -53,7 +53,7 @@ class ReaderWebViewClient(private val viewModel: EPubReaderViewModel) : WebViewC
     super.onPageFinished(view, parseUri(url!!))
     view?.loadUrl(setStyle())
 
-    if (SettingsPreference.getViewMode(view?.context)) {
+    if (SettingsPreference.getViewMode()) {
       setHorizontalMode(view, url)
     } else {
       setVerticalMode(url, view)

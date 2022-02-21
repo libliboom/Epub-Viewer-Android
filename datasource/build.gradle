@@ -32,6 +32,8 @@ android {
 }
 
 dependencies {
+  implementation project(path: ':base')
+  implementation project(path: ':domain')
   implementation project(path: ':repository')
   implementation "androidx.core:core-ktx:$versions.core_ktx"
   implementation "androidx.appcompat:appcompat:$versions.appcompat"
