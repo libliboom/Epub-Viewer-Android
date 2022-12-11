@@ -66,12 +66,12 @@ dependencies {
     implementation project(path: ':datasource')
     implementation project(path: ':repository')
     implementation project(path: ':presentation')
-    implementation "android.arch.lifecycle:common-java8:$versions.lifecycle"
-    implementation "android.arch.lifecycle:reactivestreams:$versions.lifecycle"
-    kapt "android.arch.lifecycle:compiler:$versions.lifecycle"
+    implementation "android.arch.lifecycle:common-java8:$versions.arch_lifecycle"
+    implementation "android.arch.lifecycle:reactivestreams:$versions.arch_lifecycle"
+    kapt "android.arch.lifecycle:compiler:$versions.arch_lifecycle"
     implementation "androidx.activity:activity-ktx:1.2.0"
     implementation "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.arch_lifecycle"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.lifecycle"
     implementation "androidx.room:room-ktx:$versions.room"
     implementation "androidx.room:room-runtime:$versions.room"
     kapt "androidx.room:room-compiler:$versions.room"

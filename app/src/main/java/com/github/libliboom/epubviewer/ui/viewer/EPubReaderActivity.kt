@@ -49,7 +49,7 @@ class EPubReaderActivity : BaseActivity<ActivityEpubReaderBinding>() {
   }
 
   private fun updateViewModel() {
-    viewModel.ePubFilePath = intent.getStringExtra(EXTRA_EPUB_FILE)
+    viewModel.ePubFilePath = intent.getStringExtra(EXTRA_EPUB_FILE) ?: ""
   }
 
   companion object {

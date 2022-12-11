@@ -27,8 +27,8 @@ class ContentsActivity : ReaderActivity<ActivityContentsBinding>() {
   override fun getArgs() {
     intent ?: return
     val cover = intent.getStringExtra(EXTRA_COVER) ?: EXTRA_TITLE_DEFAULT
-    val chapters = intent.getStringArrayListExtra(EXTRA_CHAPTERS)
-    val srcs = intent.getStringArrayListExtra(EXTRA_SRCS)
+    val chapters = intent.getStringArrayListExtra(EXTRA_CHAPTERS) ?: emptyList()
+    val srcs = intent.getStringArrayListExtra(EXTRA_SRCS) ?: emptyList()
     parameter = ContentsParameter(cover, chapters, srcs)
   }
 

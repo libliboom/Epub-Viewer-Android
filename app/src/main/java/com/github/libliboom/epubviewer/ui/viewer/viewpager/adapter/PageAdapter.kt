@@ -68,7 +68,7 @@ class PageAdapter(
               unlockPaging()
               updatePageIndex(
                 StorageManager.getExtractedPath(context),
-                url,
+                url ?: "",
                 newNth
               )
             }
