@@ -60,7 +60,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(path: ':common')
-    implementation project(path: ':epub2.0')
+    implementation project(path: ':appkit:epub2.0')
     implementation project(path: ':base')
     implementation project(path: ':domain')
     implementation project(path: ':datasource')
