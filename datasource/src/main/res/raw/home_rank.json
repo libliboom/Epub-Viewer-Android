@@ -1,0 +1,54 @@
+{
+  "ranks": [
+    {
+      "name": "EBooks Top 5",
+      "catalog": [
+        {
+          "title": "A Room with a View by E. M.  Forster (5443)",
+          "link": "https://www.gutenberg.org/ebooks/2641"
+        },
+        {
+          "title": "A Room with a View by E. M.  Forster (5443)",
+          "link": "https://www.gutenberg.org/ebooks/2641"
+        },
+        {
+          "title": "A Room with a View by E. M.  Forster (5443)",
+          "link": "https://www.gutenberg.org/ebooks/2641"
+        },
+        {
+          "title": "A Room with a View by E. M.  Forster (5443)",
+          "link": "https://www.gutenberg.org/ebooks/2641"
+        },
+        {
+          "title": "A Room with a View by E. M.  Forster (5443)",
+          "link": "https://www.gutenberg.org/ebooks/2641"
+        }
+      ]
+    },
+    {
+      "name": "Author Top 5",
+      "catalog": [
+        {
+          "title": "Smollett, T. (Tobias) (12746)",
+          "link": "https://www.gutenberg.org/browse/authors/s#a838"
+        },
+        {
+          "title": "Smollett, T. (Tobias) (12746)",
+          "link": "https://www.gutenberg.org/browse/authors/s#a838"
+        },
+        {
+          "title": "Smollett, T. (Tobias) (12746)",
+          "link": "https://www.gutenberg.org/browse/authors/s#a838"
+        },
+        {
+          "title": "Smollett, T. (Tobias) (12746)",
+          "link": "https://www.gutenberg.org/browse/authors/s#a838"
+        },
+        {
+          "title": "Smollett, T. (Tobias) (12746)",
+          "link": "https://www.gutenberg.org/browse/authors/s#a838"
+        }
+      ]
+    }
+  ]
+}

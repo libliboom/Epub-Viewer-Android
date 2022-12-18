@@ -1,0 +1,124 @@
+{
+  "sections": [
+    {
+      "name": "Today",
+      "books": [
+        {
+          "image": "https://www.gutenberg.org/cache/epub/69521/pg69521.cover.medium.jpg",
+          "title": "Surprise house",
+          "author": "Abbie Farwell Brown, Helen Mason Grose",
+          "link": "https://www.gutenberg.org/ebooks/69521.epub.noimages"
+        },
+        {
+          "image": "https://www.gutenberg.org/cache/epub/69519/pg69519.cover.medium.jpg",
+          "title": "New system of domestic cookery,: formed upon principles of economy, and adapted to the use of private families",
+          "author": "Maria Eliza Ketelby Rundell",
+          "link": "https://www.gutenberg.org/ebooks/69519.epub.noimages"
+        },
+        {
+          "image": "https://www.gutenberg.org/cache/epub/69517/pg69517.cover.medium.jpg",
+          "title": "The ocean wireless boys of the iceberg patrol",
+          "author": "John Henry Goldfrap, Charles L. Wrenn",
+          "link": "https://www.gutenberg.org/ebooks/69517.epub.noimages"
+        },
+        {
+          "image": "https://www.gutenberg.org/cache/epub/69512/pg69512.cover.medium.jpg",
+          "title": "The calculus of logic",
+          "author": "George Boole",
+          "link": "https://www.gutenberg.org/ebooks/69512.epub.noimages"
+        },
+        {
+          "image": "https://www.gutenberg.org/cache/epub/2701/pg2701.cover.medium.jpg",
+          "title": "Moby Dick; Or, The Whale",
+          "author": "Herman Melville",
+          "link": "EPUB (no images)"
+        }
+      ]
+    },
+    {
+      "name": "Popular",
+      "books": [
+        {
+          "image": "https://www.gutenberg.org/cache/epub/69521/pg69521.cover.medium.jpg",
+          "title": "Surprise house",
+          "author": "Abbie Farwell Brown, Helen Mason Grose",
+          "link": "https://www.gutenberg.org/ebooks/69521.epub.noimages"
+        },
+        {
+          "image": "https://www.gutenberg.org/cache/epub/69519/pg69519.cover.medium.jpg",
+          "title": "New system of domestic cookery,: formed upon principles of economy, and adapted to the use of private families",
+          "author": "Maria Eliza Ketelby Rundell",
+          "link": "https://www.gutenberg.org/ebooks/69519.epub.noimages"
+        },
+        {
+          "image": "https://www.gutenberg.org/cache/epub/69517/pg69517.cover.medium.jpg",
+          "title": "The ocean wireless boys of the iceberg patrol",
+          "author": "John Henry Goldfrap, Charles L. Wrenn",
+          "link": "https://www.gutenberg.org/ebooks/69517.epub.noimages"
+        },
+        {
+          "image": "https://www.gutenberg.org/cache/epub/69512/pg69512.cover.medium.jpg",
+          "title": "The calculus of logic",
+          "author": "George Boole",
+          "link": "https://www.gutenberg.org/ebooks/69512.epub.noimages"
+        },
+        {
+          "image": "https://www.gutenberg.org/cache/epub/2701/pg2701.cover.medium.jpg",
+          "title": "Moby Dick; Or, The Whale",
+          "author": "Herman Melville",
+          "link": "EPUB (no images)"
+        }
+      ]
+    },
+    {
+      "name": "Recommend",
+      "books": [
+        {
+          "image": "https://www.gutenberg.org/cache/epub/69521/pg69521.cover.medium.jpg",
+          "title": "Surprise house",
+          "author": "Abbie Farwell Brown, Helen Mason Grose",
+          "link": "https://www.gutenberg.org/ebooks/69521.epub.noimages",
+          "release_date": "December 11, 2022",
+          "language": "English",
+          "original_publication": "US: , United States: Houghton, Mifflin Company,1917."
+        },
+        {
+          "image": "https://www.gutenberg.org/cache/epub/69519/pg69519.cover.medium.jpg",
+          "title": "New system of domestic cookery,: formed upon principles of economy, and adapted to the use of private families",
+          "author": "Maria Eliza Ketelby Rundell",
+          "link": "https://www.gutenberg.org/ebooks/69519.epub.noimages",
+          "release_date": "December 10, 2022",
+          "language": "English",
+          "original_publication": "US: , United States: William Andrews,1807."
+        },
+        {
+          "image": "https://www.gutenberg.org/cache/epub/69517/pg69517.cover.medium.jpg",
+          "title": "The ocean wireless boys of the iceberg patrol",
+          "author": "John Henry Goldfrap, Charles L. Wrenn",
+          "link": "https://www.gutenberg.org/ebooks/69517.epub.noimages",
+          "release_date": "December 10, 2022",
+          "language": "English",
+          "original_publication": "US: , United States: Hurst & Company,1915."
+        },
+        {
+          "image": "https://www.gutenberg.org/cache/epub/69512/pg69512.cover.medium.jpg",
+          "title": "The calculus of logic",
+          "author": "George Boole",
+          "link": "https://www.gutenberg.org/ebooks/69512.epub.noimages",
+          "release_date": "December 10, 2022",
+          "language": "English",
+          "original_publication": "UK: , UK: MACMILLAN, BARCLAY, AND MACMILLAN,1848."
+        },
+        {
+          "image": "https://www.gutenberg.org/cache/epub/2701/pg2701.cover.medium.jpg",
+          "title": "Moby Dick; Or, The Whale",
+          "author": "Herman Melville",
+          "link": "EPUB (no images)",
+          "release_date": "July 1, 2001",
+          "language": "English",
+          "original_publication": ""
+        }
+      ]
+    }
+  ]
+}

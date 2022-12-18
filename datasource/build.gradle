@@ -39,6 +39,8 @@ dependencies {
   implementation "androidx.core:core-ktx:$versions.core_ktx"
   implementation "androidx.appcompat:appcompat:$versions.appcompat"
   implementation "com.google.android.material:material:$versions.material"
+  implementation "com.google.code.gson:gson:2.8.6"
+  implementation "com.squareup.moshi:moshi:1.14.0"
   testImplementation "junit:junit:$versions.junit"
   androidTestImplementation "androidx.test.ext:junit:$versions.ext_junit"
   androidTestImplementation "androidx.test.espresso:espresso-core:$versions.espresso_core"

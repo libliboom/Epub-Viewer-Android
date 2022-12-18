@@ -67,6 +67,7 @@ class ContentsFragment : BaseFragment<FragmentContentsBinding>(), ContentsViewBi
   override fun represent(state: ContentsStore.State) {
     when (state.type) {
       ContentsStore.StateType.CLICK_CONTENTS -> representClickContents(state)
+      else -> {}
     }
   }
 
